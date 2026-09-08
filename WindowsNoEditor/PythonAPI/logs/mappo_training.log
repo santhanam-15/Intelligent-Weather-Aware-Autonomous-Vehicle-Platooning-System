@@ -1,0 +1,16 @@
+[MODULE 2 MAPPO] Step: 256 | actor_loss=-0.019 | critic_loss=480.775 | entropy=1.609
+[MODULE 2 MAPPO] Step: 512 | actor_loss=-0.018 | critic_loss=111.561 | entropy=1.609
+[MODULE 2 MAPPO] Step: 768 | actor_loss=-0.019 | critic_loss=120.749 | entropy=1.606
+[MODULE 2 MAPPO] Step: 1024 | actor_loss=-0.019 | critic_loss=88.731 | entropy=1.601
+[MODULE 2 MAPPO] Step: 1280 | actor_loss=-0.018 | critic_loss=69.642 | entropy=1.592
+[MODULE 2 MAPPO] Step: 1536 | actor_loss=-0.016 | critic_loss=57.828 | entropy=1.588
+[MODULE 2 MAPPO] Step: 1792 | actor_loss=-0.019 | critic_loss=54.554 | entropy=1.596
+[MODULE 2 MAPPO] Step: 2048 | actor_loss=-0.026 | critic_loss=49.447 | entropy=1.601
+[MODULE 2 MAPPO] Step: 2304 | actor_loss=-0.019 | critic_loss=42.922 | entropy=1.602
+[MODULE 2 MAPPO] Step: 2560 | actor_loss=-0.019 | critic_loss=36.239 | entropy=1.598
+[MODULE 2 MAPPO] Step: 2816 | actor_loss=-0.020 | critic_loss=28.563 | entropy=1.595
+[MODULE 2 MAPPO] Step: 3072 | actor_loss=-0.019 | critic_loss=20.639 | entropy=1.600
+[MODULE 2 MAPPO] Step: 3328 | actor_loss=-0.025 | critic_loss=13.689 | entropy=1.588
+[MODULE 2 MAPPO] Step: 3584 | actor_loss=-0.018 | critic_loss=8.362 | entropy=1.570
+[MODULE 2 MAPPO] Step: 3840 | actor_loss=-0.016 | critic_loss=4.923 | entropy=1.580
+[MODULE 2 MAPPO] Step: 4096 | actor_loss=-0.019 | critic_loss=14.747 | entropy=1.584

@@ -11,6 +11,7 @@ import logging
 import os
 import sys
 import time
+import math
 
 import carla
 import pygame
@@ -53,52 +54,167 @@ from real_world_simulation import (
 from uncertainty.uncertainty_manager import UncertaintyManager
 from uncertainty.human_behavior import DriverProfile
 
+# Import Module 2
+import sys
+if os.path.join(CARLA_ROOT, 'module_2') not in sys.path:
+    sys.path.append(CARLA_ROOT)
+
+from module_2.mappo_agent import WeatherAwareMAPPO
+from module_2.training_config import TrainingConfig
+from module_2.observation_builder import ObservationBuilder
+from module_2.reward import RewardCalculator
+from module_2.action_space import TacticalAction
+
 logger = logging.getLogger("UncertainPlatoonMain")
 
 class UnifiedHUD(MiniHUD):
-    """Extension of MiniHUD to include Ghost Driver status."""
+    """Extension of MiniHUD to include Ghost Driver status and DRL Dashboard."""
     def render(
-        self, display, leader, platoon, vehicles, walkers,
-        autopilot, camera_name, elapsed, town_name, synchronous, fps, ghost_status=None
+        self,
+        display: pygame.Surface,
+        leader: carla.Vehicle,
+        platoon: List[carla.Vehicle],
+        vehicles: List[carla.Actor],
+        walkers: List[carla.Actor],
+        autopilot: bool,
+        camera_name: str,
+        elapsed: float,
+        town_name: str,
+        synchronous: bool,
+        fps: float,
+        ghost_status: dict = None
     ) -> None:
-        super().render(display, leader, platoon, vehicles, walkers, autopilot, camera_name, elapsed, town_name, synchronous, fps)
-        
-        # Add ghost driver status
-        if ghost_status:
-            font = pygame.font.SysFont("consolas", 14, bold=True)
-            active = ghost_status.get("active", False)
-            bg_color = (80, 15, 60, 240) if active else (15, 30, 45, 240)
-            text_color = (255, 150, 255) if active else (150, 200, 255)
+        if ghost_status is None:
+            ghost_status = {}
             
-            box_w = 430
-            box_h = 70
-            bx = 16
-            by = self.height - 230
-            
-            surf = pygame.Surface((box_w, box_h), pygame.SRCALPHA)
-            surf.fill(bg_color)
-            pygame.draw.rect(surf, text_color, surf.get_rect(), width=1, border_radius=6)
-            display.blit(surf, (bx, by))
-            
-            title = font.render("GHOST DRIVER SYSTEM", True, text_color)
-            display.blit(title, (bx + 12, by + 10))
-            
-            if active:
-                target_id = ghost_status.get("target_id")
-                disruption = ghost_status.get("disruption_name", "Unknown")
-                rem_sec = ghost_status.get("remaining_seconds", 0.0)
-                msg1 = f"Vehicle #{target_id} -> POSSESSED"
-                msg2 = f"Action: {disruption} ({rem_sec:.1f}s left)"
-                c1 = (255, 100, 100)
-            else:
-                target_id = "None"
-                cooldown = ghost_status.get("cooldown_remaining", 0.0)
-                msg1 = "All vehicles -> NORMAL"
-                msg2 = f"Lurking... (next in {cooldown:.1f}s)"
-                c1 = (100, 255, 100)
+        pt_cache = ghost_status.get("platoon_telemetry", {})
 
-            display.blit(font.render(msg1, True, c1), (bx + 12, by + 30))
-            display.blit(font.render(msg2, True, (200, 200, 200)), (bx + 12, by + 48))
+        # 1. Top FPS Banner (Super lightweight, replaces heavy super().render)
+        mins = int(elapsed) // 60
+        secs = int(elapsed) % 60
+        top = pygame.Surface((self.width, 38), pygame.SRCALPHA)
+        top.fill((10, 14, 22, 215))
+        display.blit(top, (0, 0))
+        display.blit(self.title.render("CARLA AUTOPILOT PLATOON SYSTEM", True, (245, 248, 255)), (16, 9))
+        mode = "SYNCHRONOUS 30 FPS" if synchronous else "ASYNC WORLD"
+        right_text = self.font.render(f"{town_name} | {mins:02d}:{secs:02d} | {fps:02.0f} FPS | {mode}", True, (180, 215, 245))
+        display.blit(right_text, (self.width - right_text.get_width() - 16, 10))
+
+        # Banner Top Center
+        banner_w = 650
+        banner_h = 42
+        bx = (self.width - banner_w) // 2
+        by = 48
+        banner = pygame.Surface((banner_w, banner_h), pygame.SRCALPHA)
+        banner.fill((8, 42, 24, 225) if autopilot else (60, 28, 10, 225))
+        pygame.draw.rect(banner, (70, 235, 130) if autopilot else (245, 150, 45), banner.get_rect(), width=2, border_radius=7)
+        display.blit(banner, (bx, by))
+        
+        leader_speed = pt_cache[leader.id]["speed_kmh"] if leader and leader.id in pt_cache else 0.0
+        banner_text = f"PLATOON AUTOPILOT {'ACTIVE' if autopilot else 'PAUSED'} | {len(platoon)} VEHICLES | LEADER #{leader.id if leader else 'N/A'} | {leader_speed:4.1f} km/h"
+        text = self.font.render(banner_text, True, (210, 255, 225) if autopilot else (255, 230, 200))
+        display.blit(text, (bx + (banner_w - text.get_width()) // 2, by + 10))
+
+        # 2. Ghost Driver System Box
+        box_w = 400
+        box_h = 70
+        bx = 16
+        by = self.height - 230
+        
+        surf_ghost = pygame.Surface((box_w, box_h), pygame.SRCALPHA)
+        surf_ghost.fill((20, 25, 40, 240))
+        pygame.draw.rect(surf_ghost, (100, 150, 255), surf_ghost.get_rect(), width=1, border_radius=6)
+        display.blit(surf_ghost, (bx, by))
+        
+        font = pygame.font.SysFont("consolas", 13, bold=True)
+        display.blit(font.render("GHOST DRIVER SYSTEM", True, (150, 200, 255)), (bx + 12, by + 10))
+        
+        active = ghost_status.get("active", False)
+        if active:
+            target_id = ghost_status.get("target_id")
+            disruption = ghost_status.get("disruption_name", "Unknown")
+            rem_sec = ghost_status.get("remaining_seconds", 0.0)
+            msg1 = f"Vehicle #{target_id} -> POSSESSED"
+            msg2 = f"Action: {disruption} ({rem_sec:.1f}s left)"
+            c1 = (255, 100, 100)
+        else:
+            target_id = "None"
+            cooldown = ghost_status.get("cooldown_remaining", 0.0)
+            msg1 = "All vehicles -> NORMAL"
+            msg2 = f"Lurking... (next in {cooldown:.1f}s)"
+            c1 = (100, 255, 100)
+
+        display.blit(font.render(msg1, True, c1), (bx + 12, by + 30))
+        display.blit(font.render(msg2, True, (200, 200, 200)), (bx + 12, by + 48))
+
+        # 3. Draw Detailed Platoon DRL Dashboard at the bottom
+        if "drl_actions" in ghost_status:
+            dash_h = 130
+            dash_w = self.width - 32
+            dash_x = 16
+            dash_y = self.height - dash_h - 16
+            
+            surf_dash = pygame.Surface((dash_w, dash_h), pygame.SRCALPHA)
+            surf_dash.fill((15, 25, 35, 240))
+            pygame.draw.rect(surf_dash, (100, 200, 255), surf_dash.get_rect(), width=1, border_radius=6)
+            display.blit(surf_dash, (dash_x, dash_y))
+            
+            winfo = ghost_status.get("weather_info", {})
+            w_preset = winfo.get("preset_name", "CLEAR") if winfo else "CLEAR"
+            mapping = {"CLEAR": 1.0, "CLOUDY": 0.95, "LIGHT_RAIN": 0.8, "MODERATE_RAIN": 0.7, "HEAVY_RAIN": 0.55, "FOG": 0.9, "HEAVY_FOG": 0.8, "RAIN_FOG": 0.6}
+            mu = mapping.get(w_preset, 1.0)
+            
+            header_font = pygame.font.SysFont("consolas", 14, bold=True)
+            val_font = pygame.font.SysFont("consolas", 13)
+            
+            header_str = f"MODULE 2 - WEATHER-AWARE DRL COOPERATIVE DECISION | WEATHER: {w_preset} | FRICTION (μ): {mu:.2f}"
+            display.blit(header_font.render(header_str, True, (100, 255, 100)), (dash_x + 12, dash_y + 8))
+            pygame.draw.line(display, (100, 200, 255), (dash_x, dash_y + 30), (dash_x + dash_w, dash_y + 30), 1)
+            
+            actions = ghost_status.get("drl_actions", {})
+            action_names = ["CRUISE", "ACCELERATE", "DECELERATE", "LEFT", "RIGHT"]
+            
+            num_veh = len(platoon)
+            if num_veh > 0:
+                col_w = dash_w // num_veh
+                
+                for i, vehicle in enumerate(platoon):
+                    col_x = dash_x + i * col_w
+                    
+                    if i > 0:
+                        pygame.draw.line(display, (60, 80, 100), (col_x, dash_y + 30), (col_x, dash_y + dash_h), 1)
+                    
+                    if not vehicle or not vehicle.is_alive or vehicle.id not in pt_cache:
+                        display.blit(header_font.render("MISSING", True, (255, 100, 100)), (col_x + 10, dash_y + 35))
+                        continue
+                        
+                    role = "LEADER" if i == 0 else f"FOLLOWER {i}"
+                    vid = vehicle.id
+                    act_idx = actions.get(vid, 0)
+                    decision = action_names[act_idx] if 0 <= act_idx < len(action_names) else "UNKNOWN"
+                    
+                    c_data = pt_cache[vid]
+                    speed = c_data["speed_kmh"]
+                    steer = c_data["steer"]
+                    
+                    gap_str = "N/A"
+                    if i > 0 and platoon[i-1] and platoon[i-1].is_alive and platoon[i-1].id in pt_cache:
+                        prev_data = pt_cache[platoon[i-1].id]
+                        loc = c_data["location"]
+                        prev_loc = prev_data["location"]
+                        gap = loc.distance(prev_loc) - c_data["bb_x"] - prev_data["bb_x"]
+                        gap_str = f"{gap:.1f}m"
+                        
+                    color_title = (255, 200, 50) if i == 0 else (150, 200, 255)
+                    display.blit(header_font.render(f"{role} (ID:{vid})", True, color_title), (col_x + 10, dash_y + 38))
+                    display.blit(val_font.render(f"SPEED   : {speed:.1f} km/h", True, (200, 200, 200)), (col_x + 10, dash_y + 60))
+                    
+                    color_act = (100, 255, 100) if decision == "CRUISE" else ((255, 150, 150) if decision in ["DECELERATE"] else (255, 255, 100))
+                    display.blit(val_font.render(f"DECISION: {decision}", True, color_act), (col_x + 10, dash_y + 78))
+                    
+                    display.blit(val_font.render(f"GAP     : {gap_str}", True, (200, 200, 200)), (col_x + 10, dash_y + 96))
+                    display.blit(val_font.render(f"STEERING: {steer:+.2f}", True, (200, 200, 200)), (col_x + 10, dash_y + 114))
+
 
 def run(args: argparse.Namespace) -> None:
     setup_logging(args.log_file)
@@ -221,6 +337,23 @@ def run(args: argparse.Namespace) -> None:
         hud = UnifiedHUD(window_width, window_height)
         autopilot = True
         
+        # --- MODULE 2 INITIALIZATION ---
+        logger.info("[MODULE 2] Initializing Weather-Aware MAPPO...")
+        drl_config = TrainingConfig()
+        drl_config.num_agents = len(platoon)
+        obs_builder = ObservationBuilder(desired_clearance=7.5)
+        reward_calc = RewardCalculator(desired_clearance=7.5)
+        weather_drl = WeatherAwareMAPPO(
+            obs_dim=obs_builder.obs_dim, 
+            global_state_dim=19, # 5 * 3 + 4
+            action_dim=5, 
+            config=drl_config
+        )
+        drl_step_count = 0
+        drl_active = getattr(args, 'drl', True) # Enable by default for test
+        logger.info("[MODULE 2] Initialization complete.")
+        # -------------------------------
+        
         started = time.time()
         last_tick_time = started
         leader_start_loc = leader.get_location()
@@ -286,6 +419,86 @@ def run(args: argparse.Namespace) -> None:
             if autopilot:
                 leader_controller.update(leader)
                 platoon_controller.update(platoon)
+                
+                # --- CACHE TELEMETRY ONCE PER FRAME TO FIX RPC LAG ---
+                platoon_telemetry = {}
+                for idx, v in enumerate(platoon):
+                    if v and v.is_alive:
+                        t = v.get_transform()
+                        vel = v.get_velocity()
+                        ctrl = v.get_control()
+                        bb_x = v.bounding_box.extent.x
+                        platoon_telemetry[v.id] = {
+                            "transform": t,
+                            "location": t.location,
+                            "rotation": t.rotation,
+                            "velocity": vel,
+                            "speed_kmh": 3.6 * math.sqrt(vel.x**2 + vel.y**2 + vel.z**2),
+                            "steer": ctrl.steer,
+                            "bb_x": bb_x,
+                            "idx": idx
+                        }
+                ghost_telemetry["platoon_telemetry"] = platoon_telemetry
+                # -----------------------------------------------------
+                
+                # --- MODULE 2 EXECUTION ---
+                if drl_active:
+                    weather_info = uncertainty_manager.weather.get_weather_info(world) if uncertainty_manager and hasattr(uncertainty_manager, 'weather') else None
+                    
+                    # 1. Get observations (passing cache to avoid RPC)
+                    observations = obs_builder.build_local_observations(platoon, weather_info, cache=platoon_telemetry)
+                    global_state = obs_builder.build_global_state(platoon, weather_info, cache=platoon_telemetry)
+                    
+                    # 2. Select actions
+                    actions, log_probs = weather_drl.select_actions(observations)
+                    
+                    # 3. Calculate value
+                    value = weather_drl.get_value(global_state)
+                    
+                    # 4. Calculate rewards
+                    rewards = reward_calc.calculate_reward(platoon, actions, weather_info, collision_monitor=None, cache=platoon_telemetry)
+
+                    
+                    # 5. Store in buffer
+                    if len(platoon) > 0:
+                        avg_reward = sum(rewards.values()) / max(1, len(rewards))
+                        vid = platoon[0].id if platoon[0] else 0
+                        weather_drl.buffer.add(
+                            observations.get(vid, [0.0]*obs_builder.obs_dim), 
+                            global_state, 
+                            actions.get(vid, 0), 
+                            log_probs.get(vid, 0.0), 
+                            avg_reward, 
+                            value, 
+                            False
+                        )
+                        
+                    drl_step_count += 1
+                    if drl_step_count % drl_config.rollout_length == 0:
+                        metrics = weather_drl.train_step()
+                        msg = f"[MODULE 2 MAPPO] Step: {drl_step_count} | actor_loss={metrics.get('actor_loss', 0):.3f} | critic_loss={metrics.get('critic_loss', 0):.3f} | entropy={metrics.get('entropy', 0):.3f}\n"
+                        logger.info(msg.strip())
+                        
+                        # Write to dedicated DRL log file
+                        drl_log_path = os.path.join(SCRIPT_DIR, "logs", "mappo_training.log")
+                        with open(drl_log_path, "a") as f:
+                            f.write(msg)
+                            
+                        # Save checkpoint optionally
+                        models_dir = os.path.join(SCRIPT_DIR, "models")
+                        if not os.path.exists(models_dir):
+                            os.makedirs(models_dir)
+                        if (drl_step_count // drl_config.rollout_length) % drl_config.model_save_interval == 0:
+                            save_path = os.path.join(models_dir, "weather_mappo_latest.pt")
+                            weather_drl.save_checkpoint(save_path)
+                            with open(drl_log_path, "a") as f:
+                                f.write(f"[SAVED] MAPPO Model Checkpoint saved to: {save_path}\n")
+                        
+                    # Inject debug info into telemetry for HUD
+                    ghost_telemetry["drl_actions"] = actions
+                    ghost_telemetry["weather_info"] = weather_info
+                    ghost_telemetry["avg_reward"] = avg_reward
+                # --------------------------
             else:
                 brake_platoon(platoon)
                 
