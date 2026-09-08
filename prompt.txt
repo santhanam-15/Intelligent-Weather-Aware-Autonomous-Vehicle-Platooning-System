@@ -1,747 +1,1002 @@
-# Task: Integrate the Uncertain World + Ghost Drivers + Platoon System
+MODULE 2 — WEATHER-AWARE MAPPO COOPERATIVE DECISION MODULE
+============================================================
 
-I have two existing CARLA 0.9.9 systems in this project:
+IMPORTANT:
+Module 1 is already completed and working.
 
-1. An **Uncertain World system**
+Implement ONLY Module 2.
 
-   * Creates the uncertain/driving environment.
-   * Contains a **Ghost Driver mechanism**.
-   * A vehicle can become "possessed" by a ghost driver.
-   * The ghost-driver mechanism must remain functional exactly as it currently works.
+ALL Module 2 code must be placed inside:
 
-2. A **Platoon System**
+WindowsNoEditor/Module2/
 
-   * Currently works correctly as a standalone system.
-   * It creates/runs the vehicle platoon and its existing control/behavior.
-   * Do not rewrite or redesign the platoon logic.
+Do not create another Module2 folder.
 
-## OBJECTIVE
+Do not rewrite Module 1.
 
-Create **ONE SINGLE ENTRY POINT** that runs both systems together.
+Do not create a second CARLA world.
 
-The final execution flow must be:
+Do not create a second world.tick() loop.
 
-```
-Single Entry Point
-        |
-        v
-Start/Connect to CARLA 0.9.9
-        |
-        v
-Create the Uncertain World
-        |
-        v
-Initialize Ghost Driver Mechanism
-        |
-        v
-Create/Initialize Platoon
-        |
-        v
-Run Platoon inside the SAME uncertain world
-        |
-        v
-Simulation Loop
-   |             |
-   v             v
-Platoon      Uncertainty /
-System       Ghost Drivers
-   |             |
-   +------ SAME CARLA WORLD ------+
-                  |
-                  v
-          Visualization / Logs
-```
+Do not implement Module 3, Module 4, Module 5, or Module 6.
 
-## VERY IMPORTANT: PRESERVE EXISTING SYSTEMS
+Before coding, inspect the existing Module 1 architecture and integrate with it.
 
-Do NOT rewrite the existing uncertainty implementation.
+============================================================
+1. MAIN ARCHITECTURAL IDEA
+============================================================
 
-Do NOT rewrite the existing Ghost Driver mechanism.
+The system uses:
 
-Do NOT rewrite the existing platoon algorithm/control implementation.
+ONE SHARED MAPPO BRAIN
++
+MULTIPLE INDEPENDENT VEHICLE AGENTS
 
-Do NOT change the mathematical behavior of the platoon system.
+The MAPPO policy is shared by all vehicles.
 
-Do NOT create a second independent CARLA world.
+The neural network is NOT separately trained for:
 
-Do NOT launch two separate CARLA simulations.
+Leader
+F1
+F2
+F3
+...
 
-The goal is INTEGRATION, not redevelopment.
+There is one shared actor policy.
 
-Reuse the existing classes, functions, configuration, parameters and logic wherever possible.
+However, every vehicle has its own:
 
-If an existing script already contains initialization or simulation-loop logic, refactor only the minimum necessary amount so that it can be called by the new unified entry point.
+- observation
+- state
+- perception
+- decision
+- action
+- reward
 
-Before changing anything, inspect the existing project structure and determine:
+Therefore:
 
-* Which file creates/connects to CARLA.
-* Which file creates the uncertain world.
-* Which file implements the Ghost Driver mechanism.
-* Which file creates the platoon.
-* Which file contains the platoon simulation loop.
-* Which functions/classes can be imported and reused.
-* Which parts currently assume they are the only system controlling the CARLA world.
+A1 = SharedPolicy(O1)
+A2 = SharedPolicy(O2)
+A3 = SharedPolicy(O3)
 
-Do not guess the architecture. Inspect the actual code first.
+The same brain is used by every vehicle, but different vehicles can produce different actions because their observations are different.
 
----
+Example:
 
-# 1. SINGLE CARLA WORLD
+Leader → ACCELERATE
+F1     → CRUISE
+F2     → DECELERATE
+F3     → DECELERATE
 
-Both systems MUST operate on the exact same CARLA `world` object.
+This is REQUIRED.
 
-There must be only one active simulation world.
+Do NOT make the entire platoon execute one common action.
 
-The architecture should conceptually become:
+============================================================
+2. CTDE ARCHITECTURE
+============================================================
 
-```
-world = connect_to_carla()
+Use MAPPO with Centralized Training and Decentralized Execution.
 
-uncertain_world = initialize_uncertainty(world)
+TRAINING:
 
-ghost_driver = initialize_ghost_driver(uncertain_world)
+The centralized critic can access the complete global platoon state:
 
-platoon = initialize_platoon(world)
+Leader state
++
+F1 state
++
+F2 state
++
+F3 state
++
+traffic information
++
+weather
++
+friction μ
++
+waypoints
++
+platoon information
+
+The shared actor receives each vehicle's LOCAL observation.
+
+Conceptually:
+
+                    GLOBAL STATE
+                         |
+                         ↓
+               CENTRALIZED CRITIC
+                         |
+                         ↓
+                 MAPPO TRAINING
+                         |
+              SHARED ACTOR POLICY
+                         |
+          ┌──────────────┼──────────────┐
+          ↓              ↓              ↓
+         F1             F2             F3
+     Local Obs 1    Local Obs 2    Local Obs 3
+          ↓              ↓              ↓
+       Action 1       Action 2       Action 3
+
+
+During EXECUTION:
+
+Each vehicle independently provides its local observation to the same shared actor.
+
+The centralized critic is NOT required for execution.
+
+============================================================
+3. TRAINING + EXECUTION IN THE SAME CARLA RUN
+============================================================
+
+The system must support online reinforcement learning inside the running CARLA simulation.
+
+The overall cycle is:
+
+CARLA simulation
+      ↓
+Collect state from all vehicles
+      ↓
+Create individual observations
+      ↓
+Shared MAPPO actor
+      ↓
+Independent action for every vehicle
+      ↓
+Execute actions in CARLA
+      ↓
+Observe resulting state
+      ↓
+Calculate individual + collective rewards
+      ↓
+Store rollout experience
+      ↓
+MAPPO training update after sufficient experience
+      ↓
+Updated shared policy
+      ↓
+Continue simulation
 
-run_simulation(
-    world,
-    uncertain_world,
-    ghost_driver,
-    platoon
-)
-```
+Do NOT perform a completely separate training simulation for each vehicle.
 
-The exact implementation should follow the existing project's architecture rather than blindly using these function names.
+Do NOT train F1, F2, F3 as separate neural networks.
 
----
+The entire platoon contributes experience to the same shared MAPPO policy.
 
-# 2. INITIALIZATION ORDER
+============================================================
+4. VEHICLE ROLES
+============================================================
 
-Use a deterministic initialization order.
+The platoon consists of:
 
-Preferred order:
+Leader
+F1
+F2
+F3
+...
+FN
 
-1. Connect to CARLA.
-2. Load/select the required map/world.
-3. Configure world settings required by the uncertainty system.
-4. Initialize the uncertainty system.
-5. Initialize the Ghost Driver mechanism.
-6. Spawn/create the platoon vehicles using the existing platoon implementation.
-7. Register the platoon vehicles with the uncertainty/ghost system if required.
-8. Start the unified simulation loop.
-9. Update uncertainty/ghost behavior.
-10. Update platoon behavior.
-11. Update visualization/UI.
-12. Record logs/metrics.
+The Leader and Followers are independent agents using the same MAPPO actor.
 
-Make sure all systems operate on the same simulation tick.
+However, their observations may contain role information.
 
----
+Example:
 
-# 3. GHOST DRIVER INTEGRATION
+ROLE = LEADER
+ROLE = FOLLOWER
 
-The Ghost Driver mechanism is especially important.
+The Leader's primary objective:
 
-A vehicle that becomes possessed by a ghost driver must be identifiable during the simulation.
+FOLLOW ASSIGNED ROUTE / WAYPOINT
++
+OBEY TRAFFIC RULES
++
+AVOID COLLISIONS
++
+HANDLE OBSTACLES
++
+MAINTAIN SAFE OPERATION
 
-Do not remove or change the existing ghost-driver behavior.
+Followers' primary objective:
 
-Add a clear indication when:
+FOLLOW LEADER ROUTE / WAYPOINT TRAJECTORY
++
+MAINTAIN SAFE HEADWAY
++
+OBEY TRAFFIC RULES
++
+AVOID COLLISIONS
++
+HANDLE OBSTACLES
++
+ADAPT TO WEATHER
 
-```
-vehicle -> normal vehicle
-```
+IMPORTANT:
 
-changes to:
+FOLLOWING THE LEADER'S ROUTE
+does NOT mean
+COPYING THE LEADER'S ACTION.
 
-```
-vehicle -> ghost-possessed vehicle
-```
+Each follower must independently decide what it should do.
 
-The indication should preferably be visible in the CARLA/Pygame visualization if the existing project has a Pygame window.
+============================================================
+5. LEADER WAYPOINT BEHAVIOR
+============================================================
 
-For example, use a clear visual distinction such as:
+The Leader follows the assigned CARLA waypoint/route.
 
-* Vehicle color change
-* "GHOST" label above/near the vehicle
-* Ghost icon/marker
-* HUD text
-* Vehicle ID + GHOST status
+The Leader must NOT randomly change lanes while travelling straight.
 
-Use the existing visualization framework if one already exists.
+If there is no valid reason to change lanes:
 
-Do not create a completely separate visualization system unless necessary.
+KEEP CURRENT LANE.
 
-The important requirement is:
+The Leader may change lane when required by:
 
-```
-If vehicle 12 is possessed by a ghost:
+- obstacle blocking current lane
+- route/waypoint requirement
+- valid traffic situation
+- safe lane availability
 
-    Vehicle 12
-    GHOST DRIVER
-```
+Do not allow random lane switching.
 
-must be clearly visible.
+============================================================
+6. FOLLOWER WAYPOINT BEHAVIOR
+============================================================
 
-When the vehicle is no longer possessed:
+Followers should understand the Leader's intended route/waypoint direction.
 
-```
-    Vehicle 12
-    NORMAL
-```
+They should follow the Leader's route while maintaining their own safe position.
 
-or the normal vehicle visualization should be restored.
+A follower must NOT blindly copy:
 
----
+Leader steering
+Leader throttle
+Leader brake
+Leader lane change
 
-# 4. IMPORTANT: DO NOT CONFUSE GHOST VEHICLES WITH PLATOON VEHICLES
+Instead:
 
-The platoon vehicles must continue to behave according to the existing platoon implementation.
+Follower observes:
+- Leader position
+- Leader velocity
+- Leader route/waypoint
+- vehicle ahead
+- traffic
+- traffic light
+- own state
+- weather
+- friction
 
-The Ghost Driver mechanism may affect a vehicle's behavior according to the existing uncertainty implementation.
+Then the shared MAPPO actor produces an independent tactical action.
 
-Do NOT automatically overwrite ghost-driver behavior with platoon control.
+============================================================
+7. TRAFFIC RULES HAVE HIGH PRIORITY
+============================================================
 
-Instead, define a clear control priority.
+Traffic-law compliance must be treated as a high-priority objective.
 
-Preferred conceptual priority:
+Every vehicle must independently consider:
 
-```
-Ghost/uncertainty event
-        |
-        v
-Determine vehicle state
-        |
-        +----------------------+
-        |                      |
-   Normal vehicle         Ghost-possessed
-        |                      |
-        v                      v
- Existing platoon        Existing ghost
-    controller             behavior
-        |                      |
-        +----------+-----------+
-                   |
-                   v
-             CARLA control
-```
+- traffic light
+- traffic light state
+- distance to traffic light
+- lane
+- road direction
+- waypoint
+- surrounding vehicles
 
-However, if the existing uncertainty system already defines a different control priority, preserve that existing behavior.
+The Leader must obey traffic lights.
 
-Do not invent new control logic unless required for integration.
+The Followers must also obey traffic lights and safely react to the Leader.
 
----
+The model must NOT learn:
 
-# 5. PLATOON VEHICLE REGISTRATION
+"Leader can ignore traffic rules."
 
-Identify exactly which actors belong to the platoon.
+Instead:
 
-Maintain a clear structure such as:
+TRAFFIC RULES
+>
+PLATOON FORMATION
+>
+EFFICIENCY
 
-```
-platoon_vehicles = [...]
-```
+Safety and legal driving take priority over maintaining close formation.
 
-and ensure the uncertainty system can identify those vehicles.
+============================================================
+8. RED LIGHT BEHAVIOR
+============================================================
 
-If a platoon vehicle becomes ghost-possessed, its state should be available to the platoon system.
+When the Leader approaches a RED traffic light:
 
-For example, conceptually:
+Leader should decelerate and stop.
 
-```
-vehicle_state = {
-    "vehicle_id": ...,
-    "is_platoon_vehicle": True,
-    "is_ghost": True/False
+Followers independently observe the situation and react.
+
+Example:
+
+RED LIGHT
++
+Leader slowing
++
+F1 safe headway
++
+F2 distance to F1
++
+F3 distance to F2
+
+Each follower independently chooses its response.
+
+Do NOT force all vehicles to stop at exactly the same time.
+
+For the existing experimental scenario where the Leader remains at the red light for 5 minutes, preserve this behavior as a configurable parameter:
+
+LEADER_RED_WAIT_TIME = 300 seconds
+
+Do not hard-code this value deep inside MAPPO.
+
+The traffic-light logic belongs to the environment/state interface; MAPPO learns the tactical response.
+
+============================================================
+9. WEATHER-AWARE SAFE DISTANCE
+============================================================
+
+Do NOT use one fixed distance for every weather condition.
+
+Desired headway must depend on driving conditions.
+
+Inputs should include:
+
+- vehicle speed
+- relative speed
+- weather
+- friction coefficient μ
+
+Conceptually:
+
+WEATHER
++
+FRICTION μ
++
+SPEED
++
+RELATIVE SPEED
+        ↓
+DESIRED SAFE HEADWAY
+
+Clear/high friction:
+→ relatively closer safe formation is acceptable.
+
+Rain/lower friction:
+→ larger safety margin.
+
+Severe/very low friction:
+→ more conservative spacing.
+
+The exact parameters must be configurable.
+
+MAPPO should learn appropriate behavior through reward rather than simply being replaced by a hard-coded rule.
+
+============================================================
+10. OBSTACLE AND LANE-CHANGE BEHAVIOR
+============================================================
+
+Normal condition:
+
+NO OBSTACLE
++
+VALID CURRENT LANE
++
+SAFE TRAFFIC
+        ↓
+STAY IN CURRENT LANE
+
+If an obstacle blocks the current lane:
+
+OBSTACLE DETECTED
+        ↓
+CHECK CURRENT LANE
+        ↓
+CHECK POSSIBLE ALTERNATIVE LANES
+        ↓
+CHECK SAFETY
+        ↓
+REQUEST LANE CHANGE
+        ↓
+EXECUTE LANE CHANGE
+        ↓
+TARGET LANE REACHED
+        ↓
+RETURN TO NORMAL DRIVING
+
+The system must NOT continuously switch lanes.
+
+Prevent behavior such as:
+
+LEFT → RIGHT → LEFT → RIGHT
+
+A lane-change request must have a controlled state.
+
+Recommended states:
+
+NORMAL_DRIVING
+OBSTACLE_DETECTED
+CHECK_LANE
+LANE_CHANGE_REQUESTED
+LANE_CHANGE_IN_PROGRESS
+LANE_CHANGE_COMPLETE
+RETURN_TO_NORMAL
+
+While a lane change is in progress, do not allow another immediate contradictory lane-change command.
+
+============================================================
+11. CARLA SAFETY / VALIDATION INFORMATION
+============================================================
+
+Use real information available from CARLA and Module 1.
+
+Where available, use:
+
+- collision detection
+- lane invasion detection
+- traffic light state
+- waypoint information
+- vehicle transform
+- velocity
+- road/lane information
+- surrounding traffic
+
+These signals should contribute to reward and/or action validation.
+
+Do NOT assume CARLA automatically produces a single RL "loss".
+
+The system must translate environment events into reinforcement-learning rewards.
+
+============================================================
+12. MAPPO ACTION SPACE
+============================================================
+
+MAPPO must produce HIGH-LEVEL TACTICAL ACTIONS.
+
+Do NOT make MAPPO directly output:
+
+- steering angle
+- throttle
+- brake
+
+Use a tactical action space such as:
+
+0 = CRUISE / MAINTAIN
+1 = ACCELERATE
+2 = DECELERATE
+3 = CHANGE LEFT
+4 = CHANGE RIGHT
+
+Each vehicle receives its own action.
+
+Example:
+
+Leader → CRUISE
+F1 → DECELERATE
+F2 → DECELERATE
+F3 → CRUISE
+
+The action vector is:
+
+[
+    A_Leader,
+    A_F1,
+    A_F2,
+    A_F3,
+    ...
+]
+
+============================================================
+13. IMPORTANT: ACTION FREQUENCY
+============================================================
+
+Do NOT allow the MAPPO actor to rapidly alternate actions every simulation frame.
+
+This can cause vehicle oscillation/wobbling.
+
+Use a configurable tactical decision interval.
+
+Example:
+
+CARLA:
+15 Hz simulation
+
+MAPPO:
+lower tactical decision frequency
+
+Between decisions, the low-level vehicle controller maintains the selected tactical behavior.
+
+The system must avoid:
+
+ACCELERATE
+DECELERATE
+ACCELERATE
+DECELERATE
+
+every frame.
+
+Use action persistence / minimum action duration where appropriate.
+
+============================================================
+14. LOW-LEVEL CONTROL
+============================================================
+
+MAPPO is the HIGH-LEVEL decision maker.
+
+A lower-level controller is responsible for physically executing the tactical decision.
+
+Architecture:
+
+MAPPO
+  ↓
+TACTICAL ACTION
+  ↓
+LOW-LEVEL CONTROLLER
+  ↓
+CARLA VEHICLE CONTROL
+
+Do not make MAPPO directly fight with waypoint steering or low-level PID/LQR control.
+
+If Module 1 already contains a low-level controller, integrate with it rather than replacing it.
+
+============================================================
+15. INDIVIDUAL OBSERVATIONS
+============================================================
+
+Every vehicle must have its own local observation.
+
+Observation should contain relevant information such as:
+
+Own vehicle:
+- speed
+- velocity
+- position
+- lane
+
+Leader relationship:
+- relative distance to Leader
+- relative velocity to Leader
+- Leader waypoint direction
+
+Vehicle ahead:
+- distance
+- relative velocity
+
+Vehicle behind:
+- distance
+
+Traffic:
+- nearby vehicle information
+- traffic-light state
+- traffic-light distance
+
+Route:
+- waypoint distance
+- waypoint direction
+- current lane
+
+Environment:
+- weather
+- friction μ
+
+Platoon:
+- role
+- desired headway
+
+Do not use fake values if Module 1 already provides real values.
+
+============================================================
+16. REWARD ARCHITECTURE
+============================================================
+
+Each vehicle must have an individual reward.
+
+Example:
+
+R_i =
+R_collision
++
+R_traffic_compliance
++
+R_waypoint
++
+R_headway
++
+R_speed
++
+R_lane
++
+R_weather
++
+R_smoothness
+
+Also calculate a collective platoon reward:
+
+R_platoon =
+R_cohesion
++
+R_speed_coordination
++
+R_safe_spacing
++
+R_collective_route_following
+
+Training objective:
+
+INDIVIDUAL PERFORMANCE
++
+COLLECTIVE PLATOON PERFORMANCE
+
+Do not give every vehicle exactly the same reward.
+
+Each vehicle must have its own experience and reward contribution.
+
+============================================================
+17. REWARD PRIORITY
+============================================================
+
+Use strong penalties for dangerous/illegal behavior.
+
+Priority:
+
+1. Collision avoidance
+2. Traffic-law compliance
+3. Safe headway
+4. Stay on valid road/lane
+5. Follow waypoint/route
+6. Weather adaptation
+7. Platoon coordination
+8. Efficiency
+
+Example:
+
+COLLISION
+→ very large negative reward
+
+RED-LIGHT VIOLATION
+→ very large negative reward
+
+UNSAFE LANE CHANGE
+→ strong negative reward
+
+UNSAFE HEADWAY
+→ negative reward
+
+GOOD WAYPOINT FOLLOWING
+→ positive reward
+
+SAFE PLATOON FORMATION
+→ positive reward
+
+EFFICIENCY
+→ positive reward
+
+Safety must dominate efficiency.
+
+============================================================
+18. ONLINE LEARNING LOOP
+============================================================
+
+Use the following architecture:
+
+for each simulation step:
+
+    collect global state
+
+    for each vehicle:
+        build local observation
+
+    for each vehicle:
+        action_i = shared_MAPPO_actor(observation_i)
+
+    execute:
+        action_Leader
+        action_F1
+        action_F2
+        action_F3
+        ...
+
+    collect next state
+
+    calculate:
+        individual rewards
+        collective reward
+
+    store experience
+
+    periodically:
+        update shared MAPPO actor
+        update centralized critic
+
+Continue the simulation using the updated policy.
+
+============================================================
+19. CAMERA REQUIREMENT
+============================================================
+
+Extend the existing Module 1 top-angle camera.
+
+The user must be able to switch the top-angle camera between:
+
+Leader
+F1
+F2
+F3
+...
+FN
+
+The selected vehicle becomes the camera target.
+
+Example:
+
+1 → Leader
+2 → F1
+3 → F2
+4 → F3
+
+Use the existing camera architecture if available.
+
+Do not create a second unrelated camera system.
+
+Display:
+
+CAMERA: F2
+
+when F2 is selected.
+
+============================================================
+20. DEBUG INFORMATION
+============================================================
+
+When a vehicle is selected, display its individual state.
+
+Example:
+
+CAMERA: F2
+
+VEHICLE: F2
+ROLE: FOLLOWER
+
+MAPPO ACTION: DECELERATE
+
+SPEED: ...
+HEADWAY: ...
+DESIRED HEADWAY: ...
+TRAFFIC LIGHT: RED
+FRICTION μ: ...
+WEATHER: RAIN
+LEADER DISTANCE: ...
+WAYPOINT DISTANCE: ...
+
+This is for debugging and demonstration.
+
+============================================================
+21. ANTI-WOBBLE REQUIREMENT
+============================================================
+
+The final architecture MUST specifically prevent follower wobbling.
+
+Investigate conflicts between:
+
+- MAPPO tactical decisions
+- waypoint following
+- low-level controller
+- acceleration/deceleration
+- lane-change controller
+
+Do not solve wobbling simply by reducing vehicle speed.
+
+The architecture must prevent rapid contradictory tactical commands.
+
+Use:
+
+- action persistence
+- decision interval
+- hysteresis/deadband where appropriate
+- smooth low-level control
+- controlled lane-change state
+
+============================================================
+22. REQUIRED BEHAVIOR EXAMPLES
+============================================================
+
+Example A — Clear road:
+
+Leader → CRUISE
+F1 → CRUISE
+F2 → CRUISE
+F3 → CRUISE
+
+Safe close formation.
+
+Example B — Rain:
+
+Leader → CRUISE
+F1 → CRUISE
+F2 → DECELERATE
+F3 → DECELERATE
+
+Larger safety margins.
+
+Example C — Leader stops at red:
+
+Leader → DECELERATE/STOP
+F1 → DECELERATE
+F2 → DECELERATE
+F3 → DECELERATE
+
+But each decision is independently generated.
+
+Example D — Obstacle ahead of F2:
+
+Leader → CRUISE
+F1 → CRUISE
+F2 → CHANGE LEFT
+F3 → DECELERATE
+
+Different vehicles can react differently.
+
+Example E — No obstacle:
+
+All vehicles remain in their current lanes.
+
+Do NOT randomly change lanes.
+
+============================================================
+23. MODULE 2 OUTPUT
+============================================================
+
+Module 2 must produce:
+
+PROPOSED TACTICAL ACTION VECTOR
+
+Example:
+
+{
+    Leader: CRUISE,
+    F1: DECELERATE,
+    F2: CHANGE_LEFT,
+    F3: CRUISE
 }
-```
 
-Do not duplicate actor objects or spawn duplicate vehicles.
-
-The same CARLA actor must be referenced by both systems.
-
----
-
-# 6. UNIFIED SIMULATION LOOP
-
-Create one master simulation loop.
-
-Do NOT allow the uncertainty system and platoon system to independently call `world.tick()` repeatedly.
-
-There should be ONE authoritative simulation tick.
-
-Conceptually:
-
-```
-while simulation_running:
-
-    world.tick()
-
-    # 1. Read current world state
-    update_vehicle_states()
-
-    # 2. Update uncertainty / ghost mechanism
-    update_uncertainty()
-
-    update_ghost_drivers()
-
-    # 3. Update platoon
-    update_platoon()
-
-    # 4. Apply resulting controls
-    apply_controls()
-
-    # 5. Update visualization
-    update_visualization()
-
-    # 6. Logging
-    update_logs()
-```
-
-Adapt this to the existing synchronous/asynchronous CARLA configuration.
-
-If the existing system already handles CARLA ticks correctly, preserve that mechanism and integrate the other system into it rather than introducing another tick loop.
-
----
-
-# 7. CONTROL OWNERSHIP
-
-Inspect the existing code to determine which system currently calls:
-
-```
-vehicle.apply_control(...)
-```
-
-Do not allow two systems to blindly control the same vehicle in the same frame.
-
-Create a clear control ownership mechanism.
-
-For example:
-
-```
-NORMAL PLATOON VEHICLE
-    -> platoon controller owns control
-
-GHOST-POSSESSED VEHICLE
-    -> ghost mechanism owns control
-```
-
-But ONLY use this if it matches the existing system's intended behavior.
-
-If the uncertainty system is only supposed to modify observations rather than direct control, preserve that design.
-
-The integration must not create control conflicts.
-
----
-
-# 8. OBSERVATION / STATE FLOW
-
-The platoon system should receive the correct current state of vehicles.
-
-If uncertainty modifies observations, make sure the platoon receives the appropriate uncertainty-aware state.
-
-Conceptually:
-
-```
-CARLA World
-    |
-    v
-Vehicle State
-    |
-    v
-Uncertainty Layer
-    |
-    +---- ghost status
-    +---- uncertain measurements
-    +---- disturbances
-    |
-    v
-Platoon System
-    |
-    v
-Existing Platoon Controller
-    |
-    v
-Vehicle Control
-```
-
-Do not modify the underlying platoon algorithm unless absolutely necessary.
-
----
-
-# 9. COMMAND-LINE ENTRY POINT
-
-Create one clean launcher/entry point.
-
-For example:
-
-```
-run_uncertain_platoon.bat
-```
-
-which launches one Python entry script, for example:
-
-```
-uncertain_platoon_main.py
-```
-
-The exact filenames can be chosen based on the existing project structure.
-
-The user should be able to run the complete system using ONE command.
-
-Example:
-
-```
-run_uncertain_platoon.bat
-```
-
-Optional parameters should be supported if the existing systems already support them, for example:
-
-```
-run_uncertain_platoon.bat --town Town01
-run_uncertain_platoon.bat --vehicles 32
-```
-
-Do not unnecessarily remove existing command-line options.
-
----
-
-# 10. CONFIGURATION
-
-Do not duplicate configuration values across multiple files.
-
-If possible, create one integration configuration containing:
-
-* CARLA host
-* CARLA port
-* town/map
-* number of vehicles
-* platoon size
-* uncertainty configuration
-* ghost-driver configuration
-* visualization settings
-* random seed
-
-But preserve the existing configuration format if the current systems already have one.
-
-Do not hard-code values that are already configurable elsewhere.
-
----
-
-# 11. ERROR HANDLING
-
-The unified entry point should clearly report failures.
-
-Examples:
-
-```
-[CARLA] Connecting...
-[CARLA] Connected.
-
-[WORLD] Initializing uncertain world...
-[WORLD] Ready.
-
-[GHOST] Ghost-driver system initialized.
-
-[PLATOON] Creating platoon...
-[PLATOON] Platoon ready.
-
-[SIMULATION] Starting unified simulation...
-```
-
-When a vehicle becomes possessed:
-
-```
-[GHOST] Vehicle 12 -> POSSESSED
-```
-
-When possession ends:
-
-```
-[GHOST] Vehicle 12 -> RELEASED
-```
-
-If initialization fails, clearly identify which subsystem failed.
-
----
-
-# 12. LOGGING
-
-Keep the existing logs if already implemented.
-
-Add integration-level logs showing:
-
-* Simulation tick
-* Vehicle ID
-* Platoon membership
-* Ghost status
-* Major uncertainty events
-* Control ownership if useful
-
-Example:
-
-```
-[TICK 1250]
-Vehicle 1 | Platoon: YES | Ghost: NO
-Vehicle 2 | Platoon: YES | Ghost: YES
-Vehicle 3 | Platoon: YES | Ghost: NO
-```
-
-Do not flood the console every frame unnecessarily.
-
-Use event-based logging for ghost state changes.
-
----
-
-# 13. VISUALIZATION REQUIREMENT
-
-If the platoon system already has a Pygame visualization window, integrate the ghost indication into that same window.
-
-Do NOT open a second visualization window unless unavoidable.
-
-The visualization should make it immediately obvious which vehicle is ghost-possessed.
-
-For example:
-
-```
-+--------------------------------------+
-| CARLA UNCERTAIN PLATOON              |
-|                                      |
-|   Vehicle 1   NORMAL                 |
-|   Vehicle 2   GHOST                  |
-|   Vehicle 3   NORMAL                 |
-|   Vehicle 4   NORMAL                 |
-|                                      |
-| Ghost vehicles: 1                    |
-+--------------------------------------+
-```
-
-Use the existing project's visual style and architecture where possible.
-
----
-
-# 14. CLEAN ARCHITECTURE
-
-Aim for this conceptual architecture:
-
-```
-uncertain_platoon_main.py
-          |
-   +------+------+
-   |             |
-   v             v
-Uncertainty    Platoon
-  System        System
-   |             |
-   |             |
-   +------ + ----+
-          |
-          v
-     Shared CARLA
-        World
-          |
-          v
-    Unified Tick Loop
-          |
-   +------+------+
-   |             |
-   v             v
-Ghost State   Platoon State
-   |             |
-   +------+------+
-          |
-          v
-     Vehicle Control
-          |
-          v
-      CARLA 0.9.9
-```
-
----
-
-# 15. DO NOT DO THESE THINGS
-
-DO NOT:
-
-* Rewrite the platoon algorithm.
-* Rewrite the Ghost Driver algorithm.
-* Remove uncertainty behavior.
-* Create a second CARLA world.
-* Spawn duplicate platoon vehicles.
-* Create independent simulation loops.
-* Call `world.tick()` from multiple systems.
-* Let two controllers blindly overwrite the same vehicle control.
-* Replace working implementations with simplified mock versions.
-* Remove existing command-line arguments without reason.
-* Change existing parameters without documenting it.
-* Fake the Ghost Driver status.
-* Hard-code ghost status just for visualization.
-* Build a demonstration/mock implementation instead of integrating the real systems.
-
----
-
-# 16. VALIDATION
-
-After implementation, test the systems separately first:
-
-TEST A:
-
-```
-Run uncertainty system alone.
-```
-
-Expected:
-Existing uncertainty behavior still works.
-
-TEST B:
-
-```
-Run platoon system alone.
-```
-
-Expected:
-Existing platoon behavior still works.
-
-Then test:
-
-TEST C:
-
-```
-Run unified uncertain-platoon entry point.
-```
-
-Expected:
-- One CARLA world.
-- Uncertain world is active.
-- Platoon exists inside that world.
-- Ghost-driver mechanism works.
-- Ghost-possessed vehicles are clearly indicated.
-- Platoon vehicles continue using the existing platoon implementation.
-- No duplicate actors.
-- No competing `world.tick()` loops.
-- No conflicting `apply_control()` calls.
-- Simulation remains stable.
-
-TEST D:
-
-```
-Force or wait for a ghost-driver event.
-```
-
-Expected:
-
-```
-Vehicle becomes ghost-possessed
-        |
-        +--> ghost state changes to TRUE
-        |
-        +--> visual indicator appears
-        |
-        +--> log reports possession
-        |
-        +--> existing ghost behavior runs
-```
-
-When released:
-
-```
-ghost state changes to FALSE
-        |
-        +--> visual indicator disappears/restores
-        |
-        +--> log reports release
-```
-
----
-
-# 17. IMPLEMENTATION PROCESS
-
-Follow this process strictly:
-
-STEP 1:
-Inspect the entire existing project structure.
-
-STEP 2:
-Identify the uncertainty-world entry point and Ghost Driver implementation.
-
-STEP 3:
-Identify the platoon entry point, actor creation, control logic and simulation loop.
-
-STEP 4:
-Map the dependencies between the two systems.
-
-STEP 5:
-Identify duplicate responsibilities:
-
-* CARLA connection
-* world creation
-* world tick
-* actor spawning
-* control application
-* visualization
-* cleanup
-
-STEP 6:
-Create the minimum integration layer necessary.
-
-STEP 7:
-Create ONE unified entry point.
-
-STEP 8:
-Make both systems use the SAME CARLA world and SAME actors.
-
-STEP 9:
-Create ONE authoritative simulation loop.
-
-STEP 10:
-Integrate ghost-state visualization.
-
-STEP 11:
-Add integration logging.
-
-STEP 12:
-Run the validation tests.
-
----
-
-# FINAL REQUIREMENT
-
-The final result must NOT be "two programs running together."
-
-It must be ONE integrated simulation:
-
-```
-    ONE CARLA WORLD
-          |
-   UNCERTAINTY WORLD
-          |
-   GHOST DRIVERS
-          |
-       PLATOON
-          |
-   UNIFIED SIMULATION
-          |
-   VISUALIZATION + LOGS
-```
-
-The existing uncertainty implementation and existing platoon implementation are the source of truth.
-
-Preserve their behavior and integrate them with the smallest possible architectural changes.
-
-Before modifying files, explain briefly which existing files/functions you identified and what the integration point will be.
-
-Then implement the integration.
-
-After implementation, report:
-
-1. Files created.
-2. Files modified.
-3. Existing functions reused.
-4. How the single entry point works.
-5. How the same CARLA world is shared.
-6. How ghost possession is detected.
-7. How ghost possession is visually indicated.
-8. How control conflicts are prevented.
-9. How the unified tick loop works.
-10. Exact command to run the complete system.
-11. Any assumptions or limitations.
+This output is the interface to Module 3.
+
+Module 2 does NOT implement the Twin-World Safety Shield.
+
+Module 3 will later validate/override proposed actions.
+
+============================================================
+24. ARCHITECTURAL BOUNDARY
+============================================================
+
+MODULE 1:
+CARLA environment
+vehicles
+weather
+traffic
+waypoints
+simulation
+
+MODULE 2:
+MAPPO
+weather-aware observations
+centralized critic
+shared actor
+individual vehicle decisions
+reward learning
+tactical actions
+
+MODULE 3:
+Safety Shield
+
+MODULE 4:
+Adaptive low-level control
+
+MODULE 5:
+Real-time monitoring
+
+MODULE 6:
+Evaluation
+
+Do not mix these responsibilities.
+
+============================================================
+25. FINAL ARCHITECTURE
+============================================================
+
+The final architecture must be:
+
+                 MODULE 1
+            CARLA ENVIRONMENT
+                    │
+                    ↓
+          GLOBAL STATE EXTRACTION
+                    │
+       ┌────────────┼────────────┐
+       ↓            ↓            ↓
+    Leader          F1           F2 ... FN
+       │            │            │
+       ↓            ↓            ↓
+    Local Obs     Local Obs    Local Obs
+       │            │            │
+       └────────────┼────────────┘
+                    ↓
+             SHARED MAPPO ACTOR
+                    │
+       ┌────────────┼────────────┐
+       ↓            ↓            ↓
+      A1           A2           A3 ... AN
+       │            │            │
+       └────────────┼────────────┘
+                    ↓
+          PROPOSED ACTION VECTOR
+                    ↓
+                MODULE 3
+             SAFETY SHIELD
+                    ↓
+                MODULE 4
+            LOW-LEVEL CONTROL
+                    ↓
+                 CARLA
+
+
+TRAINING SIDE:
+
+             GLOBAL PLATOON STATE
+                    ↓
+           CENTRALIZED CRITIC
+                    ↓
+            MAPPO UPDATE
+                    ↓
+             SHARED ACTOR
+
+
+This means:
+
+ONE BRAIN
++
+MANY INDEPENDENT AGENTS
++
+GLOBAL INFORMATION DURING TRAINING
++
+LOCAL INFORMATION DURING EXECUTION
++
+INDIVIDUAL ACTIONS
++
+INDIVIDUAL REWARDS
++
+COLLECTIVE PLATOON REWARD.
+
+============================================================
+26. BEFORE WRITING CODE
+============================================================
+
+DO NOT immediately start modifying files.
+
+First inspect Module 1.
+
+Then provide a short architectural report showing:
+
+1. Existing Module 1 components that Module 2 will reuse.
+2. Where vehicle observations will come from.
+3. Where weather/friction comes from.
+4. Where traffic-light information comes from.
+5. Where waypoint information comes from.
+6. Existing low-level controller.
+7. Existing camera system.
+8. Exact Module 2 integration points.
+9. How one shared MAPPO actor will control multiple independent vehicles.
+10. How training and execution will operate inside the same CARLA simulation.
+
+ONLY AFTER THIS ARCHITECTURE IS CONFIRMED should implementation begin.
+
+Do not rewrite Module 1 just to make Module 2 easier.

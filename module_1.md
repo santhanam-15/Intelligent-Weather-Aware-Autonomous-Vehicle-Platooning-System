@@ -35,3 +35,4 @@ The fully integrated module can be executed with a rich set of environment param
 ```bat
 .\run_uncertain_platoon.bat --town Town05 --vehicles 32 --pedestrians 20 --platoon-size 3 --windowed --width 1280 --height 720 --launch-server --weather 10
 ```
+
