@@ -1,0 +1,47 @@
+Backup source document
+Created: 2026-09-06
+Project root: D:\I FILES\Studies\sem7\MiniProj
+
+Purpose:
+Before creating a separate platooning launcher and separate platooning Python file,
+the existing launcher and source files were backed up here.
+
+Backed up files:
+1. Original:
+   D:\I FILES\Studies\sem7\MiniProj\run_autopilot_platoon_window.bat
+   Backup copy:
+   D:\I FILES\Studies\sem7\MiniProj\backup_platooning_separate_2026-09-06\run_autopilot_platoon_window.bat
+
+2. Original:
+   D:\I FILES\Studies\sem7\MiniProj\run_real_world.bat
+   Backup copy:
+   D:\I FILES\Studies\sem7\MiniProj\backup_platooning_separate_2026-09-06\run_real_world.bat
+
+3. Original:
+   D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\autopilot_platoon_window.py
+   Backup copy:
+   D:\I FILES\Studies\sem7\MiniProj\backup_platooning_separate_2026-09-06\autopilot_platoon_window.py
+
+New files created after backup:
+1. Separate platooning Python file:
+   D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\platooning_separate.py
+   Created from:
+   D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\autopilot_platoon_window.py
+
+2. Separate platooning batch launcher:
+   D:\I FILES\Studies\sem7\MiniProj\run_platooning_separate.bat
+   Launches:
+   D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\platooning_separate.py
+
+Note:
+The files were copied for backup and separation. The original files were not deleted.
+
+Update after testing:
+The separate platooning launcher and script were improved after initial creation:
+- run_platooning_separate.bat now prints a detailed startup header.
+- Command-line arguments after the .bat file are forwarded to platooning_separate.py.
+- platooning_separate.py opens fullscreen by default; use --windowed --width N --height N for a normal window.
+- Ghost Driver uncertain-world events are enabled by default; use --no-ghost to disable them.
+- Ghost Driver status is shown in the HUD and written to the live log.
+- Default Ghost Driver interval is random between 1 and 20 seconds.
+- Default Ghost Driver release/possession time is random between 10 and 20 seconds.

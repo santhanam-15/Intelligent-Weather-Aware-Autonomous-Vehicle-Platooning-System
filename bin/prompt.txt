@@ -1,0 +1,621 @@
+I am starting a research project using CARLA 0.9.9.
+
+PROJECT:
+"Intelligent Weather-Aware Autonomous Vehicle Platooning System"
+
+IMPORTANT:
+I am NOT asking you to build my complete project.
+
+I only want you to create a standalone set of Python scripts for
+INTRODUCING REALISTIC UNCERTAINTY into a CARLA 0.9.9 simulation.
+
+Do NOT implement:
+
+- MAPPO
+- CTDE
+- PPO
+- DRL
+- Twin-World Safety Shield
+- LQR
+- Adaptive Switching
+- Platoon control
+- Reward functions
+- Training
+- Dashboard
+- Complete autonomous driving system
+
+Your ONLY task is to create the uncertainty/scenario-generation layer.
+
+========================================================
+GOAL
+========================================================
+
+Create reusable Python scripts that can be connected to my CARLA
+simulation later.
+
+The scripts should allow me to introduce realistic uncertainty into
+the CARLA environment.
+
+The uncertainty must include ALL of the following:
+
+1. Weather uncertainty
+2. Road/tire friction uncertainty
+3. Vehicle/actuator uncertainty
+4. V2V communication uncertainty
+5. Unusual traffic jams
+6. Traffic accidents / road obstacles
+7. Human-driver behavioral uncertainty
+8. Sudden/unexpected events
+
+========================================================
+1. WEATHER UNCERTAINTY
+========================================================
+
+Create a Python module that can control and randomize CARLA weather.
+
+Support:
+
+- Clear
+- Cloudy
+- Light rain
+- Moderate rain
+- Heavy rain
+- Fog
+- Heavy fog
+- Rain + fog
+- Changing weather during simulation
+
+The weather should be configurable.
+
+Example:
+
+weather = "heavy_rain"
+
+or:
+
+weather = random_weather(seed=42)
+
+IMPORTANT:
+
+CARLA 0.9.9 weather parameters do NOT automatically change physical
+road friction.
+
+Therefore weather uncertainty and friction uncertainty must remain
+separate modules.
+
+The module should expose useful weather information such as:
+
+- rain intensity
+- fog intensity
+- cloudiness
+- visibility-related value
+
+========================================================
+2. ROAD / TIRE FRICTION UNCERTAINTY
+========================================================
+
+Create a separate Python module for physical friction uncertainty.
+
+Use CARLA 0.9.9 compatible vehicle physics APIs.
+
+Allow configurable tire friction values.
+
+For example, experimental values:
+
+Dry:
+    μ = 1.0
+
+Wet:
+    μ = 0.6
+
+Slippery:
+    μ = 0.4
+
+Very slippery:
+    μ = 0.25
+
+IMPORTANT:
+
+These are experimental/design values, NOT CARLA default physical values.
+
+The module must allow:
+
+- setting a specific friction
+- randomly selecting friction
+- changing friction during a scenario
+
+Example interface:
+
+set_friction(vehicle, mu)
+
+randomize_friction(vehicle, seed)
+
+The current μ should be retrievable.
+
+========================================================
+3. VEHICLE / ACTUATOR UNCERTAINTY
+========================================================
+
+Create a module that represents imperfect vehicle/actuator behavior.
+
+Support configurable uncertainty in:
+
+- braking response
+- throttle response
+- steering response
+- acceleration response
+- actuator delay
+- small control execution error
+
+Example:
+
+Requested acceleration:
+    2.0 m/s²
+
+Actual acceleration:
+    1.8–2.2 m/s²
+
+The uncertainty should be configurable.
+
+Do NOT randomly teleport vehicles or randomly modify their positions.
+
+The uncertainty should represent imperfect actuation.
+
+========================================================
+4. V2V COMMUNICATION UNCERTAINTY
+========================================================
+
+Create a standalone communication simulation module.
+
+It should support:
+
+- message delay
+- packet loss
+- missing messages
+- stale messages
+- temporary communication outage
+- optional small message noise
+
+Example:
+
+NORMAL:
+    delay = 0 ms
+    packet_loss = 0%
+
+MEDIUM:
+    delay = 100 ms
+    packet_loss = 5%
+
+BAD:
+    delay = 200–300 ms
+    packet_loss = 10–20%
+
+The module should NOT modify vehicle physics.
+
+It should simulate what happens to information/messages exchanged
+between vehicles.
+
+Provide a simple interface such as:
+
+send_message(sender, receiver, data)
+
+receive_message(receiver)
+
+The received message should reflect the configured delay/loss.
+
+========================================================
+5. UNUSUAL TRAFFIC JAMS
+========================================================
+
+Create a traffic uncertainty module.
+
+This is REQUIRED.
+
+The simulation must be capable of producing unexpected traffic
+congestion.
+
+Support:
+
+- sudden traffic slowdown
+- queue formation
+- traffic bottleneck
+- stop-and-go traffic
+- sudden increase in traffic density
+- temporary traffic jam
+
+Traffic jams should be capable of occurring:
+
+- at random times
+- at random reasonable road locations
+- with configurable severity
+- with configurable duration
+- with configurable probability
+
+Example:
+
+traffic_jam_probability = 0.2
+
+Do NOT make every episode identical.
+
+========================================================
+6. ACCIDENTS / ROAD OBSTACLES
+========================================================
+
+Create a separate module for unexpected traffic incidents.
+
+Support:
+
+- stopped vehicle
+- broken-down vehicle
+- accident ahead
+- multiple stopped vehicles
+- partially blocked lane
+- completely blocked lane
+- obstacle/debris where practical
+- sudden vehicle stop
+
+Each event should have configurable:
+
+- location
+- time
+- severity
+- duration
+- number of vehicles
+- affected lane(s)
+
+Do not create unrealistic teleportation.
+
+Use CARLA actors and CARLA-compatible behavior wherever possible.
+
+========================================================
+7. HUMAN DRIVER BEHAVIOR UNCERTAINTY
+========================================================
+
+This is REQUIRED.
+
+Create a module that gives surrounding traffic vehicles different
+human-driver behavior profiles.
+
+At minimum support:
+
+NORMAL
+- reasonable acceleration
+- reasonable braking
+- normal following distance
+
+AGGRESSIVE
+- stronger acceleration
+- late braking
+- shorter following distance
+- more frequent lane changes
+
+CONSERVATIVE
+- slower acceleration
+- early braking
+- larger following distance
+
+DISTRACTED
+- delayed reaction
+- inconsistent acceleration/braking
+
+ERRATIC
+- unpredictable acceleration
+- sudden braking
+- sudden lane changes
+
+SLOW
+- drives below normal traffic speed
+
+Also support specific behaviors:
+
+- sudden hard braking
+- sudden acceleration
+- sudden lane change
+- lane cut-in
+- stop-and-go behavior
+
+Human behavior must NOT be deterministic for every vehicle.
+
+Different traffic vehicles should be able to have different behavior
+profiles.
+
+Use controlled randomness rather than completely random movement.
+
+========================================================
+8. SUDDEN EVENT MANAGER
+========================================================
+
+Create a general event manager.
+
+It should be able to trigger unexpected events such as:
+
+- sudden braking
+- sudden acceleration
+- lane cut-in
+- traffic jam
+- accident
+- stopped vehicle
+- communication failure
+- sudden rain
+- sudden fog
+- sudden friction reduction
+
+Events must support:
+
+- probability
+- trigger time
+- cooldown
+- duration
+- severity
+- random seed
+
+Example:
+
+event_manager.update()
+
+Possible result:
+
+NO_EVENT
+
+or:
+
+SUDDEN_BRAKING
+
+or:
+
+TRAFFIC_JAM
+
+or:
+
+ACCIDENT
+
+or:
+
+CUT_IN
+
+========================================================
+9. SCENARIO MANAGER
+========================================================
+
+Create a scenario manager that combines the uncertainty modules.
+
+Support:
+
+LOW
+MEDIUM
+HIGH
+EXTREME
+
+Example:
+
+LOW:
+    mild weather variation
+    normal traffic
+
+MEDIUM:
+    rain
+    friction variation
+    communication delay
+    human behavior variation
+
+HIGH:
+    heavy rain
+    low friction
+    traffic jam
+    aggressive drivers
+    communication problems
+
+EXTREME:
+    heavy rain + fog
+    very low friction
+    traffic jam
+    accident
+    aggressive/erratic driver
+    communication outage
+    sudden braking
+
+The scenario manager should NOT control MAPPO or any AI model.
+
+It should only configure the CARLA environment.
+
+========================================================
+10. RANDOMIZATION AND REPRODUCIBILITY
+========================================================
+
+Every uncertainty module must support a random seed.
+
+Example:
+
+seed = 42
+
+If the same seed and scenario configuration are used, the generated
+scenario should be reproducible as closely as possible.
+
+Do not use uncontrolled random behavior everywhere.
+
+Use a centralized random number generator where practical.
+
+========================================================
+11. CONFIGURATION FILE
+========================================================
+
+Create a configuration file such as:
+
+uncertainty_config.json
+
+It should allow me to enable/disable each uncertainty independently.
+
+Example:
+
+{
+    "weather": {
+        "enabled": true
+    },
+
+    "friction": {
+        "enabled": true
+    },
+
+    "vehicle_uncertainty": {
+        "enabled": true
+    },
+
+    "communication": {
+        "enabled": true
+    },
+
+    "traffic_jam": {
+        "enabled": true
+    },
+
+    "accident": {
+        "enabled": true
+    },
+
+    "human_behavior": {
+        "enabled": true
+    }
+}
+
+Make all important parameters configurable.
+
+========================================================
+12. PROJECT STRUCTURE
+========================================================
+
+Create ONLY the uncertainty-related project structure.
+
+For example:
+
+uncertainty/
+│
+├── __init__.py
+├── uncertainty_manager.py
+├── weather_uncertainty.py
+├── friction_uncertainty.py
+├── vehicle_uncertainty.py
+├── communication_uncertainty.py
+├── traffic_uncertainty.py
+├── accident_manager.py
+├── human_behavior.py
+├── event_manager.py
+└── scenario_manager.py
+
+config/
+└── uncertainty_config.json
+
+examples/
+├── test_weather.py
+├── test_friction.py
+├── test_traffic_jam.py
+├── test_accident.py
+├── test_human_behavior.py
+├── test_communication.py
+└── test_combined_scenario.py
+
+Do not create MAPPO, LQR, safety shield, reward, or training files.
+
+========================================================
+13. TEST SCRIPTS
+========================================================
+
+Create simple standalone test scripts so I can verify each uncertainty
+works independently in CARLA 0.9.9.
+
+I should be able to run:
+
+1. Weather test
+2. Friction test
+3. Vehicle uncertainty test
+4. Communication test
+5. Traffic jam test
+6. Accident test
+7. Human behavior test
+8. Combined uncertainty test
+
+Each test should clearly show what uncertainty was introduced.
+
+========================================================
+14. IMPORTANT CARLA VERSION REQUIREMENT
+========================================================
+
+I am specifically using:
+
+CARLA 0.9.9
+
+Use ONLY APIs compatible with CARLA 0.9.9.
+
+Do not use newer CARLA APIs without checking compatibility.
+
+If a feature cannot be directly implemented through CARLA 0.9.9,
+do not fake it.
+
+Instead, clearly explain the limitation and implement the closest
+realistic approach possible.
+
+========================================================
+15. IMPORTANT — DO NOT CHEAT
+========================================================
+
+Do NOT introduce uncertainty by:
+
+- teleporting vehicles randomly
+- randomly changing vehicle positions
+- randomly changing vehicle velocities without physical meaning
+- adding meaningless noise everywhere
+
+Each uncertainty must have a clear interpretation:
+
+Weather
+    → environmental condition
+
+Friction
+    → physical road/tire condition
+
+Actuator
+    → imperfect vehicle response
+
+Communication
+    → imperfect V2V information
+
+Traffic jam
+    → unexpected congestion
+
+Accident
+    → unexpected road incident
+
+Human behavior
+    → unpredictable surrounding drivers
+
+Sudden event
+    → unexpected environmental/traffic event
+
+========================================================
+FINAL REQUIREMENT
+========================================================
+
+At the end, I should have a reusable UNCERTAINTY TOOLKIT that I can later
+connect to my own CARLA platooning project.
+
+The final data flow should simply be:
+
+CARLA
+  ↓
+Uncertainty Toolkit
+  ↓
+Modified / Uncertain Environment
+  ↓
+CARLA simulation continues
+
+DO NOT implement anything beyond this.
+
+Before writing code:
+
+1. Explain the proposed uncertainty module structure.
+2. Explain how each module interacts with CARLA.
+3. Confirm CARLA 0.9.9 compatibility.
+4. Then implement the modules one by one.
+5. Test each module before moving to the next.
+
+The final output must be the Python uncertainty scripts and their
+configuration/test files — NOT a complete autonomous vehicle project.

@@ -1,0 +1,253 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="a7IuCPILjhGt9xV0xU2e">
+    <mxGraphModel dx="2052" dy="624" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <UserObject label="" plantUmlData="{&#xa;  &quot;data&quot;: &quot;@startuml\nskinparam linetype ortho\nskinparam nodesep 40\nskinparam ranksep 50\nskinparam defaultTextAlignment center\nskinparam componentStyle rectangle\n\n&#39; Global Styling\nskinparam rectangle {\n    BackgroundColor White\n    BorderColor Black\n    BorderThickness 1.5\n    RoundCorner 5\n}\nskinparam arrow {\n    Color Black\n    Thickness 1\n}\n\ntitle Weather-Aware DRL Cooperative Decision System Architecture\n\n&#39; --- Initialization ---\nrectangle \&quot;Initialization &amp; Configuration\&quot; as Init {\n    json \&quot;Environmental Settings\&quot; as EnvSettings {\n        \&quot;1\&quot;: \&quot;Route/Map Topology\&quot;,\n        \&quot;2\&quot;: \&quot;Traffic Density\&quot;,\n        \&quot;3\&quot;: \&quot;Weather Profiles\&quot;,\n        \&quot;4\&quot;: \&quot;Vehicle Parameters\&quot;\n    }\n}\n\n&#39; --- Module 1 ---\nrectangle \&quot;Module 1: Simulation &amp; \\nEnvironmental Data Prep\&quot; as Mod1 {\n    rectangle \&quot;CARLA Simulator \\nEnvironment\&quot; as CarlaEnv {\n        rectangle \&quot;CarlaSim\&quot; as CS1\n    }\n    \n    rectangle \&quot;Generators &amp; \\nEnvironmental Physics\&quot; as GenPhys {\n        rectangle \&quot;(1) Heterogeneous \\nTraffic Generator\\n(IDM/Model Models)\&quot; as TrafficGen\n        rectangle \&quot;(2) Weather Physics Engine\\nDynamic Friction Calibration\\nCalculation\&quot; as PhysEngine\n        \n        TrafficGen -[hidden]- PhysEngine\n    }\n    \n    CarlaEnv -[hidden]--&gt; GenPhys\n}\n\n&#39; --- Module 2 ---\nrectangle \&quot;Module 2: Weather-Aware \\nDRL Cooperative Decision\&quot; as Mod2 {\n    rectangle \&quot;Centralized Critic Network\\n(Global Platoon State Evaluation)\&quot; as Critic {\n        rectangle \&quot;CentralCritic\&quot;\n    }\n    \n    rectangle \&quot;Decentralized Actor Networks\\n(Local Control Policies)\&quot; as Actors {\n        rectangle \&quot;DecenActors\&quot;\n    }\n    \n    Critic -[hidden]- Actors\n}\n\n&#39; --- Module 3 ---\nrectangle \&quot;Module 3: Weather-Aware \\nSafety Shield\&quot; as Mod3 {\n    rectangle \&quot;Dynamic Headway\\nBoundary Planner\\n(d_safe = f(v, mu))\&quot; as Headway {\n        rectangle \&quot;HeadwayBound\&quot;\n    }\n    \n    rectangle \&quot;Collision Risk Verification\\nAction Override Logic\&quot; as Risk {\n        rectangle \&quot;TwinMask\&quot;\n    }\n    \n    Headway -[hidden]- Risk\n}\n\n&#39; --- Module 4 ---\nrectangle \&quot;Module 4: Low-Level \\nKinematic Control\&quot; as Mod4 {\n    rectangle \&quot;Knowledge-Based Finite\\nContinuous Actuation\\nMode Selection\&quot; as FSM {\n        rectangle \&quot;FSM_Select\&quot;\n    }\n    \n    rectangle \&quot;Bicycle Kinematic Model\\nContinuous Actuation\\nTraction\&quot; as Bicycle {\n        rectangle \&quot;BicycleModel\&quot;\n    }\n    \n    FSM -[hidden]- Bicycle\n}\n\n&#39; --- Module 5 ---\nrectangle \&quot;Module 5: Real-Time AI \\nMonitoring Dashboard\&quot; as Mod5 {\n    rectangle \&quot;FastSocket\\nAsynchronous Server\&quot; as FastSocket {\n        rectangle \&quot;FastAPIServer\&quot;\n    }\n    \n    rectangle \&quot;WebSocket\\nLive Streaming Server\&quot; as WS {\n        rectangle \&quot;WS_Stream\&quot;\n    }\n    \n    rectangle \&quot;React Interactive Frontend UI\&quot; as React {\n        rectangle \&quot;2D Platoon Trajectories\&quot;\n        rectangle \&quot;Spacing Threshold Graphs\&quot;\n        rectangle \&quot;Active Weather Gauges\&quot;\n        rectangle \&quot;ReactUI\&quot;\n    }\n    \n    FastSocket --&gt; WS\n    WS --&gt; React\n}\n\n&#39; --- Module 6 ---\nrectangle \&quot;Module 6: System \\nEvaluation &amp; Benchmark Analysis\&quot; as Mod6 {\n    rectangle \&quot;SIL Disturbance \\nScenarios Metrics:\\nMin TTC Calculation\\nMax DRAC Matrix\&quot; as SILMetrics {\n        rectangle \&quot;MetricsCalc\&quot;\n    }\n    \n    rectangle \&quot;Post-Simulation Evaluation &amp; \\nBenchmark Deliverables\&quot; as PostSim {\n        rectangle \&quot;ScenarioConfig\&quot; as ScenConfig\n        rectangle \&quot;Safety &amp; Efficiency\\nMetrics Calculator\&quot; as SafeCalc\n        rectangle \&quot;Baseline Comparative Metrics\\n(vs DQN, PPO, SLPLC, SIPLC)\&quot; as Baseline\n        rectangle \&quot;Outputs:\\nStatistical Evaluation Matrix\&quot; as Outputs\n        \n        ScenConfig -&gt; SafeCalc\n        SafeCalc -&gt; Baseline\n        Baseline -&gt; Outputs\n    }\n}\n\n&#39; --- Main Flows ---\n\n&#39; 1. Init to Mod 1\nInit -down-&gt; Mod1 : Initial Settings\n\n&#39; 2. Mod 1 Internal &amp; Out\nCS1 -down-&gt; GenPhys\nGenPhys -right-&gt; Mod2 : Normalized Platoon \\nState Tensor (S_t)\nGenPhys -down-&gt; Mod3 : Weather Friction Index (mu)\n\n&#39; 3. Mod 2 to Mod 3\nMod2 -right-&gt; Mod3 : Proposed Action Vector (A_pro)\nCritic -down-&gt; Actors\n\n&#39; 4. Mod 3 to Mod 4\nMod3 -right-&gt; Mod4 : Verified Safe Action Vector (A_safe)\nHeadway -down-&gt; Risk\n\n&#39; 5. Mod 4 Outputs\nFSM -down-&gt; Bicycle\nBicycle -up-&gt; Mod5 : 15 Hz Telemetry \\nFeed Stream\nBicycle -down-&gt; Mod6 : Real-Time Action \\nOverride Logs\n\n&#39; 6. Feedback Loop (The Big One)\nBicycle -left-&gt; Mod1 : Continuous Actuation Signals\\n(Throttle, Brake Pressure,\\nSteering Angle)\n\n@enduml\n&quot;,&#xa;  &quot;config&quot;: null&#xa;}" id="KNP_ADdgNbyXLRIP63Hc-1">
+          <mxCell connectable="0" parent="1" style="group;transparentBounds=1;editIcon=1;lockedGroup=0;groupPadding=10;" vertex="1">
+            <mxGeometry height="1513" width="3977" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="KNP_ADdgNbyXLRIP63Hc-97" edge="1" parent="KNP_ADdgNbyXLRIP63Hc-1" source="KNP_ADdgNbyXLRIP63Hc-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="KNP_ADdgNbyXLRIP63Hc-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="Module 1: Simulation &amp; &#xa;Environmental Data Prep" plantUmlId="c_1" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Module 1: Simulation &amp; &#xa;Environmental Data Prep" id="KNP_ADdgNbyXLRIP63Hc-3">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-1" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="390" width="207.35" x="-177.69" y="548.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="CARLA Simulator &#xa;Environment" plantUmlId="c_2" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="CARLA Simulator &#xa;Environment" id="KNP_ADdgNbyXLRIP63Hc-4">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-3" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="110" width="146.24" x="29.229999999999997" y="53" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="CarlaSim" plantUmlId="n_3" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="CarlaSim" id="KNP_ADdgNbyXLRIP63Hc-5">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-4" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="99" x="23.617500000000007" y="45" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="(1) Heterogeneous &#xa;Traffic Generator&#xa;(IDM/Model Models)" plantUmlId="n_5" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="(1) Heterogeneous &#xa;Traffic Generator&#xa;(IDM/Model Models)" id="KNP_ADdgNbyXLRIP63Hc-7">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-3" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="62" width="170" x="17.35" y="222.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="(2) Weather Physics Engine&#xa;Dynamic Friction Calibration&#xa;Calculation" plantUmlId="n_6" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="(2) Weather Physics Engine&#xa;Dynamic Friction Calibration&#xa;Calculation" id="KNP_ADdgNbyXLRIP63Hc-8">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-3" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="62" width="167" x="20.349999999999994" y="298" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Generators &amp; &#xa;Environmental Physics" plantUmlId="c_4" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Generators &amp; &#xa;Environmental Physics" id="KNP_ADdgNbyXLRIP63Hc-6">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-3" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="190" width="187.19" x="10.25" y="192.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="KNP_ADdgNbyXLRIP63Hc-83" edge="1" parent="KNP_ADdgNbyXLRIP63Hc-3" source="KNP_ADdgNbyXLRIP63Hc-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.446;entryY=-0.014;entryDx=0;entryDy=0;entryPerimeter=0;" target="KNP_ADdgNbyXLRIP63Hc-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="KNP_ADdgNbyXLRIP63Hc-99" edge="1" parent="KNP_ADdgNbyXLRIP63Hc-1" source="KNP_ADdgNbyXLRIP63Hc-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="KNP_ADdgNbyXLRIP63Hc-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="Module 2: Weather-Aware &#xa;DRL Cooperative Decision" plantUmlId="c_7" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Module 2: Weather-Aware &#xa;DRL Cooperative Decision" id="KNP_ADdgNbyXLRIP63Hc-9">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-1" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="377.5" width="223" x="58" y="554.75" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Centralized Critic Network&#xa;(Global Platoon State Evaluation)" plantUmlId="c_8" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Centralized Critic Network&#xa;(Global Platoon State Evaluation)" id="KNP_ADdgNbyXLRIP63Hc-10">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-9" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="110" width="195.37" x="16.46" y="51.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="CentralCritic" plantUmlId="n_9" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="CentralCritic" id="KNP_ADdgNbyXLRIP63Hc-11">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-10" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="123" x="29.995000000000026" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Decentralized Actor Networks&#xa;(Local Control Policies)" plantUmlId="c_10" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Decentralized Actor Networks&#xa;(Local Control Policies)" id="KNP_ADdgNbyXLRIP63Hc-12">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-9" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="110" width="196.32" x="15.510000000000002" y="195" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="DecenActors" plantUmlId="n_11" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="DecenActors" id="KNP_ADdgNbyXLRIP63Hc-13">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-12" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="122" x="44.48750000000002" y="41.5" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" plantUmlId="e_63" plantUmlBaseStyle="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;" plantUmlBaseValue="" id="KNP_ADdgNbyXLRIP63Hc-65">
+          <mxCell edge="1" parent="KNP_ADdgNbyXLRIP63Hc-9" source="KNP_ADdgNbyXLRIP63Hc-10" style="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;rounded=0;" target="KNP_ADdgNbyXLRIP63Hc-12">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="KNP_ADdgNbyXLRIP63Hc-101" edge="1" parent="KNP_ADdgNbyXLRIP63Hc-1" source="KNP_ADdgNbyXLRIP63Hc-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="KNP_ADdgNbyXLRIP63Hc-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="Module 3: Weather-Aware &#xa;Safety Shield" plantUmlId="c_12" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Module 3: Weather-Aware &#xa;Safety Shield" id="KNP_ADdgNbyXLRIP63Hc-14">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-1" style="swimlane;collapsible=0;startSize=37;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="373.5" width="207.35" x="309" y="556.75" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Dynamic Headway&#xa;Boundary Planner&#xa;(d_safe = f(v, mu))" plantUmlId="c_13" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Dynamic Headway&#xa;Boundary Planner&#xa;(d_safe = f(v, mu))" id="KNP_ADdgNbyXLRIP63Hc-15">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-14" style="swimlane;collapsible=0;startSize=52;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="134" width="170" x="18" y="51" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="HeadwayBound" plantUmlId="n_14" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="HeadwayBound" id="KNP_ADdgNbyXLRIP63Hc-16">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-15" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="137" x="15" y="64" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Collision Risk Verification&#xa;Action Override Logic" plantUmlId="c_15" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Collision Risk Verification&#xa;Action Override Logic" id="KNP_ADdgNbyXLRIP63Hc-17">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-14" style="swimlane;collapsible=0;startSize=33;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="110" width="163" x="28" y="210" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="TwinMask" plantUmlId="n_16" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="TwinMask" id="KNP_ADdgNbyXLRIP63Hc-18">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-17" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="107" x="31.505000000000006" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" plantUmlId="e_65" plantUmlBaseStyle="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;" plantUmlBaseValue="" id="KNP_ADdgNbyXLRIP63Hc-67">
+          <mxCell edge="1" parent="KNP_ADdgNbyXLRIP63Hc-14" source="KNP_ADdgNbyXLRIP63Hc-15" style="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;rounded=0;" target="KNP_ADdgNbyXLRIP63Hc-17">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="KNP_ADdgNbyXLRIP63Hc-91" edge="1" parent="KNP_ADdgNbyXLRIP63Hc-1" source="KNP_ADdgNbyXLRIP63Hc-19" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="KNP_ADdgNbyXLRIP63Hc-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <UserObject label="Module 4: Low-Level &#xa;Kinematic Control" plantUmlId="c_17" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Module 4: Low-Level &#xa;Kinematic Control" id="KNP_ADdgNbyXLRIP63Hc-19">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-1" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="365" width="222.78" x="537" y="561" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Knowledge-Based Finite&#xa;Continuous Actuation&#xa;Mode Selection" plantUmlId="c_18" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Knowledge-Based Finite&#xa;Continuous Actuation&#xa;Mode Selection" id="KNP_ADdgNbyXLRIP63Hc-20">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-19" style="swimlane;collapsible=0;startSize=50;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="125" width="195.37499999999997" x="15.47250000000004" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="FSM_Select" plantUmlId="n_19" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="FSM_Select" id="KNP_ADdgNbyXLRIP63Hc-21">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-20" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="115" x="40.187499999999986" y="64" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Bicycle Kinematic Model&#xa;Continuous Actuation&#xa;Traction" plantUmlId="c_20" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Bicycle Kinematic Model&#xa;Continuous Actuation&#xa;Traction" id="KNP_ADdgNbyXLRIP63Hc-22">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-19" style="swimlane;collapsible=0;startSize=49;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="125" width="196.32000000000005" x="15.470000000000056" y="200" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="BicycleModel" plantUmlId="n_21" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="BicycleModel" id="KNP_ADdgNbyXLRIP63Hc-23">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-22" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="127" x="34.660000000000025" y="64" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" plantUmlId="e_66" plantUmlBaseStyle="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;" plantUmlBaseValue="" id="KNP_ADdgNbyXLRIP63Hc-68">
+          <mxCell edge="1" parent="KNP_ADdgNbyXLRIP63Hc-19" source="KNP_ADdgNbyXLRIP63Hc-20" style="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;rounded=0;" target="KNP_ADdgNbyXLRIP63Hc-22">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Module 5: Real-Time AI &#xa;Monitoring Dashboard" plantUmlId="c_22" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Module 5: Real-Time AI &#xa;Monitoring Dashboard" id="KNP_ADdgNbyXLRIP63Hc-24">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-1" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="402.5" width="223" x="777" y="536" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="FastSocket&#xa;Asynchronous Server" plantUmlId="c_32" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="FastSocket&#xa;Asynchronous Server" id="KNP_ADdgNbyXLRIP63Hc-34">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-24" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="110" width="181.83" x="20" y="40" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="FastAPIServer" plantUmlId="n_33" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="FastAPIServer" id="KNP_ADdgNbyXLRIP63Hc-35">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-34" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="134" x="23.915000000000006" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="WebSocket&#xa;Live Streaming Server" plantUmlId="c_34" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="WebSocket&#xa;Live Streaming Server" id="KNP_ADdgNbyXLRIP63Hc-36">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-24" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="110" width="187.18500000000003" x="20" y="167.25" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="WS_Stream" plantUmlId="n_35" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="WS_Stream" id="KNP_ADdgNbyXLRIP63Hc-37">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-36" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="114" x="36.592500000000015" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="React Interactive Frontend UI" plantUmlId="c_36" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="React Interactive Frontend UI" id="KNP_ADdgNbyXLRIP63Hc-38">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-24" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="100" width="187.19" x="20" y="290" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="ReactUI" plantUmlId="n_40" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="ReactUI" id="KNP_ADdgNbyXLRIP63Hc-42">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-38" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="87" x="47.42" y="35" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" plantUmlId="e_49" plantUmlBaseStyle="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;" plantUmlBaseValue="" id="KNP_ADdgNbyXLRIP63Hc-51">
+          <mxCell edge="1" parent="KNP_ADdgNbyXLRIP63Hc-24" source="KNP_ADdgNbyXLRIP63Hc-34" style="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;rounded=0;" target="KNP_ADdgNbyXLRIP63Hc-36">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" plantUmlId="e_50" plantUmlBaseStyle="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;" plantUmlBaseValue="" id="KNP_ADdgNbyXLRIP63Hc-52">
+          <mxCell edge="1" parent="KNP_ADdgNbyXLRIP63Hc-24" source="KNP_ADdgNbyXLRIP63Hc-36" style="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;rounded=0;" target="KNP_ADdgNbyXLRIP63Hc-38">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Module 6: System &#xa;Evaluation &amp; Benchmark Analysis" plantUmlId="c_41" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Module 6: System &#xa;Evaluation &amp; Benchmark Analysis" id="KNP_ADdgNbyXLRIP63Hc-43">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-1" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="190" width="1190" x="-190" y="960" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="SIL Disturbance &#xa;Scenarios Metrics:&#xa;Min TTC Calculation&#xa;Max DRAC Matrix" plantUmlId="c_42" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="SIL Disturbance &#xa;Scenarios Metrics:&#xa;Min TTC Calculation&#xa;Max DRAC Matrix" id="KNP_ADdgNbyXLRIP63Hc-44">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-43" style="swimlane;collapsible=0;startSize=51;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="125" width="163.24" x="30" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="MetricsCalc" plantUmlId="n_43" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="MetricsCalc" id="KNP_ADdgNbyXLRIP63Hc-45">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-44" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="119" x="22.122500000000002" y="61" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Post-Simulation Evaluation &amp; &#xa;Benchmark Deliverables" plantUmlId="c_44" plantUmlBaseStyle="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" plantUmlBaseValue="Post-Simulation Evaluation &amp; &#xa;Benchmark Deliverables" id="KNP_ADdgNbyXLRIP63Hc-46">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-43" style="swimlane;collapsible=0;startSize=26;fillColor=none;strokeColor=#181818;fontStyle=1;" vertex="1">
+            <mxGeometry height="134" width="874" x="246" y="40" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="ScenarioConfig" plantUmlId="n_45" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="ScenarioConfig" id="KNP_ADdgNbyXLRIP63Hc-47">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-46" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="138" x="15" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Safety &amp; Efficiency&#xa;Metrics Calculator" plantUmlId="n_46" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="Safety &amp; Efficiency&#xa;Metrics Calculator" id="KNP_ADdgNbyXLRIP63Hc-48">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-46" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="163" x="174" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Baseline Comparative Metrics&#xa;(vs DQN, PPO, SLPLC, SIPLC)" plantUmlId="n_47" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="Baseline Comparative Metrics&#xa;(vs DQN, PPO, SLPLC, SIPLC)" id="KNP_ADdgNbyXLRIP63Hc-49">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-46" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="237" x="374" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Outputs:&#xa;Statistical Evaluation Matrix" plantUmlId="n_48" plantUmlBaseStyle="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" plantUmlBaseValue="Outputs:&#xa;Statistical Evaluation Matrix" id="KNP_ADdgNbyXLRIP63Hc-50">
+          <mxCell parent="KNP_ADdgNbyXLRIP63Hc-46" style="rounded=1;absoluteArcSize=1;arcSize=3;strokeWidth=1;fillColor=#F1F1F1;strokeColor=#181818;whiteSpace=wrap;" vertex="1">
+            <mxGeometry height="49" width="223" x="624" y="49" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" plantUmlId="e_51" plantUmlBaseStyle="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;" plantUmlBaseValue="" id="KNP_ADdgNbyXLRIP63Hc-53">
+          <mxCell edge="1" parent="KNP_ADdgNbyXLRIP63Hc-46" source="KNP_ADdgNbyXLRIP63Hc-47" style="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;rounded=0;" target="KNP_ADdgNbyXLRIP63Hc-48">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" plantUmlId="e_52" plantUmlBaseStyle="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;" plantUmlBaseValue="" id="KNP_ADdgNbyXLRIP63Hc-54">
+          <mxCell edge="1" parent="KNP_ADdgNbyXLRIP63Hc-46" source="KNP_ADdgNbyXLRIP63Hc-48" style="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;rounded=0;" target="KNP_ADdgNbyXLRIP63Hc-49">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" plantUmlId="e_53" plantUmlBaseStyle="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;" plantUmlBaseValue="" id="KNP_ADdgNbyXLRIP63Hc-55">
+          <mxCell edge="1" parent="KNP_ADdgNbyXLRIP63Hc-46" source="KNP_ADdgNbyXLRIP63Hc-49" style="strokeColor=#181818;fontColor=#000000;fontSize=12;html=1;endArrow=classicThin;endFill=1;rounded=0;" target="KNP_ADdgNbyXLRIP63Hc-50">
+            <mxGeometry relative="1" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="KNP_ADdgNbyXLRIP63Hc-93" edge="1" parent="KNP_ADdgNbyXLRIP63Hc-1" source="KNP_ADdgNbyXLRIP63Hc-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.903;entryY=-0.002;entryDx=0;entryDy=0;entryPerimeter=0;" target="KNP_ADdgNbyXLRIP63Hc-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

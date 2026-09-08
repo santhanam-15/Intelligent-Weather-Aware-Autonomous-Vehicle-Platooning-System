@@ -1,0 +1,37 @@
+2026-09-06 12:25:47,649 [INFO] Live log file: WindowsNoEditor\PythonAPI\logs\platooning_separate_fulltest.log
+2026-09-06 12:25:47,649 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-09-06 12:25:48,658 [INFO]   ...still waiting (0s)
+2026-09-06 12:25:51,677 [INFO] Launching CARLA: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\CarlaUE4.exe /Game/Carla/Maps/Town01 -carla-rpc-port=2000 -windowed -ResX=1280 -ResY=720 -quality-level=Low
+2026-09-06 12:25:51,690 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-09-06 12:25:52,705 [INFO]   ...still waiting (0s)
+2026-09-06 12:26:02,793 [INFO]   ...still waiting (5s)
+2026-09-06 12:26:12,862 [INFO]   ...still waiting (10s)
+2026-09-06 12:26:22,969 [INFO]   ...still waiting (15s)
+2026-09-06 12:26:30,035 [INFO] CARLA server is ready.
+2026-09-06 12:26:30,454 [INFO] Loading Town01 ...
+2026-09-06 12:26:38,051 [INFO] World timing: synchronous client ticks
+2026-09-06 12:26:38,112 [INFO] Platoon leader #258 spawned: Tesla Model3 | waypoint autopilot controller ON
+2026-09-06 12:26:38,115 [INFO] Platoon follower 1 #259 spawned: Mercedes-Benz Coupe | trajectory follower ON | target clearance 7.5m
+2026-09-06 12:26:38,116 [INFO] Platoon follower 2 #260 spawned: Lincoln Mkz2017 | trajectory follower ON | target clearance 7.5m
+2026-09-06 12:26:38,118 [INFO] Platoon follower 3 #261 spawned: Chevrolet Impala | trajectory follower ON | target clearance 7.5m
+2026-09-06 12:26:38,119 [INFO] Spawned autopilot platoon: [258, 259, 260, 261]
+2026-09-06 12:26:38,169 [INFO] Spawned 32 NPC autopilot vehicles.
+2026-09-06 12:26:38,236 [INFO] Spawned 20 pedestrians with 20 controllers.
+2026-09-06 12:26:38,404 [INFO] Window running. Press P for leader autopilot toggle, C for camera, ESC/Q to exit.
+2026-09-06 12:26:38,404 [INFO] Platoon path controller active: followers replay leader trajectory with 7.5m bumper clearance.
+2026-09-06 12:26:40,440 [INFO] Leader motion check: 0.0 km/h, displaced 0.21 m
+2026-09-06 12:26:40,440 [INFO] Platoon LEADER #258 | speed 0.0 km/h | clearance -- | alive
+2026-09-06 12:26:40,440 [INFO] Platoon FOLLOWER 1 #259 | speed 0.0 km/h | clearance 8.1m | alive
+2026-09-06 12:26:40,440 [INFO] Platoon FOLLOWER 2 #260 | speed 0.0 km/h | clearance 8.0m | alive
+2026-09-06 12:26:40,440 [INFO] Platoon FOLLOWER 3 #261 | speed 0.0 km/h | clearance 7.9m | alive
+2026-09-06 12:26:40,441 [INFO] Traffic telemetry | NPC live=32 moving=0 waiting=32 avg=0.0 km/h | walkers live=20 moving=7
+2026-09-06 12:26:42,454 [INFO] Leader motion check: 19.1 km/h, displaced 6.17 m
+2026-09-06 12:26:42,454 [INFO] Platoon LEADER #258 | speed 19.1 km/h | clearance -- | alive
+2026-09-06 12:26:42,454 [INFO] Platoon FOLLOWER 1 #259 | speed 11.9 km/h | clearance 12.9m | alive
+2026-09-06 12:26:42,454 [INFO] Platoon FOLLOWER 2 #260 | speed 0.0 km/h | clearance 9.3m | alive
+2026-09-06 12:26:42,454 [INFO] Platoon FOLLOWER 3 #261 | speed 0.0 km/h | clearance 7.9m | alive
+2026-09-06 12:26:42,455 [INFO] Traffic telemetry | NPC live=32 moving=30 waiting=2 avg=19.8 km/h | walkers live=20 moving=7
+2026-09-06 12:26:43,431 [INFO] Duration 5.0s reached; exiting test run.
+2026-09-06 12:26:43,464 [INFO] Final leader displacement: 11.87 m
+2026-09-06 12:26:43,464 [INFO] Cleaning up spawned actors...
+2026-09-06 12:26:43,525 [INFO] Done.

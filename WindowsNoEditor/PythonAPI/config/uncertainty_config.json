@@ -1,0 +1,141 @@
+{
+    "global": {
+        "seed": 42,
+        "scenario_level": "MEDIUM"
+    },
+
+    "weather": {
+        "enabled": true,
+        "preset": "MODERATE_RAIN",
+        "transition_enabled": true,
+        "transition_steps": 100
+    },
+
+    "friction": {
+        "enabled": true,
+        "condition": "WET",
+        "mu_override": null,
+        "randomize": false,
+        "mu_range": [0.25, 1.0]
+    },
+
+    "vehicle_uncertainty": {
+        "enabled": true,
+        "throttle_noise": 0.05,
+        "steer_noise": 0.02,
+        "brake_noise": 0.05,
+        "delay_ticks": 1
+    },
+
+    "communication": {
+        "enabled": true,
+        "preset": "MEDIUM",
+        "delay_ms": null,
+        "packet_loss_rate": null,
+        "noise_std": null,
+        "outage_probability": null,
+        "outage_duration_s": 5.0
+    },
+
+    "traffic_jam": {
+        "enabled": true,
+        "probability": 0.1,
+        "severity": "MEDIUM",
+        "duration": 30.0,
+        "num_vehicles": 5
+    },
+
+    "accident": {
+        "enabled": true,
+        "probability": 0.05,
+        "duration": 60.0,
+        "types": ["STOPPED_VEHICLE", "BREAKDOWN", "MULTI_VEHICLE_ACCIDENT"]
+    },
+
+    "human_behavior": {
+        "enabled": true,
+        "profile_weights": {
+            "NORMAL": 0.40,
+            "AGGRESSIVE": 0.15,
+            "CONSERVATIVE": 0.15,
+            "DISTRACTED": 0.10,
+            "ERRATIC": 0.10,
+            "SLOW": 0.10
+        }
+    },
+
+    "events": {
+        "enabled": true,
+        "sudden_braking": {
+            "probability": 0.05,
+            "cooldown": 30.0,
+            "duration": 3.0,
+            "severity": "medium",
+            "enabled": true
+        },
+        "sudden_acceleration": {
+            "probability": 0.03,
+            "cooldown": 30.0,
+            "duration": 5.0,
+            "severity": "medium",
+            "enabled": true
+        },
+        "lane_cut_in": {
+            "probability": 0.05,
+            "cooldown": 20.0,
+            "duration": 5.0,
+            "severity": "medium",
+            "enabled": true
+        },
+        "traffic_jam": {
+            "probability": 0.02,
+            "cooldown": 60.0,
+            "duration": 30.0,
+            "severity": "medium",
+            "enabled": true
+        },
+        "accident": {
+            "probability": 0.01,
+            "cooldown": 120.0,
+            "duration": 60.0,
+            "severity": "high",
+            "enabled": true
+        },
+        "stopped_vehicle": {
+            "probability": 0.03,
+            "cooldown": 45.0,
+            "duration": 30.0,
+            "severity": "low",
+            "enabled": true
+        },
+        "comm_failure": {
+            "probability": 0.03,
+            "cooldown": 40.0,
+            "duration": 10.0,
+            "severity": "medium",
+            "enabled": true
+        },
+        "sudden_rain": {
+            "probability": 0.02,
+            "cooldown": 60.0,
+            "duration": 30.0,
+            "severity": "medium",
+            "enabled": true
+        },
+        "sudden_fog": {
+            "probability": 0.02,
+            "cooldown": 60.0,
+            "duration": 30.0,
+            "severity": "medium",
+            "enabled": true
+        },
+        "friction_reduction": {
+            "probability": 0.02,
+            "cooldown": 60.0,
+            "duration": 20.0,
+            "severity": "medium",
+            "enabled": true
+        }
+    }
+}
+

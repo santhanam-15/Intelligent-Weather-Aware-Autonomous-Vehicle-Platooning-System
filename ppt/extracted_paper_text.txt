@@ -1,0 +1,1510 @@
+--- PAGE 1 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 1
+Towards Safe and Robust Autonomous Vehicle
+Platooning: A Self-Organizing Cooperative
+Decision-making Framework
+Chengkai Xu, Zihao Deng, Jiaqi Liu, Aijing Kong, Yu Tang, Chao Huang,Senior Member, IEEE,
+and Peng Hang,Senior Member, IEEE
+Abstract—In hybrid traffic environments where human-driven
+vehicles (HDVs) and autonomous vehicles (A Vs) coexist, achieving
+safe and robust decision-making for A V platooning remains a
+complex challenge. Existing platooning systems often struggle
+with dynamic formation management and adaptability, especially
+under complex and dynamic mixed-traffic conditions. To enhance
+autonomous vehicle platooning within these hybrid environments,
+this paper presents TriCoD, a twin-world safety-enhanced Data-
+Model-Knowledge Triple-Driven Cooperative Decision-making
+Framework. This framework integrates deep reinforcement
+learning (DRL) with model-driven approaches, enabling dynamic
+formation dissolution and reconfiguration through a safety-
+prioritized twin-world deduction mechanism. The DRL com-
+ponent augments traditional model-driven methods, enhancing
+both safety and operational efficiency, especially under emer-
+gency conditions. Additionally, an adaptive switching mechanism
+allows the system to seamlessly switch between data-driven and
+model-driven strategies based on real-time traffic demands, thus
+optimizing decision-making ability and adaptability. Simulation
+experiments and hardware-in-the-loop tests demonstrate that the
+proposed framework significantly improves safety, robustness,
+and flexibility. A detailed account of the validation results for
+the model can be found in Our Website.
+Index Terms—Autonomous Vehicle Platooning; Deep Rein-
+forcement Learning; Mixed Traffic Flows; Self-Organized Co-
+operative Decision-making.
+I. INTRODUCTION
+T
+HE rapid advancements in autonomous driving and ve-
+hicle communication technologies have catalyzed signif-
+icant interest in connected and autonomous vehicles (CA Vs).
+Among these technological advances, autonomous vehicle
+This work is supported in part by the State Key Laboratory of Intelligent
+Vehicle Safety Technology under Project No. IVSTSKL-202414, the National
+Natural Science Foundation of China (52302502), and the State Key Lab of
+Intelligent Transportation System under Project No. 2024-A002.
+Chengkai Xu and Peng Hang are with the State Key Laboratory of Intelli-
+gent Vehicle Safety Technology and the College of Transportation, Tongji
+University, Shanghai 201804, China. (e-mail: xuchengkai@tongji.edu.cn,
+hangpeng@tongji.edu.cn)
+Zihao Deng is with the Institute of Automation, Chinese Academy of
+Sciences, Beijing 100190, China. (e-mail: dengzihao2025@ia.ac.cn)
+Jiaqi Liu is with the Department of Computer Science, University of North
+Carolina at Chapel Hill, United States. (e-mail: jqliu@cs.unc.edu)
+Kong Aijing is with the School of Automotive Studies, Tongji University,
+Shanghai 201804, China. (e-mail: ajkong@tongji.edu.cn)
+Yu Tang is with China Automotive Engineering Research Institute Co., Ltd,
+Chongqing 430058, China. (e-mail: tangyu@caeri.com.cn)
+Chao Huang is with Department of Industrial and System Engineering,
+The Hong Kong Polytechnical University, Hong Kong 999077. (e-mail:
+hchao.huang@polyu.edu.hk)
+Corresponding author: Jiaqi Liu and Peng Hang
+platooning has emerged as a promising approach to enhance
+traffic efficiency, safety, and environmental sustainability [1],
+[2]. By reducing the gaps between vehicles and aerodynamic
+drag, vehicle platooning holds substantial potential to decrease
+fuel consumption and emissions, address environmental chal-
+lenges, and mitigate traffic congestion [3].
+Current autonomous vehicle platooning systems primarily
+focus on two key aspects of vehicle control: Cooperative Adap-
+tive Cruise Control (CACC) and Cooperative Lane Change
+Control (CLCC). CACC manages longitudinal dynamics to
+maintain inter-vehicle gaps and ensure string stability [4],
+while CLCC facilitates lateral maneuvers for lane changes
+within the platoon. Extensive research has been dedicated to
+improving CACC and CLCC. Model-based approaches, such
+as Model Predictive Control (MPC), have been employed to
+optimize vehicle dynamics [5]. However, these approaches
+often struggle with computational complexity and adaptability
+to rapidly changing environments. Rule-based methods offer
+simplicity but lack flexibility [6], [7], while Reinforcement
+Learning (RL) has recently emerged as a promising alternative
+capable of learning from real-time traffic data [8], [9].
+Despite these contributions, CACC and CLCC remain
+largely confined to fixed leader–follower chains and single-
+lane operation, which limits their ability to manage dynamic
+interactions and to reorganize a platoon in mixed traffic [10],
+[11]. Recent work has begun to relax these assumptions. Hu
+et al.[12] treat platoon as intelligent swarm, coupling longi-
+tudinal and lateral cooperation through multi-agent planning,
+whereas Zhouet al.[9] embed safe-RL shields to mitigate
+the stochastic behavior of human-driven vehicles (HDVs).
+Although both studies demonstrate that vehicle–vehicle co-
+operation can indeed be made more adaptive and safer, their
+formations remain logically intact and neither framework sup-
+ports explicit dissolution, re-merging, or topology switching
+when the traffic context changes.
+To overcome these challenges, inspiration is drawn from for-
+mation decision-making techniques in other domains, specif-
+ically Unmanned Aerial Vehicles (UA Vs). In the broader
+context of multi-agent systems, the concept of formation re-
+configuration has been extensively explored [13], which lever-
+age dynamic formation reconfiguration to adapt to changing
+conditions, avoid obstacles, and fulfill mission requirements
+in controlled three-dimensional environments [14]. Although
+UA Vs operate in different environments compared to ground
+vehicles, certain principles, such as decentralized control and
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 2 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 2
+dynamic adaptability, can be applied to autonomous vehicle
+platoons to improve their formation decision capabilities.
+Unlike UA Vs, which operate in three dimensions with
+relatively low obstacle densities, autonomous vehicle platoons
+must navigate constrained road environments with frequent
+interactions involving HDVs and complex infrastructure. The
+unpredictable behavior of HDVs, combined with road con-
+straints, presents a significant challenge for dynamic formation
+reconfiguration in vehicle platoons [15], [16]. Addressing
+these challenges requires a novel approach that integrates
+adaptability with the specific needs of ground-based traffic
+systems.
+In response, this paper proposes TriCoD, a safety-enhanced
+Data-Model-KnowledgeTriple-Driven AdaptiveCooperative
+Decision-making Framework for autonomous vehicle platoon-
+ing, integrating data-driven methods with model-based control
+to manage platoons in complex environments. The platooning
+problem is modeled as a cooperative decision-making chal-
+lenge, with a twin-world safety enhancement model running in
+parallel with real scenarios to improve safety and adaptability
+during learning. An adaptive switching mechanism optimizes
+the transitions between traffic conditions-based decision strate-
+gies.
+The hybrid approach is designed to enable platoon reconfig-
+uration in complex traffic conditions. The system dynamically
+adjusts both longitudinal and lateral behaviors to enhance
+safety, efficiency, and flexibility in real time. The approach
+is evaluated against structured disturbances in mixed-traffic
+high-risk scenarios, including human interference, incidents,
+and fluctuating flows, as shown in Figure 1. In these sce-
+narios, the process of platoon reorganization plays a critical
+role in enhancing the system’s safety and adaptability. Our
+framework demonstrates the ability to dynamically dissolve
+and reorganize the platoon formation in response to distur-
+bances, ensuring both safety and operational efficiency. Ex-
+tensive software-in-the-loop and hardware-in-the-loop experi-
+ments fully demonstrate that our framework exhibits higher
+security and robustness in different scenarios while taking
+efficiency into consideration.
+The contributions of this paper are summarized as follows:
+•A hybrid framework for platooning decision has been
+developed, which integrates data-driven methods with
+model-based control and domain-specific knowledge, en-
+abling platoon members to achieve adaptive decision-
+making in complex traffic environments.
+•A twin-world safety enhancement model integrated with
+RL is proposed, which significantly enhances sampling
+efficiency by providing a parallel virtual environment that
+allows safe exploration of diverse strategies, thereby im-
+proving the overall safety and adaptability of the system.
+•The proposed framework uniquely enables the dissolution
+and reconfiguration of platoon formations in response
+to changing traffic conditions. It integrates longitudinal
+and lateral control, allowing the system to dynamically
+adjust vehicle behavior and maintain formation integrity
+in complex environments.
+To better present our work, the rest of this paper is organized
+as follows.Section IIIformulates the problem in our research.
+!
+Human Interference Formation Maintainance
+Formation Dissolution
+Formation Reorganization
+Traffic Accidents
+Traffic Flow Oscillation
+Multiple Strong Interferences Our Solution
+1
+2
+3
+CA Vs HDVs
+Fig. 1. Illustration of challenging traffic conditions and our framework’s
+adaptive responses. The diagram demonstrates the dynamic stages of (1) main-
+taining formation with active avoidance, (2) realigning to mitigate the impact
+of disruptions, and (3) restoring optimal formation after the disturbances, with
+CA Vs (red) and HDVs (green) represented with corresponding behaviors under
+each scenario.
+Section IVintroduces in detail the proposed TriCoD frame-
+work.Section Vpresents the performance evaluation. Finally,
+the paper is concluded inSection VI.
+II. RELATEDWORKS
+A. Coordinated Lane Change Decision-Making
+Coordinated lane change allows a platoon to merge, over-
+take, or circumvent obstacles while preserving safety and
+throughput. The controller must determine both the instant
+and path of the manoeuvre under tight kinematic, traffic-flow,
+and regulatory constraints, which is an intrinsically difficult
+optimization problem. The literature addresses this task with
+model-based,rule-based, anddata-drivenparadigms.
+Model-based control:Optimal-control formulations such
+as Model Predictive Control and Linear-Quadratic Regulation
+solve a constrained optimization at each step to ensure string
+stability and collision avoidance [17], [18]. These methods
+offer the advantage of providing clear performance guarantees
+and are computationally efficient, yet their efficacy hinges
+on accurate dynamical models and reliable previews of sur-
+rounding traffic [19]. In mixed traffic containing HDVs, model
+mismatch and sensing uncertainty can erode safety margins.
+Rule-based heuristics:Rule-based strategies embed ex-
+pert knowledge in a finite set of heuristics that trigger lane
+changes when pre-specified conditions are met [6], [20]. These
+rules typically consider factors like relative velocity, gap
+acceptance, and the presence of obstacles. While such systems
+are straightforward to implement and interpret, they lack the
+adaptability required to respond to complex and unforeseen
+traffic situations. The rigid nature of rule-based approaches
+can lead to suboptimal performance in scenarios that deviate
+from the predefined conditions.
+Data-driven learning:Recent advances have seen the
+integration of data-driven techniques, particularly RL, to en-
+hance lane change decision-making [9], [21]. RL allows agents
+to learn strategies through interaction with the environment,
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 3 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 3
+which has demonstrated an ability to capture nonlinear vehicle
+interactions and to negotiate complex, uncertain environments
+that foil classical controllers, yet faces slow convergence,
+sensitivity to reward shaping, and the absence of formal safety
+guarantees during exploration and deployment [22], [23].
+Hybrid directions and open gaps:However, each
+paradigm exhibits inherent deficiencies: model-based schemes
+struggle with uncertainty, rule-based logic lacks adaptability,
+and purely data-driven solutions face stability and safety
+barriers. Recent work has begun to explore hybrid frameworks
+that fuse analytical models with learning or heuristic layers
+[24]. However, research in this direction remains nascent,
+where key questions include how to orchestrate the blending
+of components, provide formal safety guarantees, and maintain
+real-time feasibility. These gaps motivate the mixed architec-
+ture proposed in this study.
+B. Formation Reorganization Decision-Making
+Most platoon controllers maintain a rigid leader–follower
+chain and rely on longitudinal regulation such as CACC and
+isolated lateral manoeuvres via CLCC. Such static topologies
+cannot dissolve, split, or reform in real time, limiting resilience
+to incidents and traffic oscillations [8], [11].
+Insights from robotics and UAV swarms:Multi-robot
+teams and UA V swarms routinely perform formation recon-
+figuration to bypass obstacles, adapt to agent loss, or satisfy
+mission geometry [25], [26]. Decentralized consensus, virtual-
+structure, and behavior-based methods deliver flexibility and
+robustness in three-dimensional free space. However, these
+algorithms assume near-perfect observability and lack the lane
+level and legal constraints of ground traffic.
+Emerging vehicular studies:Recent work has begun to
+translate reorganization concepts to road traffic, exploring
+dynamic leader selection and splitting or merging of multilane
+platoon under mixed autonomy. Although simulation results
+show promise, most studies presume homogeneous CA Vs and
+ideal vehicle-to-vehicle (V2V) communication, leaving their
+robustness in dense traffic unverified [12].
+Domain-specific challenges:Vehicles operate on seg-
+mented roadways with severe kinematic limits and must com-
+ply with traffic regulations. Formation reorganization on roads
+requires longitudinal–lateral coordination, safety guarantees
+during collective manoeuvres and resilience to non-cooperative
+HDVs, which are not fully met by existing frameworks [16].
+To date, there is a lack of comprehensive architecture
+that deliversverifiably safe,computationally tractable, and
+adaptivein mixed traffic. Therefore, this paper is dedicated
+to applying the formation reorganization technology to au-
+tonomous driving formations and building a unified decision-
+making layer that combines lane splitting, merging, and lane
+changing planning in mixed traffic flows.
+III. PROBLEM STATEMENT
+A. Scenario Description
+Highway environments are the most common application
+scenario for autonomous vehicle platooning. This study fo-
+cuses on self-organizing decision-making for multi-vehicle
+platooning on a three-lane highway, addressing significant
+disturbances such as human interference, traffic accidents,
+and traffic flow oscillations, as illustrated in Figure 1. In
+these scenarios, traditional formation algorithms are no longer
+capable of effectively addressing the challenges posed by
+unpredictable disturbances, leading to reduced stability and
+compromised safety. Therefore, a new, adaptive algorithm is
+necessary to navigate these disturbances and ensure robust,
+stable, high-speed operation.
+B. Problem Formulation
+The problem is modeled as a Partially Observable Markov
+Decision Process (POMDP) [27], which provides a robust
+framework for handling the partial observability and stochastic
+nature of real-world traffic scenarios. By employing DRL
+within the POMDP framework, both individual and collective
+goals can be balanced, enabling adaptive responses in dynamic
+environments. The system schematics are shown in Figure 2.
+The vehicle platoon, while making decisions as a whole,
+employs a decentralized execution strategy. The problem is
+formulated as a POMDP, which can be described by the tuple
+(S,A,P,R,O), whereSis the set of system states;Ais the
+action space;Pis the state transition model;Ris the reward
+function; andOis the observation space.
+In this POMDP, the agent makes decisions based on the
+policyπand the current observation space. The optimization
+problem is then formulated as finding the optimal policyπ ∗
+that maximizes the expected sum of discounted future rewards
+[28]:
+Qπ(s,a)
+def
+=E π
+"∞X
+t=0
+γtR(st,at)|s 0 =s,a 0 =a
+#
+(1)
+whereγ∈[0,1]is the discount factor that balances the impor-
+tance of immediate versus future rewards. The optimization
+process involves updating the policyπ θ to approximate the
+optimal policyπ ∗, which governs how the platoon should act
+to achieve long-term performance goals.
+1)Observation SpaceO:In real-world highway environ-
+ments, autonomous vehicles cannot directly observe the full
+state of the system due to sensor limitations and occlusions
+caused by other vehicles. Formally, the observationo t at time
+tis a function of the true states t, but it is incomplete:
+ot =f(s t), o t⊂s t (2)
+In this study, the observation space is structured as a matrix
+with dimensions|N i|×|F|, where|N i|is the number of
+vehicles detected by the platoon, and|F|represents the feature
+vector describing each detected vehicle. The feature vector
+includes relative positions and velocities of other vehicles, as
+well as an indicator variableδ platoon
+i that specifies whether
+the vehicle is part of the platoon:
+Fi = [xi,yi,vx
+i,vy
+i,δplatoon
+i ](3)
+wherex i andy i represent the relative longitudinal and lateral
+positions of vehiclei, andv x
+i andv y
+i denote its relative
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 4 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 4
+Fig. 2. Illustration of the system and the simulation setup. All high-level
+actions are verified through a security mask before being processed by the
+bottom-level controller, which will be finally converted into control signals.
+longitudinal and lateral velocities. The binary variableδ platoon
+i
+indicates whether vehicleiis part of the platoon:
+δplatoon
+i =
+(
+1if vehicleibelongs to the platoon,
+0otherwise. (4)
+Additionally, the observation is restricted to vehicles within
+a sensor detection range,D vision, ahead or behind the observ-
+ing vehicle.
+2)Action SpaceA:The action spaceAdefines the set of
+possible actions that the platoon can take at any given time
+step. In this study, each autonomous vehicle in the platoon
+selects from a discrete set of high-level actions, including
+left turn, right turn, accelerate, decelerate, and cruise. These
+actions allow the vehicles to maneuver within their lanes and
+adjust their speeds to maintain a safe and efficient formation.
+For a platoon consisting ofNautonomous vehicles, the
+joint action spaceAis the Cartesian product of the individual
+action spaces of the vehicles:
+A=A 1×A 2×···×A N (5)
+Each vehicleiin the platoon selects an actiona i∈A i, and
+the combined actiona platoon is executed as:
+aplatoon = (a1,a 2,...,a N)(6)
+In this study, a quinary encoding scheme is employed to
+encode the joint action space, resulting in a 125-dimensional
+discrete action space through the Cartesian product of the indi-
+vidual actions. After selecting high-level actions, the platoon’s
+low-level controllers manage steering and throttle to execute
+the specific vehicle movements in the simulation environment,
+as illustrated in Figure 2.
+3)Transition ProbabilitiesP:HDVs introduce random-
+ness into the whole system, making future states inherently
+uncertain. This uncertainty is modeled using a state transition
+functionP(s t+1|st,at), which represents the stochastic nature
+of the environment, capturing the likelihood of transitioning
+from the current statest to the next statest+1 given the current
+actiona t:
+P(st+1|st,at) = Pr(st+1|st,at)(7)
+The transition probabilities account for the stochasticity
+brought by the HDVs, ensuring that the decision-making
+process anticipates and responds to these uncertainties.
+C. Vehicle Model
+The vehicle kinematics model is commonly used for
+decision-making and planning in autonomous driving. There-
+fore, this paper adopts a simplified nonlinear bicycle model for
+the DRL-based self-organizing cooperative decision-making,
+described by
+˙x=v·cos(ψ+β)
+˙y=v·sin(ψ+β)
+˙ψ= v
+l·sinβ
+β= tan−1 (1/2·tanδ)
+(8)
+where(x,y)is the global position,vis vehicle velocity,βis
+the slip angle at the vehicle’s center of gravity due to steering,
+ψdenotes the yaw angle,ldenotes the wheelbase, andδ
+denotes the front steering angle.
+This system enables the vehicle to adapt its position and
+orientation to follow a desired path with both precision and
+stability, which underpins both the DRL and the linear design
+of the LQR inSection IV.
+IV. METHODOLOGY
+This section introduces a comprehensive framework for
+autonomous vehicle platoon. The DRL-based core decision-
+making algorithm for formation reconfiguration is first pre-
+sented to enable adaptive and secure platoon adjustments,
+which is followed by a formation maintenance algorithm and
+an adaptive switching mechanism, ensuring stable and efficient
+decision-making across varying traffic conditions.
+A. Framework Overview
+To address emergency and high-risk scenarios that tra-
+ditional vehicle platooning technologies struggle to manage
+effectively, this study introduces TriCoD framework. As de-
+picted in Figure 3, the framework seamlessly integrates two
+tightly coupled primary layers that collaboratively handle
+different aspects of platoon decision making:
+•Upper Layer:The DRL decision model follows the Cen-
+tralized Training and Decentralized Execution (CTDE)
+paradigm, with a twin-world safety verification model
+that simulates decision outcomes in a parallel virtual
+environment. This verification ensures safe, effective
+decision-making before deployment and enhances the
+DRL model’s sampling efficiency. The upper layer works
+alongside the lower layer to adapt to complex scenarios
+in real-time.
+•Lower Layer:The Linear-Quadratic Regulator (LQR)
+provides precise control in predictable scenarios, mini-
+mizing headway for efficiency. This layer also collabo-
+rates with the DRL model by executing low-level control
+commands that align with the strategic decisions made
+by the upper layer.
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 5 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 5
+Upper-level Data-driven Formation Reconfiguration
+Traffic Snap-shots
+Relativistic coding Decentralized Execution
+Vehicle
+Ego
+Vehicle_1
+Vehicle_2
+...
+Vehicle_n
+Is
+1
+1
+0
+0
+... ... ... ... ...
+Vx Vyx
+5.0
+-10.0 4.0 12.0 1.7
+5.0 -2.0 5.0 0.2
+22.2 10.5 18.0 0.5
+4.0 15.0 0.0
+y
+IDM Controller
+Knowledge-based FSM
+Observation DRL-based reconfiguration decision
+Twin-world Security Projection
+Decision Results
+LQR ControllerLongitudinal Vehicle Control
+Acceleration
+Deceleration
+Constant Speed
+...
+...
+...
+Crash RiskAffect OthersAccepted
+Lower-level Model-driven Formation Maintenance
+Sensorium
+Fig. 3. Overview of the TriCoD framework for self-organizing autonomous vehicle platooning, which combines a data-driven upper layer and a model-driven
+lower layer to manage platoon adaptively. The upper layer uses DRL with a twin-world safety verification model for safe, real-time decision-making, while the
+lower layer employs a LQR for precise control in predictable conditions, ensuring stable and efficient vehicle spacing. Together, these layers provide robust,
+adaptive platooning in complex traffic environments.
+A knowledge-based finite state machine dynamically inte-
+grates these layers, switching decision strategies based on real-
+time traffic conditions. In stable conditions, the LQR controller
+optimizes efficiency with reduced headway. In complex sce-
+narios, the DRL model manages platoon splitting and reforma-
+tion, coordinating with the LQR for adaptive responses. This
+hybrid approach combines data-driven learning with model-
+based control, ensuring cohesive, adaptive responses to both
+routine and emergency situations.
+B. Reward for Platooning
+The reward function is central to shaping the behavior of
+autonomous vehicle platoons. Inspired by the social behavior
+in A Vs [29], a reward system is designed to account for both
+individual vehicle performance and the collective dynamics of
+the platoon as a whole. This approach ensures that each vehicle
+operates safely and efficiently while maintaining coordination
+and cohesion within the platoon.
+The total rewardR global(s,a)is formulated as the sum of
+individual rewards and system-wide collaborative rewards:
+Rglobal(s,a) = 1
+n
+nX
+i=1
+Ri
+ind +Rsys (9)
+Both the individual vehicle perspective and the platoon-wide
+perspective are considered in the reward design. From the indi-
+vidual vehicle’s perspective, the reward function emphasizes
+safety and efficiency, focusing on collision avoidance, lane
+keeping, speed control, and smooth acceleration:
+Rind(s,a) =
+X
+t∈{C,L,F,A}
+wt×rt (10)
+wherer C penalizes collisions,r L encourages lane discipline,
+rF rewards maintaining high speeds, andr A controls acceler-
+ation behavior. The weightsw C,w L,w F , andw A are tuned to
+reflect the importance of each factor, with a strong emphasis
+on collision avoidance through a higher value ofw C.
+Each component is defined as follows:
+
+
+
+rC =−I{collision}
+rL =−cos(π(y−y center)/4)
+rF =clip((v−v min)/(vmax−v min),0,1)
+rA = 1−|a/a max|
+(11)
+wherevdenotes longitudinal speed,aacceleration, andylat-
+eral position. The operatorI {·} denotes the indicator function,
+andcliprestricts the value within[0,1]to stabilize learning.
+From the platoon-wide perspective, the reward function pro-
+motes the cooperation and cohesion of the entire platoon. The
+system-wide rewardR sys(s,a)encourages vehicles to remain
+coordinated and maintain proper formation:
+Rsys(s,a) =
+X
+k∈{M,H,S}
+wk×rk (12)
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 6 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 6
+Fig. 4. Illustration of the designed headway maintaining reward, which
+considers both the single-vehicle rewards and the multi-vehicle rewards.
+In this expression,r M rewards staying in the same lane,r H
+ensures proper headway between vehicles, andr S aligns speed
+coordination within the platoon. The corresponding weights
+wM ,w H, andw S are designed to ensure that each vehicle’s
+actions contribute to the collective success of the formation.
+
+
+
+rM = 1−n lane/nmax
+rH =− 1
+N−1
+N−1X
+i=1
+|di,i+1−d∗|
+rS =− 1
+N
+NX
+i=1
+|vi−¯v|
+(13)
+wheren lane andn max denotes the number of lanes occupied
+and the total number of lanes respectively.d i,i+1 is the inter-
+vehicle gap between vehicleiand its immediate follower, with
+d∗ representing the target headway.vi is the velocity of vehicle
+i, and¯v= 1
+N
+PN
+i=1vi is the average platoon speed.
+This reward design effectively balances the individual ob-
+jectives of safety and efficiency with the collective need for
+coordination, ensuring that the platoon operates as a cohesive
+unit. The combined rewards guide both individual vehicles and
+the platoon as a whole toward achieving optimal performance
+in dynamic traffic conditions. Figure 4 illustrates the structure
+of the reward function, highlighting how it integrates both
+individual and collective factors.
+C. Deep Reinforcement Learning Algorithm
+In DRL, an agent interacts with an environment defined by
+a Markov Decision Process (MDP), aiming to learn a policy
+that maximizes cumulative long-term rewards. Value-based
+DRL methods estimate the state–action value functionQ(s,a)
+and obtain the optimal action bya ∗ = arg maxaQ(s,a).
+However, in multi-vehicle platooning, the joint action space
+grows exponentially with the number of agents, and Q-learning
+suffers from poor sample efficiency, instability due to non-
+stationarity from concurrent updates, and brittle off-policy
+corrections that destabilize closely coupled dynamics.
+To address these issues, we adopt a policy gradient approach
+based on an actor–critic architecture, which separates the
+representation of the policy (actor) from that of the value
+function (critic). The actor directly maps observed states to
+a distribution over actions, while the critic provides a learned
+estimate of the state valueV π(s)and the advantage function
+Aπ(s,a), allowing a reduction of the variance of the gradient
+estimation. The target of agent is to optimize the long-term
+cumulative reward under policyπ:
+J(π) =argmax
+π
+Eπ
+" TX
+t=0
+γtr(st,at)
+#
+(14)
+whereγ∈[0,1)is the discount factor andTis the time
+horizon. Using the policy gradient theorem, the gradient of
+the objective can be expressed as:
+∇θJ(πθ) =E πθ [∇θ logπθ(at|st)Aπ
+t ](15)
+whereA π
+t =Q π(st,at)−V π(st)is the advantage function.
+The advantage estimates are constructed from the Bellman
+equation, where the state value functionV π(st)and Q-value
+functionQ π(st,at)can be computed as:
+Vπ(st) =E at∼π(·|st) [Qπ(st,at)](16)
+Qπ(st,at) =r t +γE st+1∼T(·|st,at) [Vπ(st+1)](17)
+To ensure the stability of policy gradients, Trust Region Pol-
+icy Optimization (TRPO) is introduced to ensure monotonic
+performance improvement and bounded divergence between
+successive policies [30]:
+max
+θ
+Eπθold
+ πθ(a|s)
+πθold(a|s)Aπθold (s,a)
+
+Es∼πθold
+[KL(πθold(·|s)∥π θ(·|s))]≤δ
+(18)
+whereδis a small positive constant controlling the size of the
+update step, and KL denotes the Kullback-Leibler divergence,
+which guarantees stable learning for multi-agent platooning.
+In this study, a CTDE strategy shown in Figure 5 is adopted.
+During training, sensor data from all platoon members are
+aggregated to form a global observation space. Then a shared
+policyπ θ is learned using the TRPO algorithm. During execu-
+tion, each agent applies the learned policy using only its local
+observations, ensuring decentralized operation and scalability.
+SinceV π(st)cannot be calculated directly, the improved
+deep neural networks (DNN) shown in Figure 6 is adopted
+to approximate the actor and critic, which processes input
+states through fully connected layers. The actor outputs action
+probabilities that are refined with a safety mask to eliminate
+unsafe actions. The critic evaluates state values to support
+policy improvement.
+In this architecture, the policy loss and value function error
+loss are combined into a single loss function. Under the
+condition of shared parameters among agents, the total loss
+function can be expressed as a linear combination of the policy
+loss, state update loss, and entropy regularization term:
+J(θ) =J πθ−β 1JVϕ +β 2H(πθ (st))(19)
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 7 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 7
+Fig. 5. Illustration of the TRPO-based formation configuration algorithm
+schematic model.
+whereβ 1 andβ 2 are the weight values for the value loss
+function and the entropy regularization term, respectively. The
+policy lossJ πθ and the state update loss functionJ Vϕ are
+defined as:
+Jπθ =E πθ [logπθ (at|st)Aπθ
+t ](20)
+JVϕ = min
+ϕ
+ED [(rt +γV ϕ (st+1)−V ϕ (st))]2 (21)
+whereA πθ
+t is the advantage function, defined as:
+Aπθ
+t =r t +γV πϕ(st+1)−V πϕ(st)(22)
+whereV πϕ(st)is the state value function. Additionally, the
+entropy regularization term , which encourages the agent to
+explore new directions and avoid potential local optima, can
+be expressed as:
+H(πθ (st)) =E πθ [−log (πθ (st))](23)
+Mini-batch stochastic gradient descent is used to update
+the network parameters. The use of the trust-region constraint
+ensures that updates remain conservative, thereby preserving
+policy stability. Together with the twin-world safety verifica-
+tion (detailed inSection IV-D), this setup allows the agent to
+safely explore reconfiguration strategies under diverse traffic
+conditions.
+D. Twin World Security Projection
+While DRL enables robust decision-making in mixed traffic
+with strong interferences, its ”black-box” nature can lead
+to unexpected outcomes in standard scenarios and may not
+fully comply with traffic regulations. Although more reward
+functions could enforce these constraints, they may incur
+significant training costs and risk model divergence. These
+issues are addressed in this study through the implementation
+of a comprehensive and extensible safety mask.
+To ensure decision safety and sample efficiency, a safety-
+priority-based twin-world model is proposed. This model
+evaluates the safety of DRL decisions by first detecting po-
+tential collisions based on safety priorities, thereby reducing
+computational complexity. It then recursively computesT n
+steps in a twin world constructed from the current scenario,
+optimizing actions based on the platoon’s safety margin.
+Given the focus of this study on decision-making in mixed
+traffic, predicting the driving behavior of HDVs is essential.
+The prevalent Intelligent Driver Model (IDM) [31] is utilized
+for simulating car-following behaviors, while the MOBIL
+model [32] is adopted for lane-changing decisions. The combi-
+nation of these models minimizes collision risk among HDVs
+while closely mirroring human driving patterns.
+The safety mask models each vehicle as a circle, with
+the center at the vehicle’s center and a radius equal to
+half its length. FutureT n steps are simulated using motion
+models of HDVs and CA Vs to assess collision risks. While
+this simulation is straightforward for individual vehicles, it
+becomes computationally challenging for platoons due to the
+exponentially growing action space. To address this, a safety-
+priority-based simulation model is proposed, which prioritizes
+vehicles with the smallest safety margins and conducts safety
+simulations in the twin world, ensuring efficient real-time
+computation and platoon cohesion.
+Safety priority is determined based on headway time, with
+higher priority assigned to vehicles with smaller headway
+times relative to HDVs. The safety priorityp i is defined as:
+pi =−log dheadway
+vt
++σi (24)
+whered headway is the headway distance,v t is the current
+vehicle speed, andσ i is a small random term to avoid identical
+safety priorities.
+During the safety simulation, the vehicle with the highest
+safety priority undergoes assessment at each time stept. The
+twin world checks whether the vehicle’s decisions over the
+nextTn time steps conflict with nearby vehicles. If no collision
+is detected (i.e., the minimum distance between vehicles
+exceeds the threshold), the DRL decision is deemed safe.
+Otherwise, the twin world traverses other possible decisions,
+selecting the action that maximizes safety margins:
+a′
+t = arg max
+at∈Apro
+
+min
+k∈Tn
+dsm,k
+
+(25)
+whereA pro represents alternative actions output by the DRL,
+andd sm refers to the safety margin, defined as the minimum
+headway distance in both current and target lanes during a
+left or right turn. This risk-prioritized sequential prediction
+mechanism significantly reduces computational overhead and
+enables the safety prediction module to complete each decision
+in a shorter time. The detailed procedure is illustrated in
+Algorithm 1.
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 8 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 8
+Fig. 6. Illustration of the Actor-Critic Network Structure with Security-Enhanced Action Probability, which processes inputs through full connected layers in
+the Actor-Critic networks. The Actor generates action probabilities, which are refined by a security mask to ensure safe decisions, while the Critic evaluates
+actions to maximize cumulative rewards.
+Algorithm 1:Twin World Security Projection
+Input:vehicles,x i,yi,vi
+x,vi
+y,headwayi
+Output:a i,i∈formation
+1fori= 0toNdo
+2Compute safety priority:
+priorityi =−ln (headway i/vi);
+3Sort vehicles by safety priority and store in listϕ;
+4end
+5forj= 0to|ϕ|do
+6Retrieve the vehicle with the highest safety
+priority:ϕ[0];
+7Identify neighboring vehicles and store them in list
+Nϕ[0];
+8Predict the trajectory for the nextT n simulation
+steps:ξ v,v∈ϕ[0]∪N ϕ[0];
+9iftrajectories overlapthen
+10Calculate safety margind sm,i;
+11iflane changedthen
+12d sm,i = minj (pi−pj,j∈objectivev i)
+13end
+14else
+15d sm,i =headwayv i
+16end
+17Replace actiona t←a′
+t;
+18Update trajectory listξ ϕ[0]←ξ′
+ϕ[0];
+19end
+20Replace actiona t←a′
+t Update
+ϕ[i]←ϕ[i+ 1],i= 1,2,···
+21end
+22returna i,i∈formation
+E. Formation maintenance
+Algorithm 2:Adaptive Switching Mechanism
+Input:vehicles,riskLevel,Participants,L safe
+Output:DecisionStrategy
+1fori= 0toNdo
+2Assess risk level and number of traffic participants
+withinL safe ;
+3if(riskLevel>=RoutineSafe)and
+(Participants withinL safe )then
+4Switch to StateS 1: LQR Control Model;
+5Activate LQR Control;
+6SetDecisionStrategy=LQR;
+7else
+8Switch to StateS 2: Safety-Enhanced
+Data-Driven Strategy;
+9SetDecisionStrategy=DataDriven;
+10end
+11ExecuteDecisionStrategybased on the current
+state;
+12ifDecisionStrategy==LQRthen
+13DecideWithLQR();
+14end
+15else ifDecisionStrategy==DataDriventhen
+16DecideWithDataDrivenStrategy();
+17end
+18end
+19returnDecisionStrategy
+The platoon reconfiguration model ensures safe, robust
+decision-making in complex, high-interference scenarios but
+struggles with maintaining close headway distances in routine
+conditions due to conservative safety strategies. To address
+this, an adaptive switching mechanism, the platoon main-
+tenance model, is proposed, incorporating optimal control
+methods.
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 9 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 9
+Fig. 7. Schematic representation of the model training reward function in multiple scenarios.
+This model maintains close headway in routine scenarios
+while dynamically adjusting strategies based on real-time
+traffic conditions and interference levels, enhancing both safety
+in complex scenarios and efficiency in routine conditions.
+To allocate decision strategies across scenarios, a Finite
+State Machine (FSM)M(Q,D,δ,q 0,F)is used, where:
+1)Q={S 1,S 2}is the set of states;
+2)q∈Qrepresents the current state;
+3)δis the state transition function;
+4)Fis the set of output states
+5)Ddenotes the risk level of the traffic scenario
+This study considers a scenario safe when the platoon is on
+the same lane and there are no other traffic participants within
+Lsafe ahead or behind the platoon. In this case, the FSM
+switches to stateS 1, adopting the LQR control model [33] to
+ensure smaller headway distances. In all other scenarios, the
+FSM switches to stateS 2, which employs a safety-enhanced
+data-driven strategy to balance the safety and efficiency of the
+platoon. By defining these states and transitions, the FSM pro-
+vides a structured approach to adaptively manage the decision
+strategies of the platoon, ensuring optimal performance across
+varying traffic conditions. The detailed procedure is illustrated
+in Algorithm 2.
+V. SIMULATION ANDPERFORMANCEEVALUATION
+In this section, the software-in-the-loop (SIL) experiments
+are conducted to validate the effectiveness of the proposed
+method. Additionally, a hardware-in-the-loop (HIL) experi-
+mental platform is built to further verify the model’s safety and
+robustness and to assess its feasibility for direct deployment
+in real vehicles.
+A. Software-in-the-loop experiment
+1) Environment and simulation setting:The simulation
+environment is constructed upon the Highway-Env simulator
+[34], a reinforcement learning experimental environment li-
+brary based on an OpenAI Gym environment. As illustrated
+in Figure 2, all vehicles’ high-level policies are transformed
+into throttle and steering information through a low-level
+PID controller, thereby enabling vehicle movement within the
+simulation environment. Furthermore, our HDVs employ the
+IDM [31] car-following model and the MOBIL [32] lane-
+changing model provided by Highway-Env to achieve effective
+control in both longitudinal and lateral directions.
+During the training process, a varying number of HDVs
+will randomly appear at randomly generated refresh points.
+The sampling frequency is set to15Hz, meaning decisions
+and controls are made 15 times per second. Meanwhile,
+to comprehensively evaluate the framework’s limits against
+unscripted interactive adversarial conflicts, , supplementary
+stress tests based on Level-K game theory have also been
+conducted with training still remains on IMD+MOBIL, whoes
+detailed analytical setups and quantitative results available on
+our project website.
+Three different random seeds are used to train the pro-
+posed model in various complex scenarios, with each session
+running for over 100,000 steps until convergence. Four algo-
+rithms—DQN [35], A2C [36], PPO [37], and RecurrentPPO
+[38]—are selected as experimental baselines. The training
+parameters for the DRL model are detailed in Table I.
+TABLE I
+HYPERPARAMETER SETTINGS FOR REINFORCEMENT LEARNING
+Param Definition Value
+ηLearning Rate5×10 −4
+Nsteps steps for each environment per update256
+Nt Total Training Steps10 5
+β1 Loss function weights 1
+β2 Loss function weights 0.01
+λMinibatch size 128
+γDiscount factor 0.8
+2) Performance evaluation:This section evaluates the per-
+formance of the proposed model in a simulated environment
+designed to reflect high-risk and safety-critical scenarios. As
+illustrated in Figure 1, we construct three different scenarios,
+abstracted from real-world observations and intended to eval-
+uate the robustness, adaptability, and safety of the decision-
+making framework.
+Human interference simulates dynamic interactions with
+unpredictable HDVs, which are categorized as aggressive,
+neutral, and conservative, with behavior profiles sampled from
+distinct parameter distributions. Sudden braking events are
+introduced through rule-based deceleration patterns to repre-
+sent common human-induced disturbances, such as cut-ins or
+emergency stops.
+Traffic accidents introduce static obstructions or stalled
+vehicles in random positions ahead of the platoon, requir-
+ing coordinated reconfiguration, emergency braking, and con-
+trolled dissolution. Multiple accident configurations are in-
+cluded across lanes and locations to evaluate flexibility in
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 10 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 10
+reorganization strategies.
+Traffic flow oscillations reflect congestion-driven instability
+caused by heterogeneous initial speeds and random vehicle or-
+dering. A bimodal speed distribution is used to initialize traffic
+flow, generating stop-and-go waves that challenge longitudinal
+stability and coordination.
+For all scenarios, initial vehicle states, including positions,
+speeds, and lane assignments, are sampled from uniform or
+bimodal distributions. HDVs are randomly placed across three
+lanes, and their longitudinal spacing is adapted to prevent
+collisions while promoting moderate traffic density. Each
+simulation run uses a unique random seed to ensure diverse
+traffic conditions during training and testing. Each scenario
+class includes multiple parameterized variants to enable broad
+behavioral coverage and rigorous evaluation across both nom-
+inal and edge-case conditions [39].
+Comparison with DRL baselines.Figure 7 illustrates
+the training performance of our model compared to baseline
+DRL algorithms across various scenarios. The training curves
+demonstrate that our model consistently outperforms the base-
+line algorithms, showing high adaptability and robustness
+essential for autonomous driving. This stability is attributed to
+our safety deduction model and innovative network structure,
+which enable our model to maintain reliable learning perfor-
+mance under challenging conditions and converge to a higher
+reward level.
+Table II provides specific performance data. While our
+model may occasionally exhibit slightly lower speed and
+greater average headway distance compared to some baselines,
+it achieves significantly higher rewards, indicating that it
+prioritizes safety over raw efficiency. In contrast, the baseline
+algorithms reach their performance metrics at the expense
+of safety, which has been further verified in simulation ex-
+periments. Such trade-offs are unacceptable in transportation
+systems where safety is paramount.
+In scenarios with high randomness and interference, such
+as traffic flow oscillations and traffic accidents, our model
+achieves significantly better convergence than other algo-
+rithms. This indicates an enhanced ability to learn optimal
+decisions under strong, dynamic disturbances, underscoring
+the robustness of our approach.
+Comparison with Leading Platooning Algorithms.To
+evaluate the effectiveness of the TriCoD framework, a com-
+parative analysis is conducted with several leading platooning
+algorithms. This analysis is based on four key performance
+indicators: average vehicle speed, average headway, collision
+rate, and pass rate. These metrics provide a comprehensive
+assessment of the model’s performance in terms of safety and
+efficiency. Notably, the pass rate metric is designed to consider
+scenarios where the convoy may need to halt to avoid hazards,
+thereby balancing risk avoidance with maintaining traffic flow.
+In the experiments, the model is evaluated against advanced
+lane-changing algorithms, including Successive Platoon Lane
+Change (SuPLC) [40] and Simultaneous Platoon Lane Change
+(SiPLC) [41], as well as a baseline DRL model across
+different scenarios: Human Inference, Traffic Accidents, and
+Traffic Flow Oscillation. Specifically, SuPLC is a trajectory
+optimization-based control method that accounts for vehicle
+TABLE II
+PERFORMANCE METRICS COMPARISON BETWEEN PROPOSED METHOD
+AND BENCHMARKS
+Scenario Model Reward Avg. Speed Avg. HWD
+Sce-1
+A2C 18.93 22.23 10.00
+DQN 9.47 25.18 20.06
+PPO 22.10 23.83 13.85
+RPPO 17.43 17.57 9.73
+Ours23.0720.57 9.93
+Sce-2
+A2C 6.04 20.34 10.50
+DQN 2.31 27.72 9.81
+PPO 15.05 20.75 14.37
+RPPO 4.10 25.70 17.10
+Ours31.6620.59 11.33
+Sce-3
+A2C 4.87 20.18 10.00
+DQN 11.83 20.71 12.18
+PPO 58.21 20.13 10.00
+RPPO 34.19 20.15 9.46
+Ours61.0720.93 8.95
+dynamics and guarantees string and lateral stability during
+staggered lane changes, while SiPLC employs a combinato-
+rial optimization approach formulated as an Integer Linear
+Programming problem to generate coordinated lane change
+sequences across multi-lane scenarios.
+To provide a more comprehensive safety assessment, we
+introduce Minimum Time to Collision (TTC) and Deceleration
+Rate to Avoid Crash (DRAC) as measures. TTC measures the
+time to collision between platoon vehicles and surrounding
+HDVs. A lower TTC indicates a higher collision risk, while a
+higher value suggests safer conditions:
+TTC Ci,Hj = min
+j∈HDVs
+ dCi,Hj
+vCi−vHj
+
+(26)
+whered Ci,Hj is the distance between vehicleC i and HDV
+Hj, andv Ci andv Hj are their respective velocities. DRAC
+evaluates the minimum deceleration required to avoid a col-
+lision, which is calculated for each vehicle in the platoon by
+considering surrounding vehicles:
+DRACCi = max
+j∈Vehicles
+ (vCi−vj)2
+2 (dCi,j−L)
+
+(27)
+wherev j represents the velocity of vehiclej, andLis the
+length of the vehicle.
+As shown in Table III, our model consistently outper-
+formed these benchmarks in terms of collision rate and pass
+rate, demonstrating a unique balance between safety and
+operational efficiency. While some baseline models achieved
+slightly higher speeds or tighter headway distances, they
+do so at the expense of safety, as indicated by increased
+collision rates. In contrast, the TriCoD model maintained a
+zero-collision rate and a perfect pass rate of 100%, while
+still being able to maintain a relatively high pass rate and a
+smaller average headway. This balance illustrates our model’s
+capacity to prioritize safety without sacrificing operational
+effectiveness, especially in scenarios involving high-risk fac-
+tors like traffic accidents and flow oscillations. In terms of
+safety, TriCoD outperformed the baseline models across all
+scenarios. It consistently achieved higher minimum TTC and
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 11 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 11
+TABLE III
+PERFORMANCE METRICS COMPARISON OF MULTIPLE METRICS
+BETWEEN THE PROPOSED METHOD AND THREE STATE-OF-THE-ART BENCHMARKS
+Scenario Model Avg. Speed Avg. HWD Min. TTC Max. DRAC Collision Rate Pass Rate
+Human Inference
+SuPLC 22.58 9.68 0.00 6.00 1.00 0.00
+SiPLC 22.58 9.68 0.00 6.00 1.00 0.00
+DRL 20.46 10.00 5.80 0.25 0.00 1.00
+Ours 20.57 9.93 7.15 0.13 0.00 1.00
+Traffic Accident
+SuPLC 21.96 10.18 2.75 0.51 0.52 0.29
+SiPLC 20.81 10.15 4.69 0.23 0.54 0.21
+DRL 21.13 14.10 1.50 0.90 0.19 0.91
+Ours 20.59 11.33 1.58 0.82 0.00 1.00
+Traffic Flow Oscillation
+SuPLC 20.28 10.13 1.47 1.05 0.03 0.96
+SiPLC 19.68 10.15 1.73 0.93 0.03 0.97
+DRL 20.93 10.08 2.60 1.40 0.09 0.91
+Ours 20.93 8.95 3.19 0.44 0.00 1.00
+TABLE IV
+PERFORMANCE UNDER DIFFERENT DIFFICULTY TRANSFER SETTINGS.
+Original
+Level
+Applied
+Level
+Evaluation Reward Collision Rate
+Ours DRL Ours DRL
+Hard
+Simple 54.73 50.24 0.00 0.12
+Medium 53.49 47.55 0.00 0.17
+Hard 54.70 16.87 0.02 0.78
+Medium
+Simple 54.60 46.75 0.00 0.15
+Medium 51.64 50.72 0.00 0.09
+Hard 49.57 4.17 0.05 1.00
+Simple
+Simple 53.56 47.73 0.03 0.18
+Medium 49.83 47.05 0.07 0.27
+Hard 35.48 6.47 0.37 1.00
+lower DRAC, indicating superior collision avoidance and a
+more conservative, safer approach. These results demonstrate
+TriCoD’s ability to maintain stability and safety, even in
+challenging, fluctuating traffic conditions.
+Cross-Validation.To evaluate the adaptability and general-
+ization capabilities of the learned strategies, we test the models
+in task environments beyond their training conditions. Specif-
+ically, we introduce distribution shift by transferring policies
+across unseen traffic regimes with different densities and
+HDV ratios (Simple/Medium/Hard: 10/20/30 veh/km/lane).
+As shown in Table IV, our method preserves stable re-
+turns and consistently low collision rates across all cross-
+level evaluations, demonstrating strong adaptability to changes
+in interaction intensity and background traffic composition.
+In contrast, the DRL baseline exhibits marked performance
+degradation under distribution shift, with substantial reward
+collapse and sharply increased collision frequency as the
+applied traffic regime deviates from the training setting. These
+results support the generalization claim by evidencing that the
+proposed framework maintains both effectiveness and safety
+under unseen traffic distributions.
+Overall, these results indicate that our model consistently
+achieves high safety and operational metrics across varied and
+challenging environments, demonstrating an effective balance
+that baseline models do not maintain.
+(a) HIL experimental platform framework
+(b) HIL experiment platform physical diagram
+Fig. 8. Illustration of the HIL platform architecture for autonomous vehicle
+platooning, which integrates a CARLA simulation environment, RoadRunner
+for road scenes and traffic flow, and domin controllers for decision-making
+and control.
+B. Hardware-in-loop experiment
+1) HIL experimental platform construction:In the HIL
+experiments, an advanced simulation platform is constructed
+by integrating a domain controller with Carla [42], a high-
+fidelity driving simulator, to validate the proposed model
+in a controlled yet realistic environment. The experimental
+highway scenario is created using Roadrunner, with varied
+background traffic flows generated by Highway-env.
+The platform consists of the domain controller, Carla simu-
+lation environment, Roadrunner, Highway-env, and PID con-
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 12 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 12
+Fig. 9. Illustration of the adaptive response to static obstruction in autonomous vehicle platooning, which decipts a scenario where the platoon encounters a
+multi-vehicle collision, necessitating coordinated lane changes to navigate the obstruction safely.
+Fig. 10. Illustration of the adaptive response to dynamic obstruction in autonomous vehicle platooning, which depicts a scenario where the platoon leader’s
+sudden deceleration triggers a staggered lane-change maneuver among following vehicles to prevent collisions and maintain traffic flow.
+TABLE V
+SPECIFICATIONS OF THE DOMAIN CONTROLLER
+Parameter Specification
+CPU Cortex-A78AE – Arm®
+CPU Frequency 2.2 GHz
+Memory 64 GB 256-bit 204.8 GB/s
+GPU Performance 275 TOPS
+Storage 2 TB SSD
+trollers. The domain controller, whose parameters are shown in
+Table V, processes real-time traffic and road information from
+Carla. Carla provides detailed road conditions and vehicle
+dynamics, which are translated into vehicle movements via
+PID controllers based on high-level action commands. Road-
+runner generates complex highway scenarios, while Highway-
+env produces traffic with varied driving styles to test the
+algorithm’s robustness.
+During experiments, the domain controller gathers real-
+time data from Carla, including vehicle positions, veloci-
+ties, and traffic conditions.Based on this data, the proposed
+DRL algorithm makes high-level decisions, such as speed
+adjustments and lane changes. These decisions are sent back
+to Carla, where PID controllers convert them into specific
+throttle and steering commands. Various scenarios, including
+high-risk and normal conditions, are simulated to evaluate
+the algorithm’s performance based on metrics like safety,
+robustness, and efficiency. Figure 8 illustrates the platform’s
+overall architecture, highlighting its key components.
+2) Case analysis:This section examines the performance
+of our model on the HIL simulation platform in real-time
+autonomous platooning scenarios. The results indicate that
+our model can effectively perform perception and decision-
+making, ensuring safe and robust platooning. It is worth noting
+that in the experiments on the HIL platform, the average
+decision-making time of our model is 6ms, which verifies
+that the model is suitable for practical deployment in rapidly
+changing traffic environments.
+Two typical scenarios with significant static and dynamic
+interferences are analyzed to illustrate the model’s strategies.
+Further demonstration videos are available on our website 1.
+In the first scenario, the platoon encounters a multi-vehicle
+collision blocking several lanes. Traditional strategies struggle
+with safe deceleration and coordination, but our model enables
+the lead vehicle to initiate a lane change, followed by others
+when safe. As shown in Figure 9, the lead vehicle moves
+at step 30, with all vehicles clearing the obstruction by step
+220. The LQR controller stabilizes the platoon with reduced
+headway, illustrating flexibility in static obstructions. In the
+second scenario, the lead vehicle suddenly decelerates at 5
+m/s² due to a breakdown. Traditional models risk collision
+due to short distances, but ours initiates a staggered lane
+change (see Figure 10). By step 70, all vehicles are safely
+1Hardware-in-the-Loop Experimental Validation Video Weblink
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 13 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 13
+repositioned, and the platoon reforms in the right lane by step
+455, maintaining safety and flow.
+These scenarios demonstrate the model’s capability to han-
+dle sudden obstacles by dynamically adjusting the platoon’s
+formation and leveraging available lane space to maintain
+safety and efficiency.
+VI. CONCLUSION
+In the evolving field of autonomous driving, ensur-
+ing safe and robust self-organizing decision-making for
+vehicle platooning, especially in mixed traffic, presents
+significant challenges. This paper introduces TriCoD, a
+Twin-World Safety-Enhanced Data-Model-Knowledge Triple-
+Driven Adaptive Autonomous Vehicle Platooning Coopera-
+tive Decision-Making Framework. By integrating reinforce-
+ment learning with model control techniques, TriCoD enables
+adaptive decision-making across diverse, complex scenarios,
+guided by traffic priors and optimal control strategies.
+The proposed model significantly outperforms traditional
+platooning methods, particularly in safety, efficiency, and
+robustness. Extensive SIL and HIL experiments validate the
+effectiveness of the proposed framework in handling struc-
+tured static and dynamic disturbances. Future work will focus
+on developing closed-loop, data-driven adversarial scenario
+generation to systematically evaluate emergent interactive
+conflicts, as well as optimizing the model for scalability
+in larger platoons and integrating additional sensory data
+to enhance situational awareness. These advancements will
+further advance the reliability and applicability of autonomous
+platooning systems in commercial deployments.
+REFERENCES
+[1] Zeyu Zhu and Huijing Zhao. A survey of deep rl and il for autonomous
+driving policy learning.IEEE Transactions on Intelligent Transportation
+Systems, 23(9):14043–14065, 2021.
+[2] Shiyu Fang, Jiaqi Liu, Mingyu Ding, Yiming Cui, Chen Lv, Peng Hang,
+and Jian Sun. Towards interactive and learnable cooperative driving
+automation: a large language model-driven decision-making framework.
+IEEE Transactions on Vehicular Technology, 2025.
+[3] Ajitesh Gautam, Yuping He, and Xianke Lin. An overview of motion-
+planning algorithms for autonomous ground vehicles with various appli-
+cations.SAE International Journal of Vehicle Dynamics, Stability, and
+NVH, 8(10-08-02-0011):179–213, 2024.
+[4] Shuo Feng, Yi Zhang, Shengbo Eben Li, Zhong Cao, Henry X Liu,
+and Li Li. String stability for vehicular platoon control: Definitions and
+analysis methods.Annual Reviews in Control, 47:81–97, 2019.
+[5] M Nandhini and M Mohamed Rabik. A comprehensive overview of the
+alignment between platoon control approaches and clustering strategies.
+Green Energy and Intelligent Transportation, page 100223, 2024.
+[6] Hong Wang, Lei Song, Zichun Wei, Liming Peng, Jun Li, and Ehsan
+Hashemi. Driving safety zone model oriented motion planning frame-
+work for autonomous truck platooning.Accident Analysis & Prevention,
+193:107225, 2023.
+[7] Xinjie Zhang, Shuai Li, Konghui Guo, Xiaoxing Lv, Tao Peng, and
+Yonggang Liu. Efficient cooperative adaptive cruise control including
+platoon kinematics.Automotive Innovation, 7(2):271–282, 2024.
+[8] Jiaqi Liu, Ziran Wang, Peng Hang, and Jian Sun. Delay-aware multi-
+agent reinforcement learning for cooperative adaptive cruise control with
+model-based stability enhancement. In2024 IEEE 27th International
+Conference on Intelligent Transportation Systems (ITSC), pages 784–
+791, 2024.
+[9] Jingyuan Zhou, Longhao Yan, and Kaidi Yang. Enhancing system-level
+safety in mixed-autonomy platoon via safe reinforcement learning.IEEE
+Transactions on Intelligent Vehicles, 2024.
+[10] Qingchao Liu, Chengzhi Gao, Hai Wang, Yingfeng Cai, Long Chen, and
+Chen Lv. Learning from trajectories: How heterogeneous cacc platoons
+affect the traffic flow in highway merging area.IEEE Transactions on
+Vehicular Technology, 2024.
+[11] Farah-Emma Braiteh, Francesca Bassi, and Rida Khatoun. Platooning
+in connected vehicles: A review of current solutions, standardization
+activities, cybersecurity, and research opportunities.IEEE Transactions
+on Intelligent Vehicles, 2024.
+[12] Jia Hu, Nuoheng Zhang, Haoran Wang, Bingzhao Gao, Tenglong Jiang,
+Junnian Zheng, and Feilong Liu. Vehicles swarm intelligence: Coopera-
+tion in both longitudinal and lateral dimensions.IEEE Transactions on
+Intelligent Vehicles, 2024.
+[13] Jin Li, Yang Xu, Xiufang Shi, and Liang Li. Deform: Adaptive formation
+reconfiguration of multi-robot systems in confined environments.IEEE
+Robotics and Automation Letters, 2025.
+[14] Jiangyuan Tian, Ruixuan Wei, and Longting Jiang. Formation con-
+struction and reconfiguration control of uav swarms: a perspective from
+distributed assignment and optimization.Nonlinear Dynamics, pages
+1–21, 2024.
+[15] Chengkai Xu, Yiming Cui, Jiaqi Liu, Cheng Qin, Geyuan Zhang, Xinwei
+Dong, Shiyu Fang, Yicheng Guo, Peng Hang, and Jian Sun. A survey on
+end-to-end autonomous driving training from the perspectives of data,
+strategy, and platform.Authorea Preprints, 2025.
+[16] Anye Zhou, Srinivas Peeta, and Jian Wang. Cooperative control of
+a platoon of connected autonomous vehicles and unconnected human-
+driven vehicles.Computer-Aided Civil and Infrastructure Engineering,
+38(18):2513–2536, 2023.
+[17] Henglai Wei, Hui Zhang, AI-Haddad Kamal, and Yang Shi. Ensuring
+secure platooning of constrained intelligent and connected vehicles
+against byzantine attacks: A distributed mpc framework.Engineering,
+33:35–46, 2024.
+[18] Shengyue Yao, Yang Zhou, Bernhard Friedrich, and Soyoung Ahn.
+Planning trajectories for connected and automated vehicle platoon on
+curved roads: A two-dimensional cooperative approach.Transportation
+Research Part C: Emerging Technologies, 165:104718, 2024.
+[19] Hanyu Zhang and Lili Du. Platoon-centered control for eco-driving at
+signalized intersection built upon hybrid mpc system, online learning
+and distributed optimization part i: Modeling and solution algorithm
+design.Transportation Research Part B: Methodological, 172:174–198,
+2023.
+[20] Yitao Ma, Qiang Liu, Jie Fu, Kangmin Liufu, and Qing Li. Collision-
+avoidance lane change control method for enhancing safety for con-
+nected vehicle platoon in mixed traffic environment.Accident Analysis
+& Prevention, 184:106999, 2023.
+[21] Chengkai Xu, Jiaqi Liu, Shiyu Fang, Yiming Cui, Dong Chen, Peng
+Hang, and Jian Sun. Tell-drive: Enhancing autonomous driving
+with teacher llm-guided deep reinforcement learning.arXiv preprint
+arXiv:2502.01387, 2025.
+[22] Xia Jiang, Jian Zhang, Xiaoyu Shi, and Jian Cheng. Learning the
+policy for mixed electric platoon control of automated and human-driven
+vehicles at signalized intersection: A random search approach.IEEE
+Transactions on Intelligent Transportation Systems, 24(5):5131–5143,
+2023.
+[23] Zifeng Peng, Jun Yan, Huilin Yin, Yurong Wen, Wanchen Ge, Tobias
+Watzel, and Gerhard Rigoll. Efficient interaction-aware trajectory
+prediction model based on multi-head attention.Automotive Innovation,
+7(2):258–270, 2024.
+[24] Fengkun Gao, Bo Yang, Chao Ning, and Xinping Guan. Virtual
+leader-follower based platooning under mixed traffic: A data-driven
+distributionally robust mpc method.IEEE Transactions on Vehicular
+Technology, 2025.
+[25] Chenyang Gao, Jianfeng Ma, Teng Li, and Yulong Shen. Hybrid swarm
+intelligent algorithm for multi-uav formation reconfiguration.Complex
+& Intelligent Systems, 9(2):1929–1962, 2023.
+[26] Seongchang Park and Seung-Mok Lee. Formation reconfiguration
+control with collision avoidance of nonholonomic mobile robots.IEEE
+Robotics and Automation Letters, 8(12):7905–7912, 2023.
+[27] Matthijs TJ Spaan. Partially observable markov decision processes.
+InReinforcement learning: State-of-the-art, pages 387–414. Springer,
+2012.
+[28] Jiaqi Liu, Donghao Zhou, Peng Hang, Ying Ni, and Jian Sun. Towards
+socially responsive autonomous vehicles: A reinforcement learning
+framework with driving priors and coordination awareness.IEEE
+Transactions on Intelligent Vehicles, 2023.
+[29] Behrad Toghi, Rodolfo Valiente, Dorsa Sadigh, Ramtin Pedarsani, and
+Yaser P Fallah. Social coordination and altruism in autonomous driving.
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
+--- PAGE 14 ---
+IEEE TRANSACTIONS ON VEHICULAR TECHNOLOGY 14
+IEEE Transactions on Intelligent Transportation Systems, 23(12):24791–
+24804, 2022.
+[30] John Schulman. Trust region policy optimization.arXiv preprint
+arXiv:1502.05477, 2015.
+[31] Martin Treiber, Ansgar Hennecke, and Dirk Helbing. Congested traffic
+states in empirical observations and microscopic simulations.Physical
+review E, 62(2):1805, 2000.
+[32] Arne Kesting, Martin Treiber, and Dirk Helbing. General lane-changing
+model mobil for car-following models.Transportation Research Record,
+1999(1):86–94, 2007.
+[33] Ge Guo, Ping Li, and Li-Ying Hao. A new quadratic spacing policy
+and adaptive fault-tolerant platooning with actuator saturation.IEEE
+Transactions on Intelligent Transportation Systems, 23(2):1200–1212,
+2022.
+[34] Edouard Leurent. An environment for autonomous driving decision-
+making. https://github.com/eleurent/highway-env, 2018.
+[35] V olodymyr Mnih, Koray Kavukcuoglu, David Silver, Alex Graves,
+Ioannis Antonoglou, Daan Wierstra, and Martin Riedmiller. Playing
+atari with deep reinforcement learning.arXiv preprint arXiv:1312.5602,
+2013.
+[36] V olodymyr Mnih, Adria Puigdomenech Badia, Mehdi Mirza, Alex
+Graves, Timothy Lillicrap, Tim Harley, David Silver, and Koray
+Kavukcuoglu. Asynchronous methods for deep reinforcement learning.
+InInternational conference on machine learning, pages 1928–1937.
+PMLR, 2016.
+[37] John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and
+Oleg Klimov. Proximal policy optimization algorithms.arXiv preprint
+arXiv:1707.06347, 2017.
+[38] Marco Pleines, Matthias Pallasch, Frank Zimmer, and Mike Preuss.
+Generalization, mayhems and limits in recurrent proximal policy op-
+timization.arXiv preprint arXiv:2205.11104, 2022.
+[39] Galina Sidorenko, Johan Thunberg, Katrin Sj ¨oberg, Aleksei Fedorov,
+and Alexey Vinel. Safety of automatic emergency braking in platooning.
+IEEE Transactions on Vehicular Technology, 71(3):2319–2332, 2021.
+[40] Haoran Wang, Xin Li, Xianhong Zhang, Jia Hu, Xuerun Yan, and
+Yongwei Feng. Cut through traffic like a snake: Cooperative adaptive
+cruise control with successive platoon lane-change capability.Journal
+of Intelligent Transportation Systems, 28(2):141–162, 2022.
+[41] Qingquan Liu, Xi Lin, Meng Li, Li Li, and Fang He. Coordinated
+lane-changing scheduling of multilane cav platoons in heterogeneous
+scenarios.Transportation Research Part C: Emerging Technologies,
+147:103992, 2023.
+[42] Alexey Dosovitskiy, German Ros, Felipe Codevilla, Antonio Lopez,
+and Vladlen Koltun. CARLA: An open urban driving simulator. In
+Proceedings of the 1st Annual Conference on Robot Learning, pages
+1–16, 2017.
+Chengkai Xu(Member, IEEE) received the B.S.
+degree in Transportation Engineering from Tongji
+University, where he is currently pursuing the M.S.
+degree. His research interests include end-to-end au-
+tonomous driving, generative artificial intelligence,
+reinforcement learning, and embodied intelligence.
+Zihao Dengreceived the B.S. degree in Microelec-
+tronics Science and Engineering from Tongji Uni-
+versity, China, in 2025. He is currently pursuing the
+M.S. degree in Pattern Recognition and Intelligent
+Systems with the State Key Laboratory of Multi-
+modal Artificial Intelligence Systems, Institute of
+Automation, Chinese Academy of Sciences, China.
+His research interests include multimodal learning,
+auto-formalization, and autonomous driving.
+Jiaqi Liu(Graduate Student Member, IEEE) is a
+PhD student in the Department of Computer Sci-
+ence at UNC-Chapel Hill. He received the B.S. and
+M.S. degree from Tongji University. His research
+interests include Embodied AI, multimodal LLMs,
+autonomous driving and reinforcement learning. He
+was a Visiting Researcher with the Department of
+Mechanical Engineering, University of California,
+Berkeley.
+Aijing Kongreceived the B.S. degree in Automotive
+Engineering from Harbin Institute of Technology
+(Weihai) in 2020. She is currently pursuing the Ph.D.
+degree at Tongji University. Her research interests
+include decision-making and control for autonomous
+driving, cooperative platoon control for autonomous
+vehicles, and multi-agent systems.
+Yu Tangis a Director of the Intelligent Cockpit
+Evaluation Department at China Automotive En-
+gineering Research Institute Co., Ltd., specializing
+in ICV testing and evaluation technologies with a
+focus on multi-pillar testing of intelligent driving
+in complex environments, typical scenario construc-
+tion, and anthropomorphic evaluation. He received
+the B.S. degree from Beijing Institute of Technology
+in 2014 and M.S. degree at the Karlsruhe Institute
+of Technology. He has won the first prize of China-
+SAE Science and Technology Award, the first prize
+of ITS-China Science and Technology Award, the first prize of the BRICS
+Industrial Innovation Contest, the Gold Medal at the International Exhibition
+of Inventions Geneva.
+Chao Huang(Senior Member, IEEE) received the
+Ph.D. degree from the University of Wollongong,
+Wollongong, NSW, Australia, in 2018. She is cur-
+rently a Research Assistant Professor with the De-
+partment of Industrial and Systems Engineering, The
+Hong Kong Polytechnic University, Hong Kong. Her
+research interests are humanmachine collaboration,
+mobile robots, and path planning. Dr. Huang serves
+as an Associate Editor for IEEE TRANSACTIONS
+ON TRANSPORTATION ELECTRIFICATION, En-
+gineering Applications of Artificial Intelligence, and
+Control Engineering Practice.
+Peng Hang(Senior Member, IEEE) is a Research
+Professor at the Department of Traffic Engineering,
+Tongji University, Shanghai, China. He received the
+Ph.D. degree with the School of Automotive Studies,
+Tongji University, Shanghai, China, in 2019. He
+was a Visiting Researcher with the Department of
+Electrical and Computer Engineering, National Uni-
+versity of Singapore, Singapore, in 2018. From 2020
+to 2022, he served as a Research Fellow with the
+School of Mechanical and Aerospace Engineering,
+Nanyang Technological University, Singapore. His
+research interests include vehicle dynamics and control, decision making,
+motion planning and motion control for autonomous vehicles. He serves as an
+Associate Editor of IEEE Transactions on Vehicular Technology, Journal of
+Field Robotics, IET Smart Cities, and SAE International Journal of Vehicle
+Dynamics, Stability, and NVH.
+This article has been accepted for publication in IEEE Transactions on Vehicular Technology. This is the author's version which has not been fully edited and 
+content may change prior to final publication. Citation information: DOI 10.1109/TVT.2026.3681206
+© 2026 IEEE. All rights reserved, including rights for text and data mining and training of artificial intelligence and similar technologies. Personal use is permitted,
+but republication/redistribution requires IEEE permission. See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Mepco Schlenk Engineering College. Downloaded on July 04,2026 at 06:59:38 UTC from IEEE Xplore.  Restrictions apply. 
