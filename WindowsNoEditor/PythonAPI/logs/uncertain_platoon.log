@@ -1,130 +1,426 @@
-2026-09-09 00:38:00,049 [INFO] Live log file: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\logs\uncertain_platoon.log
-2026-09-09 00:38:00,049 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
-2026-09-09 00:38:01,056 [INFO]   ...still waiting (0s)
-2026-09-09 00:38:04,073 [INFO] Launching CARLA: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\CarlaUE4.exe /Game/Carla/Maps/Town05 -carla-rpc-port=2000 -windowed -ResX=1280 -ResY=720 -quality-level=Low
-2026-09-09 00:38:04,081 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
-2026-09-09 00:38:05,093 [INFO]   ...still waiting (0s)
-2026-09-09 00:38:08,116 [INFO] CARLA server is ready.
-2026-09-09 00:38:08,379 [INFO] Loading Town05 ...
-2026-09-09 00:38:13,829 [INFO] World timing: synchronous client ticks
-2026-09-09 00:38:13,927 [INFO] [PLATOON] Creating platoon...
-2026-09-09 00:38:14,031 [INFO] Platoon leader #199 spawned: Tesla Model3 | waypoint autopilot controller ON
-2026-09-09 00:38:14,034 [INFO] Platoon follower 1 #200 spawned: Mustang Mustang | trajectory follower ON | target clearance 7.5m
-2026-09-09 00:38:14,035 [INFO] Platoon follower 2 #201 spawned: Nissan Micra | trajectory follower ON | target clearance 7.5m
-2026-09-09 00:38:14,035 [INFO] Spawned autopilot platoon: [199, 200, 201]
-2026-09-09 00:38:14,138 [INFO] [PLATOON] Platoon ready.
-2026-09-09 00:38:14,138 [INFO] [WORLD] Initializing uncertain world traffic...
-2026-09-09 00:38:14,138 [INFO] Spawning 50 NPC vehicles via batch command API...
-2026-09-09 00:38:16,182 [INFO] Successfully spawned 50 NPC vehicles (requested 50).
-2026-09-09 00:38:16,182 [INFO] Spawning 20 pedestrians with navigation AI...
-2026-09-09 00:38:16,211 [INFO] Successfully spawned 20 pedestrians with 20 controllers.
-2026-09-09 00:38:16,212 [INFO] [WORLD] Ready.
-2026-09-09 00:38:16,212 [INFO] [GHOST] Initializing Ghost-driver system...
-2026-09-09 00:38:16,212 [INFO] HumanBehaviorManager initialized (seed=42)
-2026-09-09 00:38:16,212 [INFO] EventManager initialized (seed=42)
-2026-09-09 00:38:16,212 [INFO] ScenarioManager initialized (seed=42)
-2026-09-09 00:38:16,212 [INFO] UncertaintyManager initialized (seed=42)
-2026-09-09 00:38:16,212 [INFO] Module 'traffic_jam' disabled
-2026-09-09 00:38:16,212 [INFO] Module 'accident' disabled
-2026-09-09 00:38:16,212 [INFO] Module 'events' disabled
-2026-09-09 00:38:16,213 [INFO] Weather set to: CLEAR
-2026-09-09 00:38:16,213 [INFO] UncertaintyManager setup complete with 50 NPCs
-2026-09-09 00:38:16,213 [INFO] Vehicle 202 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
-2026-09-09 00:38:16,213 [INFO] Vehicle 203 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,213 [INFO] Vehicle 204 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,214 [INFO] Vehicle 205 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,214 [INFO] Vehicle 206 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
-2026-09-09 00:38:16,214 [INFO] Vehicle 207 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
-2026-09-09 00:38:16,214 [INFO] Vehicle 208 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,214 [INFO] Vehicle 209 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,214 [INFO] Vehicle 210 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,214 [INFO] Vehicle 211 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,214 [INFO] Vehicle 212 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,215 [INFO] Vehicle 213 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,215 [INFO] Vehicle 214 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,215 [INFO] Vehicle 215 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
-2026-09-09 00:38:16,215 [INFO] Vehicle 216 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,215 [INFO] Vehicle 217 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,215 [INFO] Vehicle 218 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,215 [INFO] Vehicle 219 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,216 [INFO] Vehicle 220 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,216 [INFO] Vehicle 221 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,216 [INFO] Vehicle 222 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,216 [INFO] Vehicle 223 assigned profile ERRATIC (speed_diff=-10.0%, dist=2.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,216 [INFO] Vehicle 224 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,216 [INFO] Vehicle 225 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,216 [INFO] Vehicle 226 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 227 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 228 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 229 assigned profile ERRATIC (speed_diff=-10.0%, dist=2.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 230 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 231 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 232 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 233 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 234 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 235 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 236 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 237 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 238 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 239 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,217 [INFO] Vehicle 240 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,218 [INFO] Vehicle 241 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
-2026-09-09 00:38:16,218 [INFO] Vehicle 242 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,218 [INFO] Vehicle 243 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,218 [INFO] Vehicle 244 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,218 [INFO] Vehicle 245 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,218 [INFO] Vehicle 246 assigned profile ERRATIC (speed_diff=-10.0%, dist=2.5m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,218 [INFO] Vehicle 247 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
-2026-09-09 00:38:16,219 [INFO] Vehicle 248 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,219 [INFO] Vehicle 249 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
-2026-09-09 00:38:16,219 [INFO] Vehicle 250 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,219 [INFO] Vehicle 251 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
-2026-09-09 00:38:16,219 [INFO] Assigned random profiles to 50 vehicles (seed=42)
-2026-09-09 00:38:16,219 [INFO] GhostDriver ready: radius=50.0m, possession=5.0-10.0s, cooldown=18.0-32.0s, platoon=3
-2026-09-09 00:38:16,220 [INFO] [GHOST] Ghost-driver system initialized.
-2026-09-09 00:38:16,372 [INFO] [SIMULATION] Starting unified simulation loop...
-2026-09-09 00:38:18,422 [INFO] 
-[TICK 244]
-2026-09-09 00:38:18,422 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:18,422 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:18,422 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:19,146 [INFO] Triggered sudden brake on vehicle 229
-2026-09-09 00:38:20,436 [INFO] 
-[TICK 304]
-2026-09-09 00:38:20,436 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:20,436 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:20,436 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:22,443 [INFO] 
-[TICK 364]
-2026-09-09 00:38:22,444 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:22,444 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:22,444 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:22,495 [INFO] Triggered sudden acceleration on vehicle 246
-2026-09-09 00:38:24,458 [INFO] 
-[TICK 424]
-2026-09-09 00:38:24,459 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:24,459 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:24,459 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:25,345 [INFO] Triggered lane change on vehicle 246 (direction=right)
-2026-09-09 00:38:26,472 [INFO] 
-[TICK 484]
-2026-09-09 00:38:26,472 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:26,472 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:26,472 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:26,756 [INFO] Triggered sudden brake on vehicle 223
-2026-09-09 00:38:27,562 [INFO] Triggered lane change on vehicle 229 (direction=right)
-2026-09-09 00:38:28,486 [INFO] 
-[TICK 544]
-2026-09-09 00:38:28,486 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:28,486 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:28,486 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:30,492 [INFO] 
-[TICK 604]
-2026-09-09 00:38:30,492 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:30,493 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:30,493 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
-2026-09-09 00:38:30,960 [INFO] Cleaning up...
-2026-09-09 00:38:30,960 [INFO] Cleaned up all accident actors and cleared active events.
-2026-09-09 00:38:30,960 [INFO] EventManager reset
-2026-09-09 00:38:30,961 [INFO] UncertaintyManager cleanup complete
-2026-09-09 00:38:31,014 [INFO] Done.
+2026-09-09 01:03:21,254 [INFO] Live log file: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\logs\uncertain_platoon.log
+2026-09-09 01:03:21,254 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-09-09 01:03:22,258 [INFO]   ...still waiting (0s)
+2026-09-09 01:03:25,295 [INFO] Launching CARLA: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\CarlaUE4.exe /Game/Carla/Maps/Town05 -carla-rpc-port=2000 -windowed -ResX=1280 -ResY=720 -quality-level=Low
+2026-09-09 01:03:25,301 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-09-09 01:03:26,313 [INFO]   ...still waiting (0s)
+2026-09-09 01:03:29,862 [INFO] CARLA server is ready.
+2026-09-09 01:03:30,413 [INFO] Loading Town05 ...
+2026-09-09 01:03:37,363 [INFO] World timing: synchronous client ticks
+2026-09-09 01:03:37,528 [INFO] [PLATOON] Creating platoon...
+2026-09-09 01:03:37,697 [INFO] Platoon leader #199 spawned: Tesla Model3 | waypoint autopilot controller ON
+2026-09-09 01:03:37,701 [INFO] Platoon follower 1 #200 spawned: Tesla Model3 | trajectory follower ON | target clearance 7.5m
+2026-09-09 01:03:37,703 [INFO] Platoon follower 2 #201 spawned: Mercedes-Benz Coupe | trajectory follower ON | target clearance 7.5m
+2026-09-09 01:03:37,704 [INFO] Spawned autopilot platoon: [199, 200, 201]
+2026-09-09 01:03:37,882 [INFO] [PLATOON] Platoon ready.
+2026-09-09 01:03:37,883 [INFO] [WORLD] Initializing uncertain world traffic...
+2026-09-09 01:03:37,884 [INFO] Spawning 32 NPC vehicles via batch command API...
+2026-09-09 01:03:39,928 [INFO] Successfully spawned 32 NPC vehicles (requested 32).
+2026-09-09 01:03:39,928 [INFO] Spawning 20 pedestrians with navigation AI...
+2026-09-09 01:03:39,970 [INFO] Successfully spawned 20 pedestrians with 20 controllers.
+2026-09-09 01:03:39,971 [INFO] [WORLD] Ready.
+2026-09-09 01:03:39,971 [INFO] [GHOST] Initializing Ghost-driver system...
+2026-09-09 01:03:39,972 [INFO] HumanBehaviorManager initialized (seed=42)
+2026-09-09 01:03:39,973 [INFO] EventManager initialized (seed=42)
+2026-09-09 01:03:39,974 [INFO] ScenarioManager initialized (seed=42)
+2026-09-09 01:03:39,974 [INFO] UncertaintyManager initialized (seed=42)
+2026-09-09 01:03:39,974 [INFO] Module 'traffic_jam' disabled
+2026-09-09 01:03:39,974 [INFO] Module 'accident' disabled
+2026-09-09 01:03:39,974 [INFO] Module 'events' disabled
+2026-09-09 01:03:39,976 [INFO] Weather set to: CLEAR
+2026-09-09 01:03:39,976 [INFO] UncertaintyManager setup complete with 32 NPCs
+2026-09-09 01:03:39,976 [INFO] Vehicle 202 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
+2026-09-09 01:03:39,976 [INFO] Vehicle 203 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,976 [INFO] Vehicle 204 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,977 [INFO] Vehicle 205 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,977 [INFO] Vehicle 206 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
+2026-09-09 01:03:39,977 [INFO] Vehicle 207 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
+2026-09-09 01:03:39,977 [INFO] Vehicle 208 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,977 [INFO] Vehicle 209 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,977 [INFO] Vehicle 210 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,978 [INFO] Vehicle 211 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,978 [INFO] Vehicle 212 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,978 [INFO] Vehicle 213 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,978 [INFO] Vehicle 214 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,978 [INFO] Vehicle 215 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
+2026-09-09 01:03:39,979 [INFO] Vehicle 216 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,979 [INFO] Vehicle 217 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,979 [INFO] Vehicle 218 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,979 [INFO] Vehicle 219 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,980 [INFO] Vehicle 220 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,980 [INFO] Vehicle 221 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,980 [INFO] Vehicle 222 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,981 [INFO] Vehicle 223 assigned profile ERRATIC (speed_diff=-10.0%, dist=2.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,981 [INFO] Vehicle 224 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,981 [INFO] Vehicle 225 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,982 [INFO] Vehicle 226 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,982 [INFO] Vehicle 227 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,982 [INFO] Vehicle 228 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,982 [INFO] Vehicle 229 assigned profile ERRATIC (speed_diff=-10.0%, dist=2.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,982 [INFO] Vehicle 230 assigned profile AGGRESSIVE (speed_diff=-15.0%, dist=2.0m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,983 [INFO] Vehicle 231 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,983 [INFO] Vehicle 232 assigned profile DISTRACTED (speed_diff=5.0%, dist=3.5m, auto_lc=True, ignore_lights=0.0%)
+2026-09-09 01:03:39,983 [INFO] Vehicle 233 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
+2026-09-09 01:03:39,983 [INFO] Assigned random profiles to 32 vehicles (seed=42)
+2026-09-09 01:03:39,983 [INFO] GhostDriver ready: radius=50.0m, possession=5.0-10.0s, cooldown=18.0-32.0s, platoon=3
+2026-09-09 01:03:39,984 [INFO] [GHOST] Ghost-driver system initialized.
+2026-09-09 01:03:40,176 [INFO] [SIMULATION] Starting unified simulation loop...
+2026-09-09 01:03:42,204 [INFO] 
+[TICK 254]
+2026-09-09 01:03:42,204 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:42,204 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:42,204 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:42,854 [INFO] Triggered sudden brake on vehicle 223
+2026-09-09 01:03:44,228 [INFO] 
+[TICK 314]
+2026-09-09 01:03:44,228 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:44,228 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:44,229 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:46,243 [INFO] 
+[TICK 374]
+2026-09-09 01:03:46,243 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:46,244 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:46,244 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:48,263 [INFO] 
+[TICK 434]
+2026-09-09 01:03:48,263 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:48,263 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:48,265 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:49,049 [INFO] Triggered lane change on vehicle 223 (direction=right)
+2026-09-09 01:03:50,281 [INFO] 
+[TICK 494]
+2026-09-09 01:03:50,282 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:50,282 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:50,282 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:51,267 [INFO] Triggered lane change on vehicle 223 (direction=left)
+2026-09-09 01:03:52,286 [INFO] 
+[TICK 553]
+2026-09-09 01:03:52,287 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:52,287 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:52,288 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:54,301 [INFO] 
+[TICK 613]
+2026-09-09 01:03:54,302 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:54,302 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:54,302 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:56,320 [INFO] 
+[TICK 673]
+2026-09-09 01:03:56,321 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:56,321 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:56,321 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:58,348 [INFO] 
+[TICK 733]
+2026-09-09 01:03:58,350 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:58,350 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:03:58,350 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:00,363 [INFO] 
+[TICK 793]
+2026-09-09 01:04:00,364 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:00,364 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:00,364 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:02,391 [INFO] 
+[TICK 853]
+2026-09-09 01:04:02,391 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:02,391 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:02,392 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:04,414 [INFO] 
+[TICK 913]
+2026-09-09 01:04:04,415 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:04,415 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:04,415 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:06,416 [INFO] 
+[TICK 972]
+2026-09-09 01:04:06,417 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:06,417 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:06,417 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:07,923 [INFO] [GHOST] Possessing vehicle #217 for 15.7s: Junction Rule Disobedience (dist 5.4m)
+2026-09-09 01:04:07,923 [INFO] [ALERT TRIGGERED @ t=27.0s] 👻 GHOST DRIVER: JUNCTION RULE DISOBEDIENCE - Vehicle #217 possessed in 50m bubble! Dist: 5.4m
+2026-09-09 01:04:07,924 [INFO] [GHOST] Vehicle 217 -> POSSESSED
+2026-09-09 01:04:08,437 [INFO] 
+[TICK 1009]
+2026-09-09 01:04:08,438 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:08,438 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:08,438 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:08,438 [INFO] Vehicle 217 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:10,456 [INFO] 
+[TICK 1069]
+2026-09-09 01:04:10,457 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:10,457 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:10,457 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:10,457 [INFO] Vehicle 217 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:12,468 [INFO] 
+[TICK 1129]
+2026-09-09 01:04:12,468 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:12,468 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:12,470 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:12,470 [INFO] Vehicle 217 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:14,486 [INFO] 
+[TICK 1189]
+2026-09-09 01:04:14,486 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:14,487 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:14,487 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:14,487 [INFO] Vehicle 217 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:16,528 [INFO] 
+[TICK 1250]
+2026-09-09 01:04:16,528 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:16,528 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:16,529 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:16,529 [INFO] Vehicle 217 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:18,360 [INFO] Triggered sudden acceleration on vehicle 229
+2026-09-09 01:04:18,543 [INFO] 
+[TICK 1310]
+2026-09-09 01:04:18,545 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:18,545 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:18,545 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:18,545 [INFO] Vehicle 217 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:20,573 [INFO] 
+[TICK 1370]
+2026-09-09 01:04:20,573 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:20,573 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:20,573 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:20,573 [INFO] Vehicle 217 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:21,531 [INFO] [GHOST] Vehicle #217 left 50.0m bubble at 50.2m; released early.
+2026-09-09 01:04:21,531 [INFO] [GHOST] Exorcised vehicle #217. Traffic Manager restored.
+2026-09-09 01:04:21,531 [INFO] [GHOST] Lurking for 6.5s. Next possession at t=47.9s.
+2026-09-09 01:04:21,532 [INFO] [GHOST] Vehicle Released -> RELEASED
+2026-09-09 01:04:22,574 [INFO] 
+[TICK 1429]
+2026-09-09 01:04:22,576 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:22,576 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:22,576 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:24,589 [INFO] 
+[TICK 1488]
+2026-09-09 01:04:24,590 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:24,590 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:24,590 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:26,584 [INFO] 
+[TICK 1547]
+2026-09-09 01:04:26,585 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:26,585 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:26,585 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:28,079 [INFO] [GHOST] Possessing vehicle #218 for 15.2s: Platoon Lane Obstacle (dist 27.9m)
+2026-09-09 01:04:28,079 [INFO] [ALERT TRIGGERED @ t=47.9s] 👻 GHOST DRIVER: PLATOON LANE OBSTACLE - Vehicle #218 possessed in 50m bubble! Dist: 27.9m
+2026-09-09 01:04:28,079 [INFO] [GHOST] Vehicle 218 -> POSSESSED
+2026-09-09 01:04:28,146 [INFO] Triggered sudden brake on vehicle 223
+2026-09-09 01:04:28,610 [INFO] 
+[TICK 1607]
+2026-09-09 01:04:28,611 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:28,611 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:28,611 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:28,611 [INFO] Vehicle 218 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:30,646 [INFO] 
+[TICK 1667]
+2026-09-09 01:04:30,646 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:30,646 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:30,647 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:30,647 [INFO] Vehicle 218 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:32,646 [INFO] 
+[TICK 1726]
+2026-09-09 01:04:32,646 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:32,647 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:32,647 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:32,647 [INFO] Vehicle 218 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:34,676 [INFO] 
+[TICK 1785]
+2026-09-09 01:04:34,676 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:34,676 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:34,676 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:34,676 [INFO] Vehicle 218 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:36,237 [INFO] Triggered sudden brake on vehicle 223
+2026-09-09 01:04:36,693 [INFO] 
+[TICK 1845]
+2026-09-09 01:04:36,693 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:36,694 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:36,694 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:36,694 [INFO] Vehicle 218 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:38,710 [INFO] 
+[TICK 1905]
+2026-09-09 01:04:38,710 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:38,711 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:38,711 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:38,711 [INFO] Vehicle 218 | Platoon: NO | Ghost: YES
+2026-09-09 01:04:39,764 [INFO] Triggered lane change on vehicle 223 (direction=right)
+2026-09-09 01:04:40,671 [INFO] [GHOST] Vehicle #218 left 50.0m bubble at 50.0m; released early.
+2026-09-09 01:04:40,671 [INFO] [GHOST] Exorcised vehicle #218. Traffic Manager restored.
+2026-09-09 01:04:40,671 [INFO] [GHOST] Lurking for 6.4s. Next possession at t=66.9s.
+2026-09-09 01:04:40,672 [INFO] [GHOST] Vehicle Released -> RELEASED
+2026-09-09 01:04:40,719 [INFO] 
+[TICK 1965]
+2026-09-09 01:04:40,719 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:40,724 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:40,725 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:42,048 [INFO] Triggered lane change on vehicle 229 (direction=left)
+2026-09-09 01:04:42,759 [INFO] 
+[TICK 2025]
+2026-09-09 01:04:42,760 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:42,760 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:42,760 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:44,767 [INFO] 
+[TICK 2085]
+2026-09-09 01:04:44,768 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:44,768 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:44,768 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:46,776 [INFO] 
+[TICK 2145]
+2026-09-09 01:04:46,776 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:46,777 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:46,777 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:48,780 [INFO] 
+[TICK 2200]
+2026-09-09 01:04:48,781 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:48,782 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:48,782 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:50,795 [INFO] 
+[TICK 2260]
+2026-09-09 01:04:50,795 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:50,795 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:50,795 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:52,814 [INFO] 
+[TICK 2320]
+2026-09-09 01:04:52,815 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:52,815 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:52,815 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:54,840 [INFO] 
+[TICK 2375]
+2026-09-09 01:04:54,841 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:54,841 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:54,841 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:56,866 [INFO] 
+[TICK 2435]
+2026-09-09 01:04:56,867 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:56,867 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:56,867 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:57,657 [INFO] Triggered lane change on vehicle 223 (direction=right)
+2026-09-09 01:04:58,886 [INFO] 
+[TICK 2495]
+2026-09-09 01:04:58,889 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:58,889 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:58,889 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:04:59,698 [INFO] [GHOST] Possessing vehicle #228 for 16.7s: Junction Rule Disobedience (dist 34.1m)
+2026-09-09 01:04:59,698 [INFO] [ALERT TRIGGERED @ t=78.8s] 👻 GHOST DRIVER: JUNCTION RULE DISOBEDIENCE - Vehicle #228 possessed in 50m bubble! Dist: 34.1m
+2026-09-09 01:04:59,698 [INFO] [GHOST] Vehicle 228 -> POSSESSED
+2026-09-09 01:05:00,135 [INFO] Triggered sudden acceleration on vehicle 223
+2026-09-09 01:05:00,896 [INFO] 
+[TICK 2535]
+2026-09-09 01:05:00,897 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:00,900 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:00,900 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:00,900 [INFO] Vehicle 228 | Platoon: NO | Ghost: YES
+2026-09-09 01:05:02,927 [INFO] 
+[TICK 2595]
+2026-09-09 01:05:02,928 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:02,928 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:02,928 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:02,928 [INFO] Vehicle 228 | Platoon: NO | Ghost: YES
+2026-09-09 01:05:04,955 [INFO] 
+[TICK 2655]
+2026-09-09 01:05:04,956 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:04,956 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:04,956 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:04,956 [INFO] Vehicle 228 | Platoon: NO | Ghost: YES
+2026-09-09 01:05:06,978 [INFO] 
+[TICK 2715]
+2026-09-09 01:05:06,978 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:06,979 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:06,979 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:06,979 [INFO] Vehicle 228 | Platoon: NO | Ghost: YES
+2026-09-09 01:05:07,729 [INFO] [GHOST] Vehicle #228 left 50.0m bubble at 50.2m; released early.
+2026-09-09 01:05:07,729 [INFO] [GHOST] Exorcised vehicle #228. Traffic Manager restored.
+2026-09-09 01:05:07,730 [INFO] [GHOST] Lurking for 7.3s. Next possession at t=94.9s.
+2026-09-09 01:05:07,730 [INFO] [GHOST] Vehicle Released -> RELEASED
+2026-09-09 01:05:08,978 [INFO] 
+[TICK 2775]
+2026-09-09 01:05:08,978 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:08,979 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:08,979 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:09,066 [INFO] Triggered sudden brake on vehicle 229
+2026-09-09 01:05:10,080 [INFO] Triggered sudden acceleration on vehicle 223
+2026-09-09 01:05:10,983 [INFO] 
+[TICK 2834]
+2026-09-09 01:05:10,983 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:10,984 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:10,984 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:11,433 [INFO] Triggered sudden brake on vehicle 229
+2026-09-09 01:05:13,001 [INFO] 
+[TICK 2892]
+2026-09-09 01:05:13,002 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:13,003 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:13,004 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:15,030 [INFO] 
+[TICK 2952]
+2026-09-09 01:05:15,030 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:15,030 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:15,030 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:15,582 [INFO] [GHOST] Possessing vehicle #218 for 15.5s: Junction Rule Disobedience (dist 48.3m)
+2026-09-09 01:05:15,582 [INFO] [ALERT TRIGGERED @ t=94.9s] 👻 GHOST DRIVER: JUNCTION RULE DISOBEDIENCE - Vehicle #218 possessed in 50m bubble! Dist: 48.3m
+2026-09-09 01:05:15,582 [INFO] [GHOST] Vehicle 218 -> POSSESSED
+2026-09-09 01:05:17,038 [INFO] 
+[TICK 2997]
+2026-09-09 01:05:17,039 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:17,039 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:17,039 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:17,039 [INFO] Vehicle 218 | Platoon: NO | Ghost: YES
+2026-09-09 01:05:18,296 [INFO] [GHOST] Vehicle #218 left 50.0m bubble at 50.1m; released early.
+2026-09-09 01:05:18,296 [INFO] [GHOST] Exorcised vehicle #218. Traffic Manager restored.
+2026-09-09 01:05:18,297 [INFO] [GHOST] Lurking for 17.7s. Next possession at t=115.8s.
+2026-09-09 01:05:18,297 [INFO] [GHOST] Vehicle Released -> RELEASED
+2026-09-09 01:05:19,048 [INFO] 
+[TICK 3057]
+2026-09-09 01:05:19,049 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:19,049 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:19,049 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:21,050 [INFO] 
+[TICK 3116]
+2026-09-09 01:05:21,050 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:21,050 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:21,051 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:22,522 [INFO] Triggered lane change on vehicle 229 (direction=right)
+2026-09-09 01:05:22,690 [INFO] Triggered lane change on vehicle 223 (direction=left)
+2026-09-09 01:05:23,050 [INFO] 
+[TICK 3175]
+2026-09-09 01:05:23,050 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:23,051 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:23,051 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:25,051 [INFO] 
+[TICK 3233]
+2026-09-09 01:05:25,051 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:25,052 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:25,052 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:27,076 [INFO] 
+[TICK 3293]
+2026-09-09 01:05:27,077 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:27,077 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:27,077 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:29,094 [INFO] 
+[TICK 3353]
+2026-09-09 01:05:29,095 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:29,095 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:29,095 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:31,122 [INFO] 
+[TICK 3413]
+2026-09-09 01:05:31,122 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:31,122 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:31,124 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:32,477 [INFO] Triggered sudden acceleration on vehicle 223
+2026-09-09 01:05:32,710 [INFO] Triggered sudden brake on vehicle 229
+2026-09-09 01:05:33,136 [INFO] 
+[TICK 3473]
+2026-09-09 01:05:33,136 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:33,136 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:33,136 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:34,805 [INFO] Triggered lane change on vehicle 229 (direction=left)
+2026-09-09 01:05:35,139 [INFO] 
+[TICK 3532]
+2026-09-09 01:05:35,140 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:35,140 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:35,141 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:37,154 [INFO] 
+[TICK 3592]
+2026-09-09 01:05:37,155 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:37,155 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:37,155 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:39,164 [INFO] 
+[TICK 3652]
+2026-09-09 01:05:39,165 [INFO] Vehicle 199 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:39,165 [INFO] Vehicle 200 | Platoon: YES | Ghost: NO
+2026-09-09 01:05:39,168 [INFO] Vehicle 201 | Platoon: YES | Ghost: NO
