@@ -55,6 +55,14 @@ def _angle_diff_deg(yaw1: float, yaw2: float) -> float:
     return diff
 
 
+def _speed_mps(vehicle: carla.Vehicle) -> float:
+    try:
+        v = vehicle.get_velocity()
+        return math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z)
+    except Exception:
+        return 0.0
+
+
 class GhostState(enum.Enum):
     LURKING = "LURKING"
     POSSESSING = "POSSESSING"
@@ -515,7 +523,7 @@ class GhostDriver:
 
         # Record initial conditions
         tf = target.get_transform()
-        init_speed_mps = target.get_velocity().length()
+        init_speed_mps = _speed_mps(target)
         init_lane = "unknown"
         try:
             wp = self.world.get_map().get_waypoint(tf.location, project_to_road=True)
@@ -596,7 +604,7 @@ class GhostDriver:
 
         # Closed-loop target calculation
         tf_t = target.get_transform()
-        v_curr = target.get_velocity().length()
+        v_curr = _speed_mps(target)
 
         dest_pos = None
         target_speed_mps = 8.0
@@ -610,7 +618,7 @@ class GhostDriver:
                 y=(p0_loc.y + p1_loc.y) * 0.5,
                 z=p0_loc.z,
             )
-            target_speed_mps = max(5.0, p0.get_velocity().length())
+            target_speed_mps = max(5.0, _speed_mps(p0))
 
         elif maneuver == DisruptionType.LEADER_CUT_IN:
             p0 = self.platoon[0]
@@ -621,7 +629,7 @@ class GhostDriver:
                 y=p0_tf.location.y + 10.0 * math.sin(yaw_r),
                 z=p0_tf.location.z,
             )
-            target_speed_mps = max(6.0, p0.get_velocity().length() + 0.8)
+            target_speed_mps = max(6.0, _speed_mps(p0) + 0.8)
 
         elif maneuver == DisruptionType.FOLLOWER_CUT_IN:
             pf = self.platoon[1] if len(self.platoon) > 1 else self.platoon[0]
@@ -632,7 +640,7 @@ class GhostDriver:
                 y=pf_tf.location.y + 8.0 * math.sin(yaw_r),
                 z=pf_tf.location.z,
             )
-            target_speed_mps = max(5.0, pf.get_velocity().length())
+            target_speed_mps = max(5.0, _speed_mps(pf))
 
         elif maneuver == DisruptionType.APPROACH_FROM_BEHIND:
             plast = self.platoon[-1]
@@ -643,7 +651,7 @@ class GhostDriver:
                 y=plast_tf.location.y - 4.5 * math.sin(yaw_r),
                 z=plast_tf.location.z,
             )
-            last_spd = plast.get_velocity().length()
+            last_spd = _speed_mps(plast)
             dist_to_rear = tf_t.location.distance(plast_tf.location)
             target_speed_mps = last_spd + (2.0 if dist_to_rear > 8.0 else 0.0)
 
@@ -657,7 +665,7 @@ class GhostDriver:
                 y=p0_tf.location.y + sign * 3.5 * math.cos(yaw_r),
                 z=p0_tf.location.z,
             )
-            target_speed_mps = max(5.0, p0.get_velocity().length())
+            target_speed_mps = max(5.0, _speed_mps(p0))
 
         if dest_pos is None:
             self._abort_maneuver(current_time, "Destination position unavailable")

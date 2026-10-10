@@ -5,9 +5,9 @@ Vehicle: Leader
 MAPPO Action: CHANGE_LEFT
 --------------------
 Vehicle: F1
-MAPPO Action: ACCELERATE
+MAPPO Action: DECELERATE
 --------------------
 Vehicle: F2
-MAPPO Action: ACCELERATE
+MAPPO Action: DECELERATE
 --------------------
 ================================================
