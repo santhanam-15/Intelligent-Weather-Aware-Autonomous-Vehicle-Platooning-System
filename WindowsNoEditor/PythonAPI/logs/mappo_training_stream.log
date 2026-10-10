@@ -1,0 +1,17 @@
+[02:13:00] [UPDATE 104] actor_loss=+0.1282 critic_loss=64.2624 entropy=0.6173 kl=0.00402 clip_frac=0.046 expl_var=-0.000 rew_mean=+0.2674 sha256=be700321
+[02:13:10] [UPDATE 105] actor_loss=+0.0027 critic_loss=35.9920 entropy=0.6617 kl=0.00470 clip_frac=0.079 expl_var=-0.000 rew_mean=+0.2086 sha256=9b25d036
+[02:13:19] [UPDATE 106] actor_loss=-0.1275 critic_loss=35.0773 entropy=0.9309 kl=0.00179 clip_frac=0.020 expl_var=0.000 rew_mean=+0.2198 sha256=e65d14d8
+[02:13:28] [UPDATE 107] actor_loss=-0.1165 critic_loss=34.2228 entropy=0.7483 kl=0.00689 clip_frac=0.143 expl_var=0.000 rew_mean=+0.2660 sha256=d0be82a1
+[02:13:37] [UPDATE 108] actor_loss=-0.1883 critic_loss=36.8397 entropy=0.8292 kl=0.00597 clip_frac=0.125 expl_var=0.000 rew_mean=+0.2719 sha256=2ef093b7
+[02:13:46] [UPDATE 109] actor_loss=+0.0657 critic_loss=8.2370 entropy=0.9007 kl=0.00354 clip_frac=0.060 expl_var=-0.000 rew_mean=+0.0546 sha256=e2b056ca
+[02:13:55] [UPDATE 110] actor_loss=-0.2459 critic_loss=12.8401 entropy=0.9095 kl=0.00240 clip_frac=0.016 expl_var=-0.001 rew_mean=+0.1225 sha256=a68bdc85
+[02:14:04] [UPDATE 111] actor_loss=+0.2616 critic_loss=20.2332 entropy=0.7164 kl=0.00235 clip_frac=0.027 expl_var=-0.000 rew_mean=+0.1770 sha256=e8ae76d0
+[02:14:13] [UPDATE 112] actor_loss=-0.0266 critic_loss=35.6131 entropy=0.8176 kl=0.00171 clip_frac=0.025 expl_var=0.000 rew_mean=+0.2813 sha256=87e158d4
+[02:14:22] [UPDATE 113] actor_loss=+0.0832 critic_loss=39.7096 entropy=0.9712 kl=0.00261 clip_frac=0.015 expl_var=0.000 rew_mean=+0.3060 sha256=6d08c64d
+[02:14:31] [UPDATE 114] actor_loss=+0.0990 critic_loss=17.9744 entropy=0.9228 kl=0.00035 clip_frac=0.000 expl_var=-0.000 rew_mean=+0.1880 sha256=41136762
+[02:14:39] [UPDATE 115] actor_loss=-0.0222 critic_loss=39.9553 entropy=0.9574 kl=0.00127 clip_frac=0.005 expl_var=0.000 rew_mean=+0.3441 sha256=da5b5d42
+[02:14:48] [UPDATE 116] actor_loss=-0.0163 critic_loss=13.6722 entropy=0.8854 kl=0.00240 clip_frac=0.029 expl_var=-0.000 rew_mean=+0.1449 sha256=fe922a3f
+[02:14:57] [UPDATE 117] actor_loss=-0.0136 critic_loss=9.5087 entropy=0.7380 kl=0.00332 clip_frac=0.021 expl_var=-0.000 rew_mean=+0.1053 sha256=3347865f
+[02:15:06] [UPDATE 118] actor_loss=+0.2031 critic_loss=16.5905 entropy=0.7300 kl=0.00217 clip_frac=0.023 expl_var=0.000 rew_mean=+0.1765 sha256=e8aa358a
+[02:15:15] [UPDATE 119] actor_loss=-0.0440 critic_loss=35.9969 entropy=0.7401 kl=0.00030 clip_frac=0.002 expl_var=-0.000 rew_mean=+0.3210 sha256=22b3e302
+[02:15:24] [UPDATE 120] actor_loss=+0.0689 critic_loss=73.6072 entropy=0.7576 kl=0.00161 clip_frac=0.005 expl_var=-0.000 rew_mean=+0.4777 sha256=6ac3a6d6

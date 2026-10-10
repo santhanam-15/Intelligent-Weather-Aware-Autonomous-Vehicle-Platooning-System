@@ -1,26 +1,27 @@
-====================================================
-  MAPPO DRL NEURAL UPDATE  [23:47:26]
-====================================================
-  Update Step  : 102
-  Actor Loss   : -0.0036
-  Critic Loss  : 0.0789
-  Entropy      : 0.9202
-  Adv mean/std : -0.0000 / 1.0000
-  Actor GradN  : 0.1197
-  Critic GradN : 0.5000
-====================================================
+==========================================================
+  MAPPO DRL NEURAL UPDATE  [02:15:24]
+==========================================================
+  [UPDATE] Step : 120
+  [LOSS] Actor  : +0.0689  |  Critic: 73.6072
+  [REWARD] Mean : +0.4777  |  Std   : 0.1501
+  [ENTROPY]     : 0.7576
+  [KL] Div      : 0.00161  |  ClipFrac: 0.005  |  ExplVar: -0.000
+  [GRAD NORM]   : Actor: 0.1754  |  Critic: 0.5000
+  [CHECKPOINT]  : D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt [6ac3a6d6]
+==========================================================
   ACTOR layer weight L2 norms:
-    net.0.weight            4.903
-    net.0.bias              0.824
-    net.2.weight            5.115
-    net.2.bias              0.625
-    net.4.weight            1.423
-    net.4.bias              0.163
-====================================================
+    net.0.weight              4.909
+    net.0.bias                0.844
+    net.2.weight              5.167
+    net.2.bias                0.631
+    net.4.weight              1.459
+    net.4.bias                0.147
+==========================================================
   CRITIC layer weight L2 norms:
-    net.0.weight            8.596
-    net.0.bias              0.552
-    net.2.weight            6.583
-    net.2.bias              0.430
-    net.4.weight            2.111
-    net.4.bias              0.063
+    net.0.weight              9.337
+    net.0.bias                0.894
+    net.2.weight              6.707
+    net.2.bias                0.499
+    net.4.weight              1.058
+    net.4.bias                0.057
+==========================================================
