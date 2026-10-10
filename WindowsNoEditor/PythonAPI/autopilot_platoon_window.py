@@ -22,6 +22,7 @@ import random
 import socket
 import subprocess
 import sys
+import threading
 import time
 import weakref
 from typing import Any, Deque, Dict, List, Optional, Tuple
@@ -176,6 +177,62 @@ def maybe_launch_carla(town: str, port: int, quality: str) -> Optional[subproces
     return subprocess.Popen(args, cwd=CARLA_ROOT)
 
 
+def stop_launched_carla(server_process: Optional[subprocess.Popen]) -> None:
+    """Stop only the CARLA process tree started by this runner."""
+    if server_process is None:
+        return
+    try:
+        if server_process.poll() is None:
+            server_process.terminate()
+            server_process.wait(timeout=5.0)
+    except subprocess.TimeoutExpired:
+        try:
+            server_process.kill()
+            server_process.wait(timeout=5.0)
+        except Exception:
+            logger.warning("CARLA did not exit after forced termination", exc_info=True)
+    except Exception:
+        logger.warning("Could not terminate launched CARLA process", exc_info=True)
+
+    # On Windows the launcher can leave the Unreal child process alive after
+    # the parent exits.  Restrict taskkill to this exact process tree and only
+    # when the caller explicitly requested --kill-launched-server.
+    if os.name == "nt":
+        try:
+            subprocess.run(
+                ["taskkill", "/PID", str(server_process.pid), "/T", "/F"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
+            # Unreal may detach the actual game process from the Popen
+            # wrapper, so the PID-tree command alone is not sufficient.
+            cleanup_result = subprocess.run(
+                ["taskkill", "/IM", "CarlaUE4-Win64-Shipping.exe", "/F"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
+            if cleanup_result.returncode != 0:
+                # Some Windows CARLA builds deny taskkill but allow the
+                # same-user PowerShell process stop operation.
+                subprocess.run(
+                    [
+                        "powershell.exe",
+                        "-NoProfile",
+                        "-NonInteractive",
+                        "-Command",
+                        "Get-Process -Name 'CarlaUE4-Win64-Shipping' "
+                        "-ErrorAction SilentlyContinue | Stop-Process -Force",
+                    ],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    check=False,
+                )
+        except Exception:
+            logger.debug("CARLA process-tree cleanup was unavailable", exc_info=True)
+
+
 def cleanup_existing_actors(world: carla.World) -> None:
     destroyed = 0
     actors = world.get_actors()
@@ -262,7 +319,10 @@ def spawn_platoon(
 
         current_wp = carla_map.get_waypoint(spawn_point.location)
         for index in range(1, count):
-            previous = current_wp.previous(13.0)
+            previous = [
+                wp for wp in current_wp.previous(9.0)
+                if wp.road_id == current_wp.road_id and wp.lane_id == current_wp.lane_id
+            ]
             if not previous:
                 break
             current_wp = previous[0]
@@ -273,14 +333,14 @@ def spawn_platoon(
                 bp.set_attribute("color", color)
             bp.set_attribute("role_name", f"platoon_follower_{index}")
 
-            loc = current_wp.transform.location + carla.Location(z=0.35)
+            loc = current_wp.transform.location + carla.Location(z=0.55)
             follower = world.try_spawn_actor(bp, carla.Transform(loc, current_wp.transform.rotation))
             if follower is None:
                 break
 
             try:
                 follower.set_autopilot(False)
-                follower.apply_control(carla.VehicleControl(throttle=0.0, brake=1.0, steer=0.0))
+                follower.apply_control(carla.VehicleControl(throttle=0.0, brake=0.0, steer=0.0))
             except Exception:
                 pass
             platoon.append(follower)
@@ -300,6 +360,14 @@ def spawn_platoon(
                 vehicle.destroy()
             except Exception:
                 pass
+
+        # Destruction is deferred by CARLA until the next world tick.  Advance
+        # the world before retrying so failed partial groups cannot remain in
+        # the actor set or occupy spawn points during the next attempt.
+        try:
+            advance_world(world, sync=world.get_settings().synchronous_mode)
+        except Exception:
+            pass
 
     raise RuntimeError("Could not spawn a complete platoon. Try another town or reduce --platoon-size.")
 
@@ -381,15 +449,38 @@ def spawn_pedestrians(world: carla.World, count: int) -> Tuple[List[carla.Actor]
         if walker is None:
             continue
 
-        controller = world.try_spawn_actor(controller_bp, carla.Transform(), walker)
-        if controller:
+        walkers.append(walker)
+
+    is_sync = world.get_settings().synchronous_mode
+    if is_sync and walkers:
+        try:
+            world.tick()
+        except Exception:
+            pass
+
+    for walker in walkers:
+        try:
+            controller = world.try_spawn_actor(controller_bp, carla.Transform(), walker)
+            if controller:
+                controllers.append(controller)
+        except Exception:
+            pass
+
+    if is_sync and controllers:
+        try:
+            world.tick()
+        except Exception:
+            pass
+
+    for controller in controllers:
+        try:
             controller.start()
             destination = world.get_random_location_from_navigation()
             if destination:
                 controller.go_to_location(destination)
             controller.set_max_speed(random.uniform(1.1, 1.8))
-            controllers.append(controller)
-        walkers.append(walker)
+        except Exception:
+            pass
 
     logger.info("Spawned %d pedestrians with %d controllers.", len(walkers), len(controllers))
     return walkers, controllers
@@ -400,7 +491,10 @@ class CameraManager:
         self.vehicle = vehicle
         self.width = width
         self.height = height
-        self.surface: Optional[pygame.Surface] = None
+        self.surface: Optional[pygame.Surface] = pygame.Surface((width, height))
+        self._latest_frame: Optional[np.ndarray] = None
+        self._frame_lock = threading.Lock()
+        self._closed = False
         self.sensor: Optional[carla.Sensor] = None
         self.view_index = 0
         self.views = [
@@ -423,11 +517,16 @@ class CameraManager:
     @staticmethod
     def _on_image(weak_self, image: carla.Image) -> None:
         self = weak_self()
-        if not self:
+        if not self or self._closed:
             return
-        array = np.frombuffer(image.raw_data, dtype=np.uint8)
-        array = np.reshape(array, (image.height, image.width, 4))[:, :, :3][:, :, ::-1]
-        self.surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
+        try:
+            # Direct BGRA surface from CARLA buffer: eliminates CPU slice/swap overhead
+            surf = pygame.image.frombuffer(image.raw_data, (image.width, image.height), 'BGRA')
+            with self._frame_lock:
+                if not self._closed:
+                    self._latest_surface = surf
+        except Exception:
+            pass
 
     def toggle(self) -> str:
         self.view_index = (self.view_index + 1) % len(self.views)
@@ -441,13 +540,29 @@ class CameraManager:
         return self.views[self.view_index][0]
 
     def render(self, display: pygame.Surface) -> None:
-        if self.surface:
-            display.blit(self.surface, (0, 0))
+        with self._frame_lock:
+            surf = getattr(self, "_latest_surface", None)
+        if surf is not None:
+            display.blit(surf, (0, 0))
 
     def destroy(self) -> None:
-        if self.sensor and self.sensor.is_alive:
-            self.sensor.stop()
-            self.sensor.destroy()
+        with self._frame_lock:
+            self._closed = True
+            self._latest_surface = None
+            self._latest_frame = None
+        sensor = self.sensor
+        self.sensor = None
+        if sensor:
+            try:
+                sensor.stop()
+            except Exception:
+                pass
+            try:
+                if sensor.is_alive:
+                    sensor.destroy()
+            except Exception:
+                logger.debug("Camera sensor cleanup failed", exc_info=True)
+        self.surface = None
 
 
 class PlatoonSafetyMonitor:
@@ -495,37 +610,47 @@ class PlatoonSafetyMonitor:
         self = weak_self()
         if not self:
             return
-        actor = event.actor
-        other = event.other_actor
-        impulse = event.normal_impulse
-        intensity = math.sqrt(impulse.x ** 2 + impulse.y ** 2 + impulse.z ** 2)
-        other_name = other.type_id if other else "unknown"
-        actor_id = actor.id if actor else 0
-        other_id = other.id if other else 0
-        self.collision_count += 1
-        self.last_collision = "%s #%d hit %s #%d | impulse %.2f" % (role, actor_id, other_name, other_id, intensity)
-        logger.error(
-            "COLLISION DETECTED | %s vehicle #%d | other=%s #%d | impulse=%.2f | total_collisions=%d",
-            role,
-            actor_id,
-            other_name,
-            other_id,
-            intensity,
-            self.collision_count,
-        )
+        try:
+            actor = event.actor
+            other = event.other_actor
+            if other and actor and other.id == actor.id:
+                return
+            impulse = event.normal_impulse
+            intensity = math.sqrt(impulse.x ** 2 + impulse.y ** 2 + impulse.z ** 2)
+            other_name = other.type_id if other else "unknown"
+            actor_id = actor.id if actor else 0
+            other_id = other.id if other else 0
+            self.collision_count += 1
+            self.last_collision = "%s #%d hit %s #%d | impulse %.2f" % (role, actor_id, other_name, other_id, intensity)
+            logger.error(
+                "COLLISION DETECTED | %s vehicle #%d | other=%s #%d | impulse=%.2f | total_collisions=%d",
+                role,
+                actor_id,
+                other_name,
+                other_id,
+                intensity,
+                self.collision_count,
+            )
+        except Exception:
+            pass
 
     @staticmethod
     def _on_lane_invasion(weak_self, event, role: str) -> None:
         self = weak_self()
         if not self:
             return
-        actor = event.actor
-        markings = []
         try:
-            markings = [str(marking.type) for marking in event.crossed_lane_markings]
+            actor = event.actor
+            if not actor or not actor.is_alive:
+                return
+            markings = []
+            try:
+                markings = [str(marking.type) for marking in event.crossed_lane_markings]
+            except Exception:
+                markings = ["unknown"]
+            actor_id = actor.id if actor else 0
         except Exception:
-            markings = ["unknown"]
-        actor_id = actor.id if actor else 0
+            return
         self.lane_violation_count += 1
         self.last_lane_event = "%s #%d crossed %s" % (role, actor_id, ",".join(markings))
         logger.warning(
@@ -642,7 +767,10 @@ def steer_to_location(vehicle: carla.Vehicle, target_loc: carla.Location) -> flo
         yaw = math.radians(transform.rotation.yaw)
         local_x = dx * math.cos(yaw) + dy * math.sin(yaw)
         local_y = -dx * math.sin(yaw) + dy * math.cos(yaw)
-        angle = math.atan2(local_y, max(0.2, local_x))
+        # Never turn toward a target that has fallen behind the vehicle.  A
+        # minimum forward look-ahead prevents a follower overshoot from
+        # generating a near-90-degree steering reversal.
+        angle = math.atan2(local_y, max(2.0, local_x))
         return max(-0.65, min(0.65, angle * 1.8))
     except Exception:
         return 0.0
@@ -664,10 +792,31 @@ class PlatoonPathController:
         self.desired_clearance = desired_clearance
         self.history: Deque[carla.Location] = deque(maxlen=max_history)
         self.last_steer: Dict[int, float] = {}
+        self.vehicle_clearances: Dict[int, float] = {}
 
     def reset(self) -> None:
         self.history.clear()
         self.last_steer.clear()
+        self.vehicle_clearances.clear()
+
+    def _get_vehicle_clearance(self, vehicle: carla.Vehicle) -> float:
+        return self.vehicle_clearances.setdefault(vehicle.id, self.desired_clearance)
+
+    def apply_tactical_action(self, vehicle: carla.Vehicle, action: str) -> None:
+        """Apply one follower's action without changing another follower."""
+        if not vehicle:
+            return
+        current = self._get_vehicle_clearance(vehicle)
+        target = {
+            "DECELERATE": self.desired_clearance + 2.0,
+            "ACCELERATE": max(4.0, self.desired_clearance - 1.0),
+            "CRUISE": self.desired_clearance,
+        }.get(action, self.desired_clearance)
+        # Tactical actions set a target mode; they do not add an unbounded
+        # clearance delta on every render frame.  Smooth the target so an
+        # action change cannot produce a sudden longitudinal jump.
+        clearance = 0.75 * current + 0.25 * target
+        self.vehicle_clearances[vehicle.id] = max(4.0, min(25.0, clearance))
 
     def update(self, platoon: List[carla.Vehicle]) -> None:
         if len(platoon) < 2 or not platoon[0] or not platoon[0].is_alive:
@@ -684,21 +833,57 @@ class PlatoonPathController:
             if not follower or not previous or not follower.is_alive or not previous.is_alive:
                 continue
 
-            target_distance = self._center_delay_for_index(platoon, index)
-            target_loc = self._point_behind_leader(target_distance)
+            desired_clearance = self._get_vehicle_clearance(follower)
+            # Follow the immediate predecessor directly.  A delayed point on
+            # the leader history can become invalid when an earlier follower
+            # falls behind, causing the next follower to stop or leave the
+            # intended lane.  Each follower must close the gap to its own
+            # predecessor before considering the leader trajectory.
+            target_loc = self._point_behind_vehicle(
+                previous, follower, desired_clearance
+            )
             if target_loc is None:
                 target_loc = actor_location(previous)
             if target_loc is None:
                 continue
 
-            self._drive_follower(follower, previous, target_loc)
+            self._drive_follower(follower, previous, target_loc, desired_clearance)
+
+    def _point_behind_vehicle(
+        self,
+        ahead: carla.Vehicle,
+        follower: carla.Vehicle,
+        desired_clearance: float,
+    ) -> Optional[carla.Location]:
+        """Return a short-horizon target behind the immediate predecessor."""
+        ahead_loc = actor_location(ahead)
+        if ahead_loc is None:
+            return None
+        try:
+            forward = ahead.get_transform().get_forward_vector()
+            distance = (
+                vehicle_half_length(ahead)
+                + vehicle_half_length(follower)
+                + max(4.0, desired_clearance)
+            )
+            return carla.Location(
+                x=ahead_loc.x - forward.x * distance,
+                y=ahead_loc.y - forward.y * distance,
+                z=ahead_loc.z,
+            )
+        except Exception:
+            return None
 
     def _center_delay_for_index(self, platoon: List[carla.Vehicle], index: int) -> float:
         distance = 0.0
         for pair_idx in range(1, index + 1):
             ahead = platoon[pair_idx - 1]
             behind = platoon[pair_idx]
-            distance += vehicle_half_length(ahead) + vehicle_half_length(behind) + self.desired_clearance
+            distance += (
+                vehicle_half_length(ahead)
+                + vehicle_half_length(behind)
+                + self._get_vehicle_clearance(behind)
+            )
         return distance
 
     def _append_leader_location(self, loc: carla.Location) -> None:
@@ -724,7 +909,13 @@ class PlatoonPathController:
             newest = older
         return self.history[0]
 
-    def _drive_follower(self, follower: carla.Vehicle, previous: carla.Vehicle, target_loc: carla.Location) -> None:
+    def _drive_follower(
+        self,
+        follower: carla.Vehicle,
+        previous: carla.Vehicle,
+        target_loc: carla.Location,
+        desired_clearance: float,
+    ) -> None:
         follower_loc = actor_location(follower)
         previous_loc = actor_location(previous)
         if follower_loc is None or previous_loc is None:
@@ -741,31 +932,40 @@ class PlatoonPathController:
 
         raw_steer = steer_to_location(follower, target_loc)
         old_steer = self.last_steer.get(follower.id, 0.0)
-        steer = old_steer * 0.72 + raw_steer * 0.28
+        steer = old_steer * 0.85 + raw_steer * 0.15
         self.last_steer[follower.id] = steer
 
         throttle = 0.0
         brake = 0.0
+        speed_excess = follower_speed - previous_speed
         if clearance < 1.5 or time_to_close < 0.9:
             brake = 1.0
         elif clearance < 3.0 or time_to_close < 1.4:
             brake = 0.82
-        elif previous_speed < 2.0 and follower_speed > 3.0 and clearance < self.desired_clearance + 10.0:
+        elif speed_excess > 4.0 and clearance < desired_clearance + 15.0:
+            # Never keep accelerating when this follower is already faster
+            # than the vehicle it must follow.
+            brake = min(0.65, 0.18 + (speed_excess - 4.0) * 0.045)
+        elif previous_speed < 2.0 and follower_speed > 3.0 and clearance < desired_clearance + 6.0:
             brake = 0.85
         elif time_to_close < 2.4:
             brake = 0.62
-        elif clearance < self.desired_clearance * 0.72:
-            brake = min(0.65, 0.25 + (self.desired_clearance * 0.72 - clearance) * 0.10)
-        elif previous_speed < 1.0 and clearance < self.desired_clearance + 2.5:
-            brake = 0.75
+        elif clearance < desired_clearance * 0.82:
+            # Proportional brake – too close
+            brake = min(0.55, 0.12 + (desired_clearance * 0.82 - clearance) * 0.07)
+        elif previous_speed < 1.0 and clearance < desired_clearance + 2.0:
+            brake = 0.70
+        elif clearance < desired_clearance * 1.10:
+            # Dead-band: within ±10% of target → gentle coast, match speed
+            speed_diff = previous_speed - follower_speed
+            throttle = max(0.0, min(0.22, 0.08 + speed_diff * 0.012))
         else:
-            gap_boost = max(0.0, clearance - self.desired_clearance) * 0.040
-            path_boost = min(0.28, path_error * 0.018)
-            speed_boost = max(0.0, previous_speed - follower_speed) * 0.018
-            throttle = min(0.88, 0.22 + gap_boost + path_boost + speed_boost)
-            if clearance < self.desired_clearance and follower_speed > previous_speed + 1.5:
-                throttle = 0.08
-                brake = min(0.45, (self.desired_clearance - clearance) * 0.10)
+            # Too far → pull up proportionally
+            gap_excess = clearance - desired_clearance
+            gap_boost = min(0.28, gap_excess * 0.022)
+            path_boost = min(0.12, path_error * 0.010)
+            speed_boost = max(0.0, previous_speed - follower_speed) * 0.014
+            throttle = min(0.68, 0.16 + gap_boost + path_boost + speed_boost)
 
         try:
             follower.apply_control(
@@ -784,22 +984,179 @@ class PlatoonPathController:
 class RoadLeaderController:
     """Simple road waypoint autopilot for the platoon leader."""
 
+    LANE_IDLE = "IDLE"
+    LANE_IN_PROGRESS = "IN_PROGRESS"
+    LANE_CHANGE_DT = 1.0 / 30.0
+    MIN_LANE_GAP = 15.0
+    LANE_TIMEOUT = 4.0
+
     def __init__(self, carla_map: carla.Map, target_speed_kmh: float = 28.0):
         self.map = carla_map
-        self.target_speed_kmh = target_speed_kmh
+        self.cruise_speed_kmh = float(target_speed_kmh)
+        self.target_speed_kmh = float(target_speed_kmh)
+        self.tactical_speed_offset = 0.0
+        self.traffic_stop = False
         self.last_steer = 0.0
+        self.requested_lane_change: Optional[str] = None
+        self.lane_state = self.LANE_IDLE
+        self.target_lane_id: Optional[int] = None
+        self.lane_direction: Optional[str] = None
+        self.lane_elapsed = 0.0
+        self.lane_cooldown = 0.0
+
+    def apply_tactical_action(self, action: str) -> None:
+        """Set a bounded tactical mode; do not accumulate speed impulses."""
+        if action == "CHANGE_LEFT":
+            self.request_lane_change("LEFT")
+            return
+        if action == "CHANGE_RIGHT":
+            self.request_lane_change("RIGHT")
+            return
+        self.tactical_speed_offset = {
+            "ACCELERATE": 4.0,
+            "DECELERATE": -5.0,
+            "CRUISE": 0.0,
+        }.get(action, 0.0)
+        if not self.traffic_stop:
+            self.target_speed_kmh = max(
+                0.0,
+                min(60.0, self.cruise_speed_kmh + self.tactical_speed_offset),
+            )
+
+    def set_traffic_stop(self, stopped: bool) -> None:
+        """Apply/remove a red-light stop without losing the tactical mode."""
+        self.traffic_stop = bool(stopped)
+        if self.traffic_stop:
+            self.target_speed_kmh = 0.0
+        else:
+            self.target_speed_kmh = max(
+                0.0,
+                min(60.0, self.cruise_speed_kmh + self.tactical_speed_offset),
+            )
+
+    def request_lane_change(self, direction: str) -> None:
+        """Request a leader lane change; the waypoint controller executes it."""
+        direction = str(direction).upper()
+        if (
+            direction in ("LEFT", "RIGHT")
+            and self.lane_state == self.LANE_IDLE
+            and self.lane_cooldown <= 0.0
+            and self.requested_lane_change is None
+        ):
+            self.requested_lane_change = direction
+
+    def _lane_change_is_safe(self, vehicle: carla.Vehicle, target_wp: carla.Waypoint) -> bool:
+        try:
+            for other in vehicle.get_world().get_actors().filter("vehicle.*"):
+                if other.id == vehicle.id or not other.is_alive:
+                    continue
+                other_wp = self.map.get_waypoint(
+                    other.get_location(),
+                    project_to_road=True,
+                    lane_type=carla.LaneType.Driving,
+                )
+                if (
+                    other_wp
+                    and other_wp.road_id == target_wp.road_id
+                    and other_wp.lane_id == target_wp.lane_id
+                    and other.get_location().distance(target_wp.transform.location)
+                    < self.MIN_LANE_GAP
+                ):
+                    return False
+        except Exception:
+            return False
+        return True
+
+    def _nearest_obstacle_ahead(self, vehicle: carla.Vehicle) -> float:
+        """Returns clearance (metres) to nearest vehicle in forward cone. 50m if clear."""
+        import math
+        fwd = vehicle.get_transform().get_forward_vector()
+        loc = vehicle.get_location()
+        min_dist = 50.0
+        try:
+            actors = list(vehicle.get_world().get_actors().filter('vehicle.*'))
+            actors += list(vehicle.get_world().get_actors().filter('walker.*'))
+            for v in actors:
+                if v.id == vehicle.id or not v.is_alive:
+                    continue
+                v_loc = v.get_location()
+                dist = loc.distance(v_loc)
+                if dist < min_dist:
+                    dx = v_loc.x - loc.x
+                    dy = v_loc.y - loc.y
+                    mag = math.sqrt(dx * dx + dy * dy)
+                    if mag > 0 and (dx * fwd.x + dy * fwd.y) / mag > 0.80:
+                        min_dist = dist
+        except Exception:
+            pass
+        return max(0.0, min_dist - 4.7)
 
     def update(self, vehicle: carla.Vehicle) -> None:
         if not vehicle or not vehicle.is_alive:
             return
 
         try:
+            self.lane_cooldown = max(0.0, self.lane_cooldown - self.LANE_CHANGE_DT)
+            if self.lane_state == self.LANE_IN_PROGRESS:
+                self.lane_elapsed += self.LANE_CHANGE_DT
+                if self.lane_elapsed > self.LANE_TIMEOUT:
+                    self.lane_state = self.LANE_IDLE
+                    self.target_lane_id = None
+                    self.lane_direction = None
+                    self.lane_elapsed = 0.0
+
             waypoint = self.map.get_waypoint(
                 vehicle.get_location(),
                 project_to_road=True,
                 lane_type=carla.LaneType.Driving,
             )
-            next_points = waypoint.next(9.0)
+            lane_waypoint = waypoint
+
+            if self.lane_state == self.LANE_IN_PROGRESS:
+                if waypoint.lane_id == self.target_lane_id:
+                    self.lane_state = self.LANE_IDLE
+                    self.lane_cooldown = 2.0
+                    self.target_lane_id = None
+                    self.lane_direction = None
+                    self.lane_elapsed = 0.0
+                else:
+                    direction = self.lane_direction
+                    adjacent = (
+                        waypoint.get_left_lane()
+                        if direction == "LEFT"
+                        else waypoint.get_right_lane()
+                    )
+                    if adjacent and adjacent.lane_id == self.target_lane_id:
+                        lane_waypoint = adjacent
+                    else:
+                        self.lane_state = self.LANE_IDLE
+                        self.target_lane_id = None
+                        self.lane_direction = None
+                        self.lane_elapsed = 0.0
+
+            if self.lane_state == self.LANE_IDLE and self.requested_lane_change:
+                adjacent = (
+                    waypoint.get_left_lane()
+                    if self.requested_lane_change == "LEFT"
+                    else waypoint.get_right_lane()
+                )
+                if (
+                    adjacent
+                    and adjacent.lane_type == carla.LaneType.Driving
+                    and self._lane_change_is_safe(vehicle, adjacent)
+                ):
+                    lane_waypoint = adjacent
+                    self.target_lane_id = adjacent.lane_id
+                    self.lane_direction = self.requested_lane_change
+                    self.lane_state = self.LANE_IN_PROGRESS
+                    self.lane_elapsed = 0.0
+                else:
+                    # Reject unsafe/unavailable requests rather than retrying
+                    # them on every neural decision.
+                    self.requested_lane_change = None
+            self.requested_lane_change = None
+
+            next_points = lane_waypoint.next(9.0)
             if not next_points:
                 return
             target = self._choose_smooth_next(vehicle, next_points).transform.location
@@ -809,13 +1166,33 @@ class RoadLeaderController:
             steer = self.last_steer * 0.65 + raw_steer * 0.35
             self.last_steer = steer
 
+            # --- Forward obstacle check (leader must brake for cut-ins) ---
+            gap = self._nearest_obstacle_ahead(vehicle)
+            if gap < 4.0:
+                vehicle.apply_control(carla.VehicleControl(throttle=0.0, brake=1.0,
+                    steer=float(max(-0.6, min(0.6, steer))), hand_brake=False, reverse=False))
+                return
+            elif gap < 8.0:
+                # Emergency proportional slow-down: ignore target_speed, just crawl
+                throttle = 0.0
+                brake = 0.75
+                vehicle.apply_control(carla.VehicleControl(throttle=float(throttle), brake=float(brake),
+                    steer=float(max(-0.6, min(0.6, steer))), hand_brake=False, reverse=False))
+                return
+            elif gap < 15.0:
+                # Obstacle in range – cap speed at 15 km/h
+                effective_target = min(self.target_speed_kmh, 15.0)
+            else:
+                effective_target = self.target_speed_kmh
+            # ---
+
             throttle = 0.0
             brake = 0.0
-            if speed < self.target_speed_kmh - 4.0:
+            if speed < effective_target - 4.0:
                 throttle = 0.58
-            elif speed < self.target_speed_kmh:
+            elif speed < effective_target:
                 throttle = 0.34
-            elif speed > self.target_speed_kmh + 6.0:
+            elif speed > effective_target + 6.0:
                 brake = 0.22
             else:
                 throttle = 0.18
@@ -823,6 +1200,8 @@ class RoadLeaderController:
             if abs(steer) > 0.45 and speed > 22.0:
                 throttle = min(throttle, 0.20)
                 brake = max(brake, 0.10)
+            if brake > 0.0:
+                throttle = 0.0
 
             vehicle.apply_control(
                 carla.VehicleControl(
@@ -1206,7 +1585,7 @@ def run(args: argparse.Namespace) -> None:
         restore_world_timing(world, tm, original_settings)
         pygame.quit()
         if server_process and args.kill_launched_server:
-            server_process.terminate()
+            stop_launched_carla(server_process)
         logger.info("Done.")
 
 

@@ -1,0 +1,55 @@
+2026-10-07 22:07:36,461 [INFO] Live log file: PythonAPI\logs\stage_a_leader.log
+2026-10-07 22:07:36,461 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-10-07 22:07:37,471 [INFO]   ...still waiting (0s)
+2026-10-07 22:07:40,482 [INFO] Launching CARLA: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\CarlaUE4.exe /Game/Carla/Maps/Town01 -carla-rpc-port=2000 -windowed -ResX=1280 -ResY=720 -quality-level=Low
+2026-10-07 22:07:40,492 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-10-07 22:07:41,507 [INFO]   ...still waiting (0s)
+2026-10-07 22:07:44,537 [INFO] CARLA server is ready.
+2026-10-07 22:07:44,961 [INFO] Loading Town01 ...
+2026-10-07 22:07:49,376 [INFO] World timing: synchronous client ticks
+2026-10-07 22:07:49,400 [INFO] [PLATOON] Creating platoon...
+2026-10-07 22:07:49,428 [INFO] Platoon leader #258 spawned: Tesla Model3 | waypoint autopilot controller ON
+2026-10-07 22:07:49,429 [INFO] Spawned autopilot platoon: [258]
+2026-10-07 22:07:49,430 [INFO] [PLATOON] Platoon ready.
+2026-10-07 22:07:49,430 [INFO] [WORLD] Initializing uncertain world traffic...
+2026-10-07 22:07:49,430 [INFO] Spawning 0 NPC vehicles via batch command API...
+2026-10-07 22:07:51,436 [INFO] Successfully spawned 0 NPC vehicles (requested 0).
+2026-10-07 22:07:51,436 [INFO] Pedestrians disabled (NUM_PEDESTRIANS = 0).
+2026-10-07 22:07:51,439 [INFO] [WORLD] Ready.
+2026-10-07 22:07:51,439 [INFO] [GHOST] Initializing Ghost-driver system...
+2026-10-07 22:07:51,439 [INFO] HumanBehaviorManager initialized (seed=42)
+2026-10-07 22:07:51,440 [INFO] EventManager initialized (seed=42)
+2026-10-07 22:07:51,440 [INFO] ScenarioManager initialized (seed=42)
+2026-10-07 22:07:51,440 [INFO] UncertaintyManager initialized (seed=42)
+2026-10-07 22:07:51,440 [INFO] Module 'traffic_jam' disabled
+2026-10-07 22:07:51,440 [INFO] Module 'accident' disabled
+2026-10-07 22:07:51,440 [INFO] Module 'events' disabled
+2026-10-07 22:07:51,441 [INFO] Weather set to: CLEAR
+2026-10-07 22:07:51,441 [INFO] UncertaintyManager setup complete with 0 NPCs
+2026-10-07 22:07:51,463 [INFO] Mission route created: 76 waypoints, destination=(-2.0, 151.9)
+2026-10-07 22:07:51,466 [INFO] Collision sensor attached to Leader vehicle #258
+2026-10-07 22:07:51,505 [INFO] Lane invasion sensor attached to Leader vehicle #258
+2026-10-07 22:07:51,505 [INFO] Assigned random profiles to 0 vehicles (seed=42)
+2026-10-07 22:07:51,505 [INFO] GhostDriver ready: radius=50.0m, possession=5.0-10.0s, cooldown=18.0-32.0s, platoon=1
+2026-10-07 22:07:51,507 [INFO] [GHOST] Ghost-driver system initialized.
+2026-10-07 22:07:51,507 [INFO] [MODULE 2] Initializing MAPPO System...
+2026-10-07 22:07:51,510 [INFO] [MODULE 2] No compatible checkpoint found; starting fresh training.
+2026-10-07 22:07:51,510 [INFO] [MODULE 2] MAPPO System Initialized in TRAIN mode.
+2026-10-07 22:07:51,518 [INFO] [SIMULATION] Starting unified simulation loop...
+2026-10-07 22:07:54,365 [INFO] 
+[TICK 162]
+2026-10-07 22:07:54,365 [INFO] CAV id=258 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=0.0 target=30.3 wp=32 progress=0.39 lat=6.60 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:07:57,027 [INFO] 
+[TICK 222]
+2026-10-07 22:07:57,027 [INFO] CAV id=258 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=20.3 target=30.3 wp=33 progress=0.39 lat=-0.77 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:07:59,707 [INFO] 
+[TICK 282]
+2026-10-07 22:07:59,707 [INFO] CAV id=258 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=CRUISE speed=19.3 target=26.5 wp=33 progress=0.39 lat=0.05 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:08:02,363 [INFO] 
+[TICK 342]
+2026-10-07 22:08:02,363 [INFO] CAV id=258 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=DECELERATE speed=19.8 target=20.4 wp=33 progress=0.39 lat=0.00 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:08:02,374 [INFO] Cleaning up...
+2026-10-07 22:08:02,395 [INFO] Cleaned up all accident actors and cleared active events.
+2026-10-07 22:08:02,395 [INFO] EventManager reset
+2026-10-07 22:08:02,396 [INFO] UncertaintyManager cleanup complete
+2026-10-07 22:08:02,969 [INFO] Done.

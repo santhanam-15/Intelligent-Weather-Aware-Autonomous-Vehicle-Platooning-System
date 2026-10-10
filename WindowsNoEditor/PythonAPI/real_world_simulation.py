@@ -1392,16 +1392,39 @@ def spawn_pedestrians(
         w = world.try_spawn_actor(bp, sp)
         if w is None:
             continue
-        c = world.try_spawn_actor(ctrl_bp, carla.Transform(), w)
-        if c is not None:
+        walkers.append(w)
+
+    is_sync = world.get_settings().synchronous_mode
+    if is_sync and walkers:
+        try:
+            world.tick()
+        except Exception:
+            pass
+
+    for w in walkers:
+        try:
+            c = world.try_spawn_actor(ctrl_bp, carla.Transform(), w)
+            if c is not None:
+                controllers.append(c)
+        except Exception:
+            pass
+
+    if is_sync and controllers:
+        try:
+            world.tick()
+        except Exception:
+            pass
+
+    for c in controllers:
+        try:
             c.start()
             dest = world.get_random_location_from_navigation()
             if dest is not None:
                 c.go_to_location(dest)
-            speed = 1.2 + random.random() * 0.6  # 1.2 - 1.8 m/s natural walking
+            speed = 1.2 + random.random() * 0.6
             c.set_max_speed(speed)
-            controllers.append(c)
-        walkers.append(w)
+        except Exception:
+            pass
 
     logger.info("Successfully spawned %d pedestrians with %d controllers.", len(walkers), len(controllers))
     return walkers, controllers

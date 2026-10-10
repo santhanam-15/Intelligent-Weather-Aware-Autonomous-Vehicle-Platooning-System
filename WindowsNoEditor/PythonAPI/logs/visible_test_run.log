@@ -1,0 +1,144 @@
+2026-10-08 23:46:53,687 [INFO] Live log file: logs/visible_test_run.log
+2026-10-08 23:46:53,688 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-10-08 23:46:54,698 [INFO]   ...still waiting (0s)
+2026-10-08 23:46:57,721 [INFO] Launching CARLA: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\CarlaUE4.exe /Game/Carla/Maps/Town01 -carla-rpc-port=2000 -windowed -ResX=1280 -ResY=720 -quality-level=Low
+2026-10-08 23:46:57,732 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-10-08 23:46:58,745 [INFO]   ...still waiting (0s)
+2026-10-08 23:47:08,842 [INFO]   ...still waiting (5s)
+2026-10-08 23:47:18,944 [INFO]   ...still waiting (10s)
+2026-10-08 23:47:29,049 [INFO]   ...still waiting (15s)
+2026-10-08 23:47:36,123 [INFO] CARLA server is ready.
+2026-10-08 23:47:36,586 [INFO] Loading Town01 ...
+2026-10-08 23:47:44,464 [INFO] World timing: synchronous client ticks
+2026-10-08 23:47:44,499 [INFO] [PLATOON] Creating platoon...
+2026-10-08 23:47:44,536 [INFO] Platoon leader #258 spawned: Tesla Model3 | waypoint autopilot controller ON
+2026-10-08 23:47:44,539 [INFO] Platoon follower 1 #259 spawned: Audi A2 | trajectory follower ON | target clearance 7.5m
+2026-10-08 23:47:44,539 [INFO] Spawned autopilot platoon: [258, 259]
+2026-10-08 23:47:44,547 [INFO] [PLATOON] Platoon ready at (278.8, -2.0).
+2026-10-08 23:47:44,547 [INFO] [WORLD] Initializing uncertain world traffic...
+2026-10-08 23:47:44,548 [INFO] Spawning 4 NPC vehicles via batch command API...
+2026-10-08 23:47:46,563 [INFO] Successfully spawned 4 NPC vehicles (requested 4).
+2026-10-08 23:47:46,563 [INFO] Pedestrians disabled (NUM_PEDESTRIANS = 0).
+2026-10-08 23:47:46,580 [INFO] [WORLD] Ready.
+2026-10-08 23:47:46,581 [INFO] [GHOST] Initializing Ghost-driver system...
+2026-10-08 23:47:46,581 [INFO] HumanBehaviorManager initialized (seed=42)
+2026-10-08 23:47:46,581 [INFO] EventManager initialized (seed=42)
+2026-10-08 23:47:46,581 [INFO] ScenarioManager initialized (seed=42)
+2026-10-08 23:47:46,581 [INFO] UncertaintyManager initialized (seed=42)
+2026-10-08 23:47:46,581 [INFO] Module 'traffic_jam' disabled
+2026-10-08 23:47:46,581 [INFO] Module 'accident' disabled
+2026-10-08 23:47:46,582 [INFO] Module 'events' disabled
+2026-10-08 23:47:46,583 [INFO] Weather set to: CLEAR
+2026-10-08 23:47:46,583 [INFO] UncertaintyManager setup complete with 4 NPCs
+2026-10-08 23:47:46,608 [INFO] Mission route created: 76 waypoints, destination=(128.8, -2.0)
+2026-10-08 23:47:46,612 [INFO] Collision sensor attached to Leader vehicle #258
+2026-10-08 23:47:46,665 [INFO] Lane invasion sensor attached to Leader vehicle #258
+2026-10-08 23:47:46,666 [INFO] Collision sensor attached to Follower 1 vehicle #259
+2026-10-08 23:47:46,712 [INFO] Lane invasion sensor attached to Follower 1 vehicle #259
+2026-10-08 23:47:46,713 [INFO] Vehicle 260 assigned profile CONSERVATIVE (speed_diff=20.0%, dist=4.5m, auto_lc=False, ignore_lights=0.0%)
+2026-10-08 23:47:46,713 [INFO] Vehicle 261 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-10-08 23:47:46,713 [INFO] Vehicle 262 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-10-08 23:47:46,714 [INFO] Vehicle 263 assigned profile NORMAL (speed_diff=0.0%, dist=3.0m, auto_lc=True, ignore_lights=0.0%)
+2026-10-08 23:47:46,714 [INFO] Assigned random profiles to 4 vehicles (seed=42)
+2026-10-08 23:47:46,714 [INFO] GhostDriver ready: radius=50.0m, possession=5.0-10.0s, cooldown=18.0-32.0s, platoon=2
+2026-10-08 23:47:46,715 [INFO] [GHOST] Ghost-driver system initialized.
+2026-10-08 23:47:46,715 [INFO] [MODULE 2] Initializing MAPPO System...
+2026-10-08 23:47:46,728 [INFO] [MAPPO] Successfully loaded checkpoint from 'D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt' (update_step=11).
+2026-10-08 23:47:46,728 [INFO] [MODULE 2] Loaded persistent checkpoint from 'D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt' (update_step=11).
+2026-10-08 23:47:46,729 [INFO] [MODULE 2] MAPPO System Initialized in TRAIN mode.
+2026-10-08 23:47:46,729 [INFO] 
+==============================================================
+  MAPPO CONFIGURATION & CHECKPOINT VERIFICATION
+==============================================================
+2026-10-08 23:47:46,729 [INFO]   CHECKPOINT PATH:           D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt
+2026-10-08 23:47:46,730 [INFO]   OBSERVATION DIM:           32
+2026-10-08 23:47:46,730 [INFO]   ACTION DIM:                5
+2026-10-08 23:47:46,730 [INFO]   UPDATE STEP:               11
+2026-10-08 23:47:46,730 [INFO]   DETERMINISTIC EVALUATION:  False
+2026-10-08 23:47:46,730 [INFO]   ACTOR LOADED:              True
+2026-10-08 23:47:46,730 [INFO]   CRITIC LOADED:             True
+2026-10-08 23:47:46,730 [INFO] ==============================================================
+
+2026-10-08 23:47:46,777 [INFO] [SIMULATION] Starting unified simulation loop...
+2026-10-08 23:47:51,617 [INFO] 
+[TICK 194] [DEMO]
+2026-10-08 23:47:51,619 [INFO]   F0 (Leader) | speed=0.0 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=3 (prog=0.00) | lat_err=0.07 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:47:51,619 [INFO]   F1 (Follower) | speed=0.0 km/h | action=DECELERATE | target=21.5 km/h | gap=8.3 m | route_wp=3 (prog=0.00) | lat_err=-0.01 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:47:51,619 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 14 | ACCELERATE: 4 | DECELERATE: 44 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 0
+2026-10-08 23:47:56,592 [INFO] 
+[TICK 254] [DEMO]
+2026-10-08 23:47:56,593 [INFO]   F0 (Leader) | speed=17.0 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=7 (prog=0.04) | lat_err=-0.03 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:47:56,593 [INFO]   F1 (Follower) | speed=12.2 km/h | action=DECELERATE | target=19.2 km/h | gap=9.5 m | route_wp=3 (prog=0.00) | lat_err=-0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:47:56,593 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 31 | ACCELERATE: 7 | DECELERATE: 84 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 0
+2026-10-08 23:48:01,627 [INFO] 
+[TICK 314] [DEMO]
+2026-10-08 23:48:01,628 [INFO]   F0 (Leader) | speed=16.6 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=12 (prog=0.11) | lat_err=-0.01 m | tl=GREEN@85.1 | state=NORMAL_PLATOON
+2026-10-08 23:48:01,628 [INFO]   F1 (Follower) | speed=17.4 km/h | action=DECELERATE | target=21.5 km/h | gap=11.4 m | route_wp=4 (prog=0.00) | lat_err=-0.00 m | tl=GREEN@69.1 | state=NORMAL_PLATOON
+2026-10-08 23:48:01,628 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 54 | ACCELERATE: 7 | DECELERATE: 121 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 0
+2026-10-08 23:48:07,807 [INFO] 
+[TICK 374] [DEMO]
+2026-10-08 23:48:07,808 [INFO]   F0 (Leader) | speed=14.9 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=15 (prog=0.16) | lat_err=0.00 m | tl=GREEN@93.6 | state=NORMAL_PLATOON
+2026-10-08 23:48:07,808 [INFO]   F1 (Follower) | speed=15.3 km/h | action=CRUISE | target=26.0 km/h | gap=10.7 m | route_wp=7 (prog=0.05) | lat_err=0.00 m | tl=GREEN@78.2 | state=NORMAL_PLATOON
+2026-10-08 23:48:07,808 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 65 | ACCELERATE: 7 | DECELERATE: 170 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 0
+2026-10-08 23:48:09,262 [INFO] [MODULE 2] Rollout full. Training MAPPO...
+2026-10-08 23:48:09,406 [INFO] [MAPPO] Saved checkpoint to 'D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt' (update_step=12).
+2026-10-08 23:48:13,224 [INFO] 
+[TICK 434] [DEMO]
+2026-10-08 23:48:13,224 [INFO]   F0 (Leader) | speed=15.1 km/h | action=CRUISE | target=26.5 km/h | gap=80.0 m | route_wp=19 (prog=0.21) | lat_err=0.00 m | tl=GREEN@102.6 | state=NORMAL_PLATOON
+2026-10-08 23:48:13,224 [INFO]   F1 (Follower) | speed=15.7 km/h | action=DECELERATE | target=21.5 km/h | gap=11.0 m | route_wp=13 (prog=0.12) | lat_err=0.00 m | tl=GREEN@86.9 | state=NORMAL_PLATOON
+2026-10-08 23:48:13,224 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 82 | ACCELERATE: 11 | DECELERATE: 209 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 0
+2026-10-08 23:48:18,414 [INFO] 
+[TICK 494] [DEMO]
+2026-10-08 23:48:18,415 [INFO]   F0 (Leader) | speed=16.1 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=25 (prog=0.28) | lat_err=0.00 m | tl=GREEN@111.4 | state=NORMAL_PLATOON
+2026-10-08 23:48:18,415 [INFO]   F1 (Follower) | speed=16.4 km/h | action=DECELERATE | target=18.3 km/h | gap=10.9 m | route_wp=17 (prog=0.17) | lat_err=0.00 m | tl=GREEN@95.8 | state=NORMAL_PLATOON
+2026-10-08 23:48:18,416 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 90 | ACCELERATE: 11 | DECELERATE: 257 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:48:23,760 [INFO] 
+[TICK 554] [DEMO]
+2026-10-08 23:48:23,761 [INFO]   F0 (Leader) | speed=15.0 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=28 (prog=0.33) | lat_err=-0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:48:23,761 [INFO]   F1 (Follower) | speed=15.2 km/h | action=ACCELERATE | target=26.0 km/h | gap=10.7 m | route_wp=21 (prog=0.24) | lat_err=-0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:48:23,761 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 99 | ACCELERATE: 12 | DECELERATE: 307 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:48:29,278 [INFO] 
+[TICK 614] [DEMO]
+2026-10-08 23:48:29,279 [INFO]   F0 (Leader) | speed=16.9 km/h | action=CRUISE | target=26.5 km/h | gap=80.0 m | route_wp=34 (prog=0.40) | lat_err=-0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:48:29,279 [INFO]   F1 (Follower) | speed=15.6 km/h | action=DECELERATE | target=18.9 km/h | gap=10.7 m | route_wp=26 (prog=0.29) | lat_err=0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:48:29,279 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 119 | ACCELERATE: 16 | DECELERATE: 343 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:48:32,310 [INFO] [MODULE 2] Rollout full. Training MAPPO...
+2026-10-08 23:48:32,467 [INFO] [MAPPO] Saved checkpoint to 'D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt' (update_step=13).
+2026-10-08 23:48:35,275 [INFO] 
+[TICK 674] [DEMO]
+2026-10-08 23:48:35,275 [INFO]   F0 (Leader) | speed=16.2 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=39 (prog=0.47) | lat_err=0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:48:35,275 [INFO]   F1 (Follower) | speed=17.3 km/h | action=CRUISE | target=27.6 km/h | gap=11.8 m | route_wp=30 (prog=0.35) | lat_err=0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:48:35,275 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 137 | ACCELERATE: 18 | DECELERATE: 383 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:48:41,432 [INFO] 
+[TICK 734] [DEMO]
+2026-10-08 23:48:41,432 [INFO]   F0 (Leader) | speed=16.9 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=43 (prog=0.52) | lat_err=-0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:48:41,432 [INFO]   F1 (Follower) | speed=16.9 km/h | action=DECELERATE | target=21.5 km/h | gap=11.4 m | route_wp=35 (prog=0.41) | lat_err=0.00 m | tl=NONE@80.0 | state=NORMAL_PLATOON
+2026-10-08 23:48:41,432 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 146 | ACCELERATE: 20 | DECELERATE: 432 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:48:47,666 [INFO] 
+[TICK 794] [DEMO]
+2026-10-08 23:48:47,667 [INFO]   F0 (Leader) | speed=17.6 km/h | action=CRUISE | target=26.5 km/h | gap=80.0 m | route_wp=47 (prog=0.57) | lat_err=0.00 m | tl=GREEN@147.7 | state=NORMAL_PLATOON
+2026-10-08 23:48:47,667 [INFO]   F1 (Follower) | speed=16.7 km/h | action=DECELERATE | target=21.5 km/h | gap=11.0 m | route_wp=40 (prog=0.48) | lat_err=0.00 m | tl=GREEN@132.9 | state=NORMAL_PLATOON
+2026-10-08 23:48:47,667 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 158 | ACCELERATE: 20 | DECELERATE: 480 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:48:54,052 [INFO] 
+[TICK 854] [DEMO]
+2026-10-08 23:48:54,053 [INFO]   F0 (Leader) | speed=15.0 km/h | action=DECELERATE | target=20.4 km/h | gap=80.0 m | route_wp=51 (prog=0.64) | lat_err=0.00 m | tl=GREEN@156.5 | state=NORMAL_PLATOON
+2026-10-08 23:48:54,053 [INFO]   F1 (Follower) | speed=16.5 km/h | action=DECELERATE | target=17.2 km/h | gap=10.9 m | route_wp=44 (prog=0.53) | lat_err=-0.00 m | tl=GREEN@141.7 | state=NORMAL_PLATOON
+2026-10-08 23:48:54,053 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 166 | ACCELERATE: 20 | DECELERATE: 532 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:48:59,392 [INFO] [MODULE 2] Rollout full. Training MAPPO...
+2026-10-08 23:48:59,523 [INFO] [MAPPO] Saved checkpoint to 'D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt' (update_step=14).
+2026-10-08 23:49:00,842 [INFO] 
+[TICK 914] [DEMO]
+2026-10-08 23:49:00,843 [INFO]   F0 (Leader) | speed=11.3 km/h | action=DECELERATE | target=14.4 km/h | gap=80.0 m | route_wp=55 (prog=0.69) | lat_err=0.00 m | tl=RED@7.2 | state=NORMAL_PLATOON
+2026-10-08 23:49:00,843 [INFO]   F1 (Follower) | speed=14.5 km/h | action=DECELERATE | target=21.5 km/h | gap=10.6 m | route_wp=48 (prog=0.60) | lat_err=-0.00 m | tl=GREEN@22.2 | state=NORMAL_PLATOON
+2026-10-08 23:49:00,844 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 169 | ACCELERATE: 20 | DECELERATE: 589 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:49:07,527 [INFO] 
+[TICK 974] [DEMO]
+2026-10-08 23:49:07,527 [INFO]   F0 (Leader) | speed=0.9 km/h | action=DECELERATE | target=10.9 km/h | gap=80.0 m | route_wp=56 (prog=0.71) | lat_err=-0.00 m | tl=RED@5.8 | state=NORMAL_PLATOON
+2026-10-08 23:49:07,527 [INFO]   F1 (Follower) | speed=3.3 km/h | action=DECELERATE | target=21.1 km/h | gap=7.7 m | route_wp=50 (prog=0.63) | lat_err=-0.00 m | tl=GREEN@17.9 | state=NORMAL_PLATOON
+2026-10-08 23:49:07,527 [INFO]   MAPPO ACTION COUNTS -> CRUISE: 176 | ACCELERATE: 22 | DECELERATE: 640 | CHANGE_LEFT: 0 | CHANGE_RIGHT: 4
+2026-10-08 23:49:13,205 [WARNING] [MODULE 2] Episode terminated by actor loss or platoon collision.
+2026-10-08 23:49:13,207 [INFO] Cleaning up...
+2026-10-08 23:49:13,243 [INFO] Cleaned up all accident actors and cleared active events.
+2026-10-08 23:49:13,243 [INFO] EventManager reset
+2026-10-08 23:49:13,244 [INFO] UncertaintyManager cleanup complete
+2026-10-08 23:49:13,291 [INFO] Done.

@@ -22,6 +22,7 @@ import random
 import socket
 import subprocess
 import sys
+import threading
 import time
 import weakref
 from typing import Any, Deque, Dict, List, Optional, Tuple
@@ -401,6 +402,9 @@ class CameraManager:
         self.width = width
         self.height = height
         self.surface: Optional[pygame.Surface] = None
+        self._latest_frame: Optional[np.ndarray] = None
+        self._frame_lock = threading.Lock()
+        self._closed = False
         self.sensor: Optional[carla.Sensor] = None
         self.view_index = 0
         self.views = [
@@ -423,11 +427,17 @@ class CameraManager:
     @staticmethod
     def _on_image(weak_self, image: carla.Image) -> None:
         self = weak_self()
-        if not self:
+        if not self or self._closed:
             return
-        array = np.frombuffer(image.raw_data, dtype=np.uint8)
-        array = np.reshape(array, (image.height, image.width, 4))[:, :, :3][:, :, ::-1]
-        self.surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
+        try:
+            array = np.frombuffer(image.raw_data, dtype=np.uint8)
+            array = np.reshape(array, (image.height, image.width, 4))[:, :, :3][:, :, ::-1]
+            frame = array.swapaxes(0, 1).copy()
+            with self._frame_lock:
+                if not self._closed:
+                    self._latest_frame = frame
+        except Exception:
+            logger.debug("Discarding invalid camera frame", exc_info=True)
 
     def toggle(self) -> str:
         self.view_index = (self.view_index + 1) % len(self.views)
@@ -441,13 +451,34 @@ class CameraManager:
         return self.views[self.view_index][0]
 
     def render(self, display: pygame.Surface) -> None:
-        if self.surface:
+        with self._frame_lock:
+            frame = self._latest_frame
+            self._latest_frame = None
+        if frame is not None:
+            try:
+                self.surface = pygame.surfarray.make_surface(frame)
+            except pygame.error:
+                logger.debug("Pygame rejected a camera frame", exc_info=True)
+        if self.surface is not None:
             display.blit(self.surface, (0, 0))
 
     def destroy(self) -> None:
-        if self.sensor and self.sensor.is_alive:
-            self.sensor.stop()
-            self.sensor.destroy()
+        with self._frame_lock:
+            self._closed = True
+            self._latest_frame = None
+        sensor = self.sensor
+        self.sensor = None
+        if sensor:
+            try:
+                sensor.stop()
+            except Exception:
+                pass
+            try:
+                if sensor.is_alive:
+                    sensor.destroy()
+            except Exception:
+                logger.debug("Camera sensor cleanup failed", exc_info=True)
+        self.surface = None
 
 
 class PlatoonSafetyMonitor:
@@ -1480,27 +1511,31 @@ def run(args: argparse.Namespace) -> None:
                 if weather_uncertainty:
                     logger.info("Environment telemetry | Weather uncertainty: %s", weather_uncertainty.get_status(elapsed))
 
-            display.fill((8, 8, 10))
-            if camera:
-                camera.render(display)
-            ghost_status = ghost_driver.get_status(elapsed) if ghost_driver else None
-            weather_status = weather_uncertainty.get_status(elapsed) if weather_uncertainty else "OFF"
-            hud.render(
-                display,
-                leader,
-                platoon,
-                npcs,
-                walkers,
-                autopilot,
-                camera.name if camera else "None",
-                time.time() - started,
-                current_town,
-                not args.async_world,
-                clock.get_fps(),
-                ghost_status,
-                weather_status,
-            )
-            pygame.display.flip()
+            try:
+                display.fill((8, 8, 10))
+                if camera:
+                    camera.render(display)
+                ghost_status = ghost_driver.get_status(elapsed) if ghost_driver else None
+                weather_status = weather_uncertainty.get_status(elapsed) if weather_uncertainty else "OFF"
+                hud.render(
+                    display,
+                    leader,
+                    platoon,
+                    npcs,
+                    walkers,
+                    autopilot,
+                    camera.name if camera else "None",
+                    time.time() - started,
+                    current_town,
+                    not args.async_world,
+                    clock.get_fps(),
+                    ghost_status,
+                    weather_status,
+                )
+                pygame.display.flip()
+            except pygame.error:
+                logger.exception("Pygame display failed; shutting down cleanly")
+                running = False
 
     finally:
         if leader_start_loc is not None and platoon and platoon[0] and platoon[0].is_alive:

@@ -1,0 +1,26 @@
+====================================================
+  MAPPO DRL NEURAL UPDATE  [23:47:26]
+====================================================
+  Update Step  : 102
+  Actor Loss   : -0.0036
+  Critic Loss  : 0.0789
+  Entropy      : 0.9202
+  Adv mean/std : -0.0000 / 1.0000
+  Actor GradN  : 0.1197
+  Critic GradN : 0.5000
+====================================================
+  ACTOR layer weight L2 norms:
+    net.0.weight            4.903
+    net.0.bias              0.824
+    net.2.weight            5.115
+    net.2.bias              0.625
+    net.4.weight            1.423
+    net.4.bias              0.163
+====================================================
+  CRITIC layer weight L2 norms:
+    net.0.weight            8.596
+    net.0.bias              0.552
+    net.2.weight            6.583
+    net.2.bias              0.430
+    net.4.weight            2.111
+    net.4.bias              0.063

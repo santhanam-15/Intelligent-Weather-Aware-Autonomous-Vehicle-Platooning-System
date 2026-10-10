@@ -1,0 +1,55 @@
+2026-10-07 22:10:13,587 [INFO] Live log file: PythonAPI\logs\stage_c_one_follower.log
+2026-10-07 22:10:13,588 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-10-07 22:10:14,593 [INFO]   ...still waiting (0s)
+2026-10-07 22:10:17,600 [INFO] Launching CARLA: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\CarlaUE4.exe /Game/Carla/Maps/Town01 -carla-rpc-port=2000 -windowed -ResX=1280 -ResY=720 -quality-level=Low
+2026-10-07 22:10:17,625 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-10-07 22:10:18,635 [INFO]   ...still waiting (0s)
+2026-10-07 22:10:28,727 [INFO]   ...still waiting (5s)
+2026-10-07 22:10:29,730 [INFO] CARLA server is ready.
+2026-10-07 22:10:30,780 [INFO] Loading Town01 ...
+2026-10-07 22:10:39,589 [INFO] World timing: synchronous client ticks
+2026-10-07 22:10:39,658 [INFO] [PLATOON] Creating platoon...
+2026-10-07 22:10:39,762 [INFO] Platoon leader #258 spawned: Tesla Model3 | waypoint autopilot controller ON
+2026-10-07 22:10:39,767 [INFO] Platoon follower 1 #259 spawned: Nissan Patrol | trajectory follower ON | target clearance 7.5m
+2026-10-07 22:10:39,767 [INFO] Spawned autopilot platoon: [258, 259]
+2026-10-07 22:10:39,770 [INFO] [PLATOON] Platoon ready.
+2026-10-07 22:10:39,770 [INFO] [WORLD] Initializing uncertain world traffic...
+2026-10-07 22:10:39,771 [INFO] Spawning 0 NPC vehicles via batch command API...
+2026-10-07 22:10:41,782 [INFO] Successfully spawned 0 NPC vehicles (requested 0).
+2026-10-07 22:10:41,783 [INFO] Pedestrians disabled (NUM_PEDESTRIANS = 0).
+2026-10-07 22:10:41,791 [INFO] [WORLD] Ready.
+2026-10-07 22:10:41,792 [INFO] [GHOST] Initializing Ghost-driver system...
+2026-10-07 22:10:41,792 [INFO] HumanBehaviorManager initialized (seed=42)
+2026-10-07 22:10:41,792 [INFO] EventManager initialized (seed=42)
+2026-10-07 22:10:41,793 [INFO] ScenarioManager initialized (seed=42)
+2026-10-07 22:10:41,793 [INFO] UncertaintyManager initialized (seed=42)
+2026-10-07 22:10:41,793 [INFO] Module 'traffic_jam' disabled
+2026-10-07 22:10:41,794 [INFO] Module 'accident' disabled
+2026-10-07 22:10:41,795 [INFO] Module 'events' disabled
+2026-10-07 22:10:41,796 [INFO] Weather set to: CLEAR
+2026-10-07 22:10:41,796 [INFO] UncertaintyManager setup complete with 0 NPCs
+2026-10-07 22:10:41,869 [INFO] Mission route created: 76 waypoints, destination=(-2.0, 151.9)
+2026-10-07 22:10:41,877 [INFO] Collision sensor attached to Leader vehicle #258
+2026-10-07 22:10:42,018 [INFO] Lane invasion sensor attached to Leader vehicle #258
+2026-10-07 22:10:42,020 [INFO] Collision sensor attached to Follower 1 vehicle #259
+2026-10-07 22:10:42,162 [INFO] Lane invasion sensor attached to Follower 1 vehicle #259
+2026-10-07 22:10:42,162 [INFO] Assigned random profiles to 0 vehicles (seed=42)
+2026-10-07 22:10:42,163 [INFO] GhostDriver ready: radius=50.0m, possession=5.0-10.0s, cooldown=18.0-32.0s, platoon=2
+2026-10-07 22:10:42,166 [INFO] [GHOST] Ghost-driver system initialized.
+2026-10-07 22:10:42,167 [INFO] [MODULE 2] Initializing MAPPO System...
+2026-10-07 22:10:42,175 [INFO] [MODULE 2] No compatible checkpoint found; starting fresh training.
+2026-10-07 22:10:42,176 [INFO] [MODULE 2] MAPPO System Initialized in TRAIN mode.
+2026-10-07 22:10:42,213 [INFO] [SIMULATION] Starting unified simulation loop...
+2026-10-07 22:10:58,763 [INFO] 
+[TICK 192]
+2026-10-07 22:10:58,764 [INFO] CAV id=258 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=CHANGE_RIGHT speed=0.0 target=26.5 wp=3 progress=0.00 lat=48.07 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=REQUEST_REJECTED_UNSAFE override=unsafe_lane_change
+2026-10-07 22:10:58,764 [INFO] CAV id=259 role=FOLLOWER 1 owner=MAPPO->SAFETY->LOW_LEVEL action=DECELERATE speed=0.0 target=21.5 wp=3 progress=0.00 lat=47.74 tl=NONE@80.0 pred=258 gap=8.3 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:11:15,527 [INFO] 
+[TICK 252]
+2026-10-07 22:11:15,528 [INFO] CAV id=258 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=19.2 target=30.3 wp=4 progress=0.00 lat=47.86 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:11:15,528 [INFO] CAV id=259 role=FOLLOWER 1 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=13.7 target=25.1 wp=3 progress=0.00 lat=48.72 tl=NONE@80.0 pred=258 gap=10.1 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:11:24,173 [INFO] Cleaning up...
+2026-10-07 22:11:24,351 [INFO] Cleaned up all accident actors and cleared active events.
+2026-10-07 22:11:24,351 [INFO] EventManager reset
+2026-10-07 22:11:24,352 [INFO] UncertaintyManager cleanup complete
+2026-10-07 22:11:26,500 [INFO] Done.

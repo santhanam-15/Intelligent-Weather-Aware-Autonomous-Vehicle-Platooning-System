@@ -1,0 +1,557 @@
+2026-10-07 22:02:55,418 [INFO] Live log file: WindowsNoEditor\PythonAPI\logs\stage_a_smoke.log
+2026-10-07 22:02:55,420 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-10-07 22:02:56,432 [INFO]   ...still waiting (0s)
+2026-10-07 22:02:59,469 [INFO] Launching CARLA: D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\CarlaUE4.exe /Game/Carla/Maps/Town01 -carla-rpc-port=2000 -windowed -ResX=1280 -ResY=720 -quality-level=Low
+2026-10-07 22:02:59,480 [INFO] Waiting for CARLA server at 127.0.0.1:2000 ...
+2026-10-07 22:03:00,494 [INFO]   ...still waiting (0s)
+2026-10-07 22:03:03,523 [INFO] CARLA server is ready.
+2026-10-07 22:03:04,138 [INFO] Loading Town01 ...
+2026-10-07 22:03:08,571 [INFO] World timing: synchronous client ticks
+2026-10-07 22:03:08,592 [INFO] [PLATOON] Creating platoon...
+2026-10-07 22:03:08,617 [INFO] Platoon leader #258 spawned: Tesla Model3 | waypoint autopilot controller ON
+2026-10-07 22:03:08,619 [INFO] Platoon follower 1 #259 spawned: Toyota Prius | trajectory follower ON | target clearance 7.5m
+2026-10-07 22:03:08,620 [INFO] Platoon follower 2 #260 spawned: Citroen C3 | trajectory follower ON | target clearance 7.5m
+2026-10-07 22:03:08,625 [INFO] Platoon leader #261 spawned: Tesla Model3 | waypoint autopilot controller ON
+2026-10-07 22:03:08,627 [INFO] Platoon follower 1 #262 spawned: Lincoln Mkz2017 | trajectory follower ON | target clearance 7.5m
+2026-10-07 22:03:08,627 [INFO] Platoon follower 2 #263 spawned: Jeep Wrangler_Rubicon | trajectory follower ON | target clearance 7.5m
+2026-10-07 22:03:08,630 [INFO] Platoon follower 3 #264 spawned: Tesla Model3 | trajectory follower ON | target clearance 7.5m
+2026-10-07 22:03:08,631 [INFO] Spawned autopilot platoon: [261, 262, 263, 264]
+2026-10-07 22:03:08,631 [INFO] [PLATOON] Platoon ready.
+2026-10-07 22:03:08,632 [INFO] [WORLD] Initializing uncertain world traffic...
+2026-10-07 22:03:08,632 [INFO] Spawning 0 NPC vehicles via batch command API...
+2026-10-07 22:03:10,636 [INFO] Successfully spawned 0 NPC vehicles (requested 0).
+2026-10-07 22:03:10,636 [INFO] Pedestrians disabled (NUM_PEDESTRIANS = 0).
+2026-10-07 22:03:10,640 [INFO] [WORLD] Ready.
+2026-10-07 22:03:10,640 [INFO] [GHOST] Initializing Ghost-driver system...
+2026-10-07 22:03:10,640 [INFO] HumanBehaviorManager initialized (seed=42)
+2026-10-07 22:03:10,640 [INFO] EventManager initialized (seed=42)
+2026-10-07 22:03:10,640 [INFO] ScenarioManager initialized (seed=42)
+2026-10-07 22:03:10,640 [INFO] UncertaintyManager initialized (seed=42)
+2026-10-07 22:03:10,641 [INFO] Module 'traffic_jam' disabled
+2026-10-07 22:03:10,641 [INFO] Module 'accident' disabled
+2026-10-07 22:03:10,641 [INFO] Module 'events' disabled
+2026-10-07 22:03:10,641 [INFO] Weather set to: CLEAR
+2026-10-07 22:03:10,642 [INFO] UncertaintyManager setup complete with 0 NPCs
+2026-10-07 22:03:10,669 [INFO] Mission route created: 176 waypoints, destination=(27.6, 330.5)
+2026-10-07 22:03:10,671 [INFO] Collision sensor attached to Leader vehicle #261
+2026-10-07 22:03:10,717 [INFO] Lane invasion sensor attached to Leader vehicle #261
+2026-10-07 22:03:10,718 [INFO] Collision sensor attached to Follower 1 vehicle #262
+2026-10-07 22:03:10,760 [INFO] Lane invasion sensor attached to Follower 1 vehicle #262
+2026-10-07 22:03:10,761 [INFO] Collision sensor attached to Follower 2 vehicle #263
+2026-10-07 22:03:10,809 [INFO] Lane invasion sensor attached to Follower 2 vehicle #263
+2026-10-07 22:03:10,810 [INFO] Collision sensor attached to Follower 3 vehicle #264
+2026-10-07 22:03:10,848 [INFO] Lane invasion sensor attached to Follower 3 vehicle #264
+2026-10-07 22:03:10,849 [INFO] Assigned random profiles to 0 vehicles (seed=42)
+2026-10-07 22:03:10,849 [INFO] GhostDriver ready: radius=50.0m, possession=5.0-10.0s, cooldown=18.0-32.0s, platoon=4
+2026-10-07 22:03:10,850 [INFO] [GHOST] Ghost-driver system initialized.
+2026-10-07 22:03:10,850 [INFO] [MODULE 2] Initializing MAPPO System...
+2026-10-07 22:03:10,857 [INFO] [MODULE 2] No compatible checkpoint found; starting fresh training.
+2026-10-07 22:03:10,857 [INFO] [MODULE 2] MAPPO System Initialized in TRAIN mode.
+2026-10-07 22:03:10,865 [INFO] [SIMULATION] Starting unified simulation loop...
+2026-10-07 22:03:18,118 [INFO] 
+[TICK 164]
+2026-10-07 22:03:18,118 [INFO] CAV id=261 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=DECELERATE speed=0.0 target=20.4 wp=101 progress=0.56 lat=5.17 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:18,118 [INFO] CAV id=262 role=FOLLOWER 1 owner=MAPPO->SAFETY->LOW_LEVEL action=DECELERATE speed=0.0 target=21.5 wp=102 progress=0.57 lat=6.80 tl=NONE@80.0 pred=261 gap=8.3 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:18,119 [INFO] CAV id=263 role=FOLLOWER 2 owner=MAPPO->SAFETY->LOW_LEVEL action=DECELERATE speed=0.0 target=21.5 wp=102 progress=0.57 lat=6.80 tl=NONE@80.0 pred=262 gap=8.3 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:18,119 [INFO] CAV id=264 role=FOLLOWER 3 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=0.0 target=22.1 wp=102 progress=0.57 lat=6.80 tl=NONE@80.0 pred=263 gap=8.3 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:25,335 [INFO] 
+[TICK 224]
+2026-10-07 22:03:25,335 [INFO] CAV id=261 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=CRUISE speed=19.2 target=26.5 wp=103 progress=0.57 lat=19.86 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:25,336 [INFO] CAV id=262 role=FOLLOWER 1 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=13.9 target=21.4 wp=102 progress=0.57 lat=15.31 tl=NONE@80.0 pred=261 gap=9.8 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:25,336 [INFO] CAV id=263 role=FOLLOWER 2 owner=MAPPO->SAFETY->LOW_LEVEL action=DECELERATE speed=9.7 target=16.0 wp=102 progress=0.57 lat=16.27 tl=NONE@80.0 pred=262 gap=8.9 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:25,336 [INFO] CAV id=264 role=FOLLOWER 3 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=9.4 target=11.9 wp=102 progress=0.57 lat=14.38 tl=NONE@80.0 pred=263 gap=8.1 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:32,833 [INFO] 
+[TICK 284]
+2026-10-07 22:03:32,833 [INFO] CAV id=261 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=CRUISE speed=22.6 target=26.5 wp=103 progress=0.57 lat=41.18 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:32,834 [INFO] CAV id=262 role=FOLLOWER 1 owner=MAPPO->SAFETY->LOW_LEVEL action=CRUISE speed=16.7 target=28.0 wp=103 progress=0.57 lat=33.56 tl=NONE@80.0 pred=261 gap=13.3 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:32,834 [INFO] CAV id=263 role=FOLLOWER 2 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=14.7 target=25.7 wp=102 progress=0.57 lat=32.77 tl=NONE@80.0 pred=262 gap=10.6 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:32,834 [INFO] CAV id=264 role=FOLLOWER 3 owner=MAPPO->SAFETY->LOW_LEVEL action=DECELERATE speed=12.0 target=16.7 wp=102 progress=0.57 lat=24.44 tl=NONE@80.0 pred=263 gap=9.6 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:37,211 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #221 | impulse=1.15 | total_collisions=1
+2026-10-07 22:03:37,229 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #221 | impulse=0.14 | total_collisions=2
+2026-10-07 22:03:38,417 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=12032.40 | total_collisions=3
+2026-10-07 22:03:38,894 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=0.00 | total_collisions=4
+2026-10-07 22:03:39,119 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=0.00 | total_collisions=5
+2026-10-07 22:03:39,394 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=0.00 | total_collisions=6
+2026-10-07 22:03:39,641 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=0.00 | total_collisions=7
+2026-10-07 22:03:40,114 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=14230.79 | total_collisions=8
+2026-10-07 22:03:40,131 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=26.99 | total_collisions=9
+2026-10-07 22:03:40,384 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=290.28 | total_collisions=10
+2026-10-07 22:03:40,385 [INFO] 
+[TICK 344]
+2026-10-07 22:03:40,385 [INFO] CAV id=261 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=19.3 target=30.3 wp=104 progress=0.57 lat=62.39 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:40,385 [INFO] CAV id=262 role=FOLLOWER 1 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=5.3 target=32.0 wp=103 progress=0.57 lat=59.79 tl=NONE@80.0 pred=261 gap=14.0 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:40,386 [INFO] CAV id=263 role=FOLLOWER 2 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=0.5 target=30.2 wp=103 progress=0.57 lat=48.87 tl=NONE@80.0 pred=262 gap=14.0 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:40,386 [INFO] CAV id=264 role=FOLLOWER 3 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=6.5 target=23.2 wp=102 progress=0.57 lat=37.05 tl=NONE@80.0 pred=263 gap=9.0 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:40,403 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #221 | impulse=0.30 | total_collisions=11
+2026-10-07 22:03:40,404 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=134.32 | total_collisions=12
+2026-10-07 22:03:40,651 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #221 | impulse=0.16 | total_collisions=13
+2026-10-07 22:03:40,664 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=99.45 | total_collisions=14
+2026-10-07 22:03:40,948 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=77.88 | total_collisions=15
+2026-10-07 22:03:40,949 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=11916.12 | total_collisions=16
+2026-10-07 22:03:40,967 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=36.64 | total_collisions=17
+2026-10-07 22:03:40,967 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.57 | total_collisions=18
+2026-10-07 22:03:41,187 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.13 | total_collisions=19
+2026-10-07 22:03:41,187 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=126.33 | total_collisions=20
+2026-10-07 22:03:41,205 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=74.01 | total_collisions=21
+2026-10-07 22:03:41,205 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=2.58 | total_collisions=22
+2026-10-07 22:03:41,490 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=3.86 | total_collisions=23
+2026-10-07 22:03:41,490 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=92.83 | total_collisions=24
+2026-10-07 22:03:41,513 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=136.90 | total_collisions=25
+2026-10-07 22:03:41,513 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.70 | total_collisions=26
+2026-10-07 22:03:41,790 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=116.25 | total_collisions=27
+2026-10-07 22:03:41,792 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=1690.18 | total_collisions=28
+2026-10-07 22:03:41,792 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.84 | total_collisions=29
+2026-10-07 22:03:41,812 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=391.90 | total_collisions=30
+2026-10-07 22:03:41,813 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=120.59 | total_collisions=31
+2026-10-07 22:03:41,813 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.13 | total_collisions=32
+2026-10-07 22:03:42,095 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.08 | total_collisions=33
+2026-10-07 22:03:42,096 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=84.57 | total_collisions=34
+2026-10-07 22:03:42,096 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=282.24 | total_collisions=35
+2026-10-07 22:03:42,123 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=144.99 | total_collisions=36
+2026-10-07 22:03:42,123 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=314.33 | total_collisions=37
+2026-10-07 22:03:42,426 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=167.11 | total_collisions=38
+2026-10-07 22:03:42,429 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=62.58 | total_collisions=39
+2026-10-07 22:03:42,449 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.32 | total_collisions=40
+2026-10-07 22:03:42,450 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=107.97 | total_collisions=41
+2026-10-07 22:03:42,450 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=512.87 | total_collisions=42
+2026-10-07 22:03:42,450 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=189.95 | total_collisions=43
+2026-10-07 22:03:42,711 [INFO] [MODULE 2] Rollout full. Training MAPPO...
+2026-10-07 22:03:42,893 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.66 | total_collisions=44
+2026-10-07 22:03:42,893 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=180.31 | total_collisions=45
+2026-10-07 22:03:42,893 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=61.93 | total_collisions=46
+2026-10-07 22:03:42,893 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=100.85 | total_collisions=47
+2026-10-07 22:03:42,893 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=199.22 | total_collisions=48
+2026-10-07 22:03:42,917 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.72 | total_collisions=49
+2026-10-07 22:03:42,917 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=34.03 | total_collisions=50
+2026-10-07 22:03:42,917 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=152.35 | total_collisions=51
+2026-10-07 22:03:42,917 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=0.75 | total_collisions=52
+2026-10-07 22:03:43,161 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=149.83 | total_collisions=53
+2026-10-07 22:03:43,161 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.94 | total_collisions=54
+2026-10-07 22:03:43,161 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=140.81 | total_collisions=55
+2026-10-07 22:03:43,163 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=170.87 | total_collisions=56
+2026-10-07 22:03:43,181 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.29 | total_collisions=57
+2026-10-07 22:03:43,182 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=134.19 | total_collisions=58
+2026-10-07 22:03:43,182 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=172.54 | total_collisions=59
+2026-10-07 22:03:43,182 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=183.17 | total_collisions=60
+2026-10-07 22:03:43,182 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=6.18 | total_collisions=61
+2026-10-07 22:03:43,426 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=130.67 | total_collisions=62
+2026-10-07 22:03:43,426 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.96 | total_collisions=63
+2026-10-07 22:03:43,427 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=128.16 | total_collisions=64
+2026-10-07 22:03:43,427 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=199.72 | total_collisions=65
+2026-10-07 22:03:43,446 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.78 | total_collisions=66
+2026-10-07 22:03:43,446 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=131.35 | total_collisions=67
+2026-10-07 22:03:43,446 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=35.55 | total_collisions=68
+2026-10-07 22:03:43,446 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=160.43 | total_collisions=69
+2026-10-07 22:03:43,690 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=130.20 | total_collisions=70
+2026-10-07 22:03:43,690 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=101.96 | total_collisions=71
+2026-10-07 22:03:43,713 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=202.90 | total_collisions=72
+2026-10-07 22:03:43,713 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.61 | total_collisions=73
+2026-10-07 22:03:43,726 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=156.51 | total_collisions=74
+2026-10-07 22:03:43,729 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=129.33 | total_collisions=75
+2026-10-07 22:03:43,729 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.07 | total_collisions=76
+2026-10-07 22:03:43,729 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=9.91 | total_collisions=77
+2026-10-07 22:03:43,961 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=146.50 | total_collisions=78
+2026-10-07 22:03:43,961 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=144.73 | total_collisions=79
+2026-10-07 22:03:43,962 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.20 | total_collisions=80
+2026-10-07 22:03:43,962 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=128.25 | total_collisions=81
+2026-10-07 22:03:43,980 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=128.85 | total_collisions=82
+2026-10-07 22:03:43,980 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=190.34 | total_collisions=83
+2026-10-07 22:03:43,980 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=2.15 | total_collisions=84
+2026-10-07 22:03:43,980 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=110.65 | total_collisions=85
+2026-10-07 22:03:44,217 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=126.17 | total_collisions=86
+2026-10-07 22:03:44,217 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=133.19 | total_collisions=87
+2026-10-07 22:03:44,219 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.45 | total_collisions=88
+2026-10-07 22:03:44,235 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=126.56 | total_collisions=89
+2026-10-07 22:03:44,236 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.03 | total_collisions=90
+2026-10-07 22:03:44,237 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=158.94 | total_collisions=91
+2026-10-07 22:03:44,464 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.71 | total_collisions=92
+2026-10-07 22:03:44,465 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=140.86 | total_collisions=93
+2026-10-07 22:03:44,465 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=127.23 | total_collisions=94
+2026-10-07 22:03:44,484 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.64 | total_collisions=95
+2026-10-07 22:03:44,485 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=147.59 | total_collisions=96
+2026-10-07 22:03:44,485 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=123.89 | total_collisions=97
+2026-10-07 22:03:44,731 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.99 | total_collisions=98
+2026-10-07 22:03:44,734 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=126.23 | total_collisions=99
+2026-10-07 22:03:44,742 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=143.06 | total_collisions=100
+2026-10-07 22:03:44,754 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.84 | total_collisions=101
+2026-10-07 22:03:44,757 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=123.49 | total_collisions=102
+2026-10-07 22:03:44,758 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=144.69 | total_collisions=103
+2026-10-07 22:03:45,004 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.31 | total_collisions=104
+2026-10-07 22:03:45,005 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=115.59 | total_collisions=105
+2026-10-07 22:03:45,005 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=127.69 | total_collisions=106
+2026-10-07 22:03:45,005 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=142.08 | total_collisions=107
+2026-10-07 22:03:45,005 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.85 | total_collisions=108
+2026-10-07 22:03:45,025 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.93 | total_collisions=109
+2026-10-07 22:03:45,026 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=123.20 | total_collisions=110
+2026-10-07 22:03:45,026 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=143.34 | total_collisions=111
+2026-10-07 22:03:45,255 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=116.16 | total_collisions=112
+2026-10-07 22:03:45,255 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.03 | total_collisions=113
+2026-10-07 22:03:45,255 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=141.48 | total_collisions=114
+2026-10-07 22:03:45,275 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=141.75 | total_collisions=115
+2026-10-07 22:03:45,275 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=123.39 | total_collisions=116
+2026-10-07 22:03:45,276 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.64 | total_collisions=117
+2026-10-07 22:03:45,502 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=66.67 | total_collisions=118
+2026-10-07 22:03:45,502 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=142.26 | total_collisions=119
+2026-10-07 22:03:45,502 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.14 | total_collisions=120
+2026-10-07 22:03:45,519 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.26 | total_collisions=121
+2026-10-07 22:03:45,520 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=132.81 | total_collisions=122
+2026-10-07 22:03:45,520 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=141.31 | total_collisions=123
+2026-10-07 22:03:45,758 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.54 | total_collisions=124
+2026-10-07 22:03:45,759 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=72.47 | total_collisions=125
+2026-10-07 22:03:45,760 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=141.25 | total_collisions=126
+2026-10-07 22:03:45,780 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=90.71 | total_collisions=127
+2026-10-07 22:03:45,780 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.96 | total_collisions=128
+2026-10-07 22:03:45,780 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=140.67 | total_collisions=129
+2026-10-07 22:03:46,015 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.39 | total_collisions=130
+2026-10-07 22:03:46,016 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.66 | total_collisions=131
+2026-10-07 22:03:46,017 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=36.53 | total_collisions=132
+2026-10-07 22:03:46,018 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=108.91 | total_collisions=133
+2026-10-07 22:03:46,035 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.09 | total_collisions=134
+2026-10-07 22:03:46,035 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=76.27 | total_collisions=135
+2026-10-07 22:03:46,035 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.31 | total_collisions=136
+2026-10-07 22:03:46,036 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=166.30 | total_collisions=137
+2026-10-07 22:03:46,269 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.41 | total_collisions=138
+2026-10-07 22:03:46,269 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=123.69 | total_collisions=139
+2026-10-07 22:03:46,269 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=58.63 | total_collisions=140
+2026-10-07 22:03:46,269 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.45 | total_collisions=141
+2026-10-07 22:03:46,289 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=120.16 | total_collisions=142
+2026-10-07 22:03:46,289 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.38 | total_collisions=143
+2026-10-07 22:03:46,289 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=140.16 | total_collisions=144
+2026-10-07 22:03:46,289 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=85.28 | total_collisions=145
+2026-10-07 22:03:46,538 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=26.39 | total_collisions=146
+2026-10-07 22:03:46,539 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=116.79 | total_collisions=147
+2026-10-07 22:03:46,539 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.30 | total_collisions=148
+2026-10-07 22:03:46,539 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.10 | total_collisions=149
+2026-10-07 22:03:46,559 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=131.01 | total_collisions=150
+2026-10-07 22:03:46,560 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.05 | total_collisions=151
+2026-10-07 22:03:46,560 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=149.72 | total_collisions=152
+2026-10-07 22:03:46,560 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.02 | total_collisions=153
+2026-10-07 22:03:46,801 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=27.94 | total_collisions=154
+2026-10-07 22:03:46,802 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=83.36 | total_collisions=155
+2026-10-07 22:03:46,802 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.20 | total_collisions=156
+2026-10-07 22:03:46,803 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.65 | total_collisions=157
+2026-10-07 22:03:46,825 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=148.08 | total_collisions=158
+2026-10-07 22:03:46,825 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.87 | total_collisions=159
+2026-10-07 22:03:46,825 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=111.80 | total_collisions=160
+2026-10-07 22:03:46,825 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.35 | total_collisions=161
+2026-10-07 22:03:47,063 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.49 | total_collisions=162
+2026-10-07 22:03:47,063 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=86.71 | total_collisions=163
+2026-10-07 22:03:47,063 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=139.47 | total_collisions=164
+2026-10-07 22:03:47,064 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.94 | total_collisions=165
+2026-10-07 22:03:47,086 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.29 | total_collisions=166
+2026-10-07 22:03:47,086 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=81.84 | total_collisions=167
+2026-10-07 22:03:47,086 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=141.30 | total_collisions=168
+2026-10-07 22:03:47,086 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.49 | total_collisions=169
+2026-10-07 22:03:47,304 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=128.93 | total_collisions=170
+2026-10-07 22:03:47,304 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=139.20 | total_collisions=171
+2026-10-07 22:03:47,304 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.87 | total_collisions=172
+2026-10-07 22:03:47,304 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.10 | total_collisions=173
+2026-10-07 22:03:47,322 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=129.25 | total_collisions=174
+2026-10-07 22:03:47,322 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.34 | total_collisions=175
+2026-10-07 22:03:47,322 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=137.45 | total_collisions=176
+2026-10-07 22:03:47,322 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.19 | total_collisions=177
+2026-10-07 22:03:47,554 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=135.33 | total_collisions=178
+2026-10-07 22:03:47,554 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.31 | total_collisions=179
+2026-10-07 22:03:47,556 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=124.61 | total_collisions=180
+2026-10-07 22:03:47,557 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.43 | total_collisions=181
+2026-10-07 22:03:47,581 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=107.07 | total_collisions=182
+2026-10-07 22:03:47,590 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=133.11 | total_collisions=183
+2026-10-07 22:03:47,591 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.73 | total_collisions=184
+2026-10-07 22:03:47,591 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.73 | total_collisions=185
+2026-10-07 22:03:47,828 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=70.40 | total_collisions=186
+2026-10-07 22:03:47,828 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=140.80 | total_collisions=187
+2026-10-07 22:03:47,830 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.07 | total_collisions=188
+2026-10-07 22:03:47,830 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=131.27 | total_collisions=189
+2026-10-07 22:03:47,849 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=127.87 | total_collisions=190
+2026-10-07 22:03:47,849 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=0.95 | total_collisions=191
+2026-10-07 22:03:47,849 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=129.06 | total_collisions=192
+2026-10-07 22:03:47,850 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=136.46 | total_collisions=193
+2026-10-07 22:03:47,851 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=140.76 | total_collisions=194
+2026-10-07 22:03:48,091 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=131.79 | total_collisions=195
+2026-10-07 22:03:48,091 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.10 | total_collisions=196
+2026-10-07 22:03:48,091 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=141.61 | total_collisions=197
+2026-10-07 22:03:48,093 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=127.47 | total_collisions=198
+2026-10-07 22:03:48,111 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=41.25 | total_collisions=199
+2026-10-07 22:03:48,111 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.15 | total_collisions=200
+2026-10-07 22:03:48,111 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=127.06 | total_collisions=201
+2026-10-07 22:03:48,111 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.93 | total_collisions=202
+2026-10-07 22:03:48,111 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=158.21 | total_collisions=203
+2026-10-07 22:03:48,112 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.25 | total_collisions=204
+2026-10-07 22:03:48,362 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.32 | total_collisions=205
+2026-10-07 22:03:48,363 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=94.40 | total_collisions=206
+2026-10-07 22:03:48,365 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=140.98 | total_collisions=207
+2026-10-07 22:03:48,365 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=124.37 | total_collisions=208
+2026-10-07 22:03:48,386 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.20 | total_collisions=209
+2026-10-07 22:03:48,387 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=159.02 | total_collisions=210
+2026-10-07 22:03:48,387 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=124.61 | total_collisions=211
+2026-10-07 22:03:48,387 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.38 | total_collisions=212
+2026-10-07 22:03:48,387 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=125.75 | total_collisions=213
+2026-10-07 22:03:48,646 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.44 | total_collisions=214
+2026-10-07 22:03:48,647 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=62.94 | total_collisions=215
+2026-10-07 22:03:48,647 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=121.44 | total_collisions=216
+2026-10-07 22:03:48,647 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.36 | total_collisions=217
+2026-10-07 22:03:48,647 [INFO] 
+[TICK 404]
+2026-10-07 22:03:48,648 [INFO] CAV id=261 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=0.1 target=30.3 wp=103 progress=0.57 lat=24.44 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:48,648 [INFO] CAV id=262 role=FOLLOWER 1 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=0.1 target=32.0 wp=103 progress=0.57 lat=96.26 tl=NONE@80.0 pred=261 gap=14.8 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:48,648 [INFO] CAV id=263 role=FOLLOWER 2 owner=MAPPO->SAFETY->LOW_LEVEL action=DECELERATE speed=0.0 target=21.5 wp=103 progress=0.57 lat=48.08 tl=NONE@80.0 pred=262 gap=14.2 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:48,649 [INFO] CAV id=264 role=FOLLOWER 3 owner=MAPPO->SAFETY->LOW_LEVEL action=CRUISE speed=0.9 target=2.2 wp=103 progress=0.57 lat=43.84 tl=NONE@80.0 pred=263 gap=7.1 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:48,667 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=120.60 | total_collisions=218
+2026-10-07 22:03:48,667 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.94 | total_collisions=219
+2026-10-07 22:03:48,669 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.40 | total_collisions=220
+2026-10-07 22:03:48,669 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=121.99 | total_collisions=221
+2026-10-07 22:03:48,901 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=145.90 | total_collisions=222
+2026-10-07 22:03:48,901 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.19 | total_collisions=223
+2026-10-07 22:03:48,902 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.72 | total_collisions=224
+2026-10-07 22:03:48,902 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=121.29 | total_collisions=225
+2026-10-07 22:03:48,902 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=88.81 | total_collisions=226
+2026-10-07 22:03:48,902 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.28 | total_collisions=227
+2026-10-07 22:03:48,920 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=108.67 | total_collisions=228
+2026-10-07 22:03:48,920 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=123.67 | total_collisions=229
+2026-10-07 22:03:48,920 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=141.56 | total_collisions=230
+2026-10-07 22:03:48,920 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.26 | total_collisions=231
+2026-10-07 22:03:49,124 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.26 | total_collisions=232
+2026-10-07 22:03:49,124 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=21.85 | total_collisions=233
+2026-10-07 22:03:49,125 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=129.26 | total_collisions=234
+2026-10-07 22:03:49,125 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.17 | total_collisions=235
+2026-10-07 22:03:49,140 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.37 | total_collisions=236
+2026-10-07 22:03:49,141 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=136.11 | total_collisions=237
+2026-10-07 22:03:49,141 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.92 | total_collisions=238
+2026-10-07 22:03:49,141 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=35.39 | total_collisions=239
+2026-10-07 22:03:49,141 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=67.94 | total_collisions=240
+2026-10-07 22:03:49,366 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=124.32 | total_collisions=241
+2026-10-07 22:03:49,367 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.37 | total_collisions=242
+2026-10-07 22:03:49,367 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.78 | total_collisions=243
+2026-10-07 22:03:49,367 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=50.75 | total_collisions=244
+2026-10-07 22:03:49,386 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=138.69 | total_collisions=245
+2026-10-07 22:03:49,386 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.95 | total_collisions=246
+2026-10-07 22:03:49,386 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=148.64 | total_collisions=247
+2026-10-07 22:03:49,386 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.37 | total_collisions=248
+2026-10-07 22:03:49,617 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.51 | total_collisions=249
+2026-10-07 22:03:49,618 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=148.03 | total_collisions=250
+2026-10-07 22:03:49,618 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.27 | total_collisions=251
+2026-10-07 22:03:49,620 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=119.47 | total_collisions=252
+2026-10-07 22:03:49,638 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.59 | total_collisions=253
+2026-10-07 22:03:49,638 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=159.49 | total_collisions=254
+2026-10-07 22:03:49,638 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.21 | total_collisions=255
+2026-10-07 22:03:49,639 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=87.44 | total_collisions=256
+2026-10-07 22:03:49,639 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=138.84 | total_collisions=257
+2026-10-07 22:03:49,639 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.24 | total_collisions=258
+2026-10-07 22:03:49,639 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=146.69 | total_collisions=259
+2026-10-07 22:03:49,898 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=112.77 | total_collisions=260
+2026-10-07 22:03:49,898 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=111.73 | total_collisions=261
+2026-10-07 22:03:49,898 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.08 | total_collisions=262
+2026-10-07 22:03:49,900 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.23 | total_collisions=263
+2026-10-07 22:03:49,917 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.04 | total_collisions=264
+2026-10-07 22:03:49,917 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.25 | total_collisions=265
+2026-10-07 22:03:49,917 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=138.81 | total_collisions=266
+2026-10-07 22:03:49,918 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=139.33 | total_collisions=267
+2026-10-07 22:03:50,182 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=79.44 | total_collisions=268
+2026-10-07 22:03:50,183 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.65 | total_collisions=269
+2026-10-07 22:03:50,183 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.28 | total_collisions=270
+2026-10-07 22:03:50,183 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=84.46 | total_collisions=271
+2026-10-07 22:03:50,204 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.66 | total_collisions=272
+2026-10-07 22:03:50,204 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=128.07 | total_collisions=273
+2026-10-07 22:03:50,204 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.33 | total_collisions=274
+2026-10-07 22:03:50,207 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=89.09 | total_collisions=275
+2026-10-07 22:03:50,459 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.35 | total_collisions=276
+2026-10-07 22:03:50,460 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.34 | total_collisions=277
+2026-10-07 22:03:50,460 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=19.89 | total_collisions=278
+2026-10-07 22:03:50,460 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=72.94 | total_collisions=279
+2026-10-07 22:03:50,478 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.03 | total_collisions=280
+2026-10-07 22:03:50,478 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=124.08 | total_collisions=281
+2026-10-07 22:03:50,478 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=20.19 | total_collisions=282
+2026-10-07 22:03:50,478 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.28 | total_collisions=283
+2026-10-07 22:03:50,718 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.59 | total_collisions=284
+2026-10-07 22:03:50,718 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.26 | total_collisions=285
+2026-10-07 22:03:50,718 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=124.02 | total_collisions=286
+2026-10-07 22:03:50,718 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=135.54 | total_collisions=287
+2026-10-07 22:03:50,739 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.22 | total_collisions=288
+2026-10-07 22:03:50,739 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=115.25 | total_collisions=289
+2026-10-07 22:03:50,740 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.38 | total_collisions=290
+2026-10-07 22:03:50,740 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=134.52 | total_collisions=291
+2026-10-07 22:03:51,035 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=129.74 | total_collisions=292
+2026-10-07 22:03:51,036 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.24 | total_collisions=293
+2026-10-07 22:03:51,036 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=155.07 | total_collisions=294
+2026-10-07 22:03:51,036 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.18 | total_collisions=295
+2026-10-07 22:03:51,067 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.58 | total_collisions=296
+2026-10-07 22:03:51,068 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.23 | total_collisions=297
+2026-10-07 22:03:51,070 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=141.90 | total_collisions=298
+2026-10-07 22:03:51,070 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=157.35 | total_collisions=299
+2026-10-07 22:03:51,070 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=122.32 | total_collisions=300
+2026-10-07 22:03:51,342 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=139.52 | total_collisions=301
+2026-10-07 22:03:51,343 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=138.40 | total_collisions=302
+2026-10-07 22:03:51,343 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=78.74 | total_collisions=303
+2026-10-07 22:03:51,347 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=157.89 | total_collisions=304
+2026-10-07 22:03:51,347 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.24 | total_collisions=305
+2026-10-07 22:03:51,357 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=112.13 | total_collisions=306
+2026-10-07 22:03:51,364 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=77.98 | total_collisions=307
+2026-10-07 22:03:51,365 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=135.92 | total_collisions=308
+2026-10-07 22:03:51,365 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=132.32 | total_collisions=309
+2026-10-07 22:03:51,365 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=136.49 | total_collisions=310
+2026-10-07 22:03:51,365 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.26 | total_collisions=311
+2026-10-07 22:03:51,366 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.92 | total_collisions=312
+2026-10-07 22:03:51,366 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.27 | total_collisions=313
+2026-10-07 22:03:51,636 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.24 | total_collisions=314
+2026-10-07 22:03:51,636 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=134.94 | total_collisions=315
+2026-10-07 22:03:51,636 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=49.58 | total_collisions=316
+2026-10-07 22:03:51,639 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.64 | total_collisions=317
+2026-10-07 22:03:51,648 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=116.64 | total_collisions=318
+2026-10-07 22:03:51,657 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=128.48 | total_collisions=319
+2026-10-07 22:03:51,657 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.24 | total_collisions=320
+2026-10-07 22:03:51,672 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.48 | total_collisions=321
+2026-10-07 22:03:51,673 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=133.08 | total_collisions=322
+2026-10-07 22:03:51,900 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=105.39 | total_collisions=323
+2026-10-07 22:03:51,900 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.80 | total_collisions=324
+2026-10-07 22:03:51,900 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=133.35 | total_collisions=325
+2026-10-07 22:03:51,900 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.25 | total_collisions=326
+2026-10-07 22:03:51,916 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.15 | total_collisions=327
+2026-10-07 22:03:51,917 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=130.06 | total_collisions=328
+2026-10-07 22:03:51,917 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.42 | total_collisions=329
+2026-10-07 22:03:51,917 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=129.27 | total_collisions=330
+2026-10-07 22:03:52,178 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.45 | total_collisions=331
+2026-10-07 22:03:52,179 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=159.14 | total_collisions=332
+2026-10-07 22:03:52,179 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=126.82 | total_collisions=333
+2026-10-07 22:03:52,180 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.17 | total_collisions=334
+2026-10-07 22:03:52,181 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=133.95 | total_collisions=335
+2026-10-07 22:03:52,197 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=124.00 | total_collisions=336
+2026-10-07 22:03:52,198 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.16 | total_collisions=337
+2026-10-07 22:03:52,198 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.18 | total_collisions=338
+2026-10-07 22:03:52,198 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.02 | total_collisions=339
+2026-10-07 22:03:52,200 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=0.62 | total_collisions=340
+2026-10-07 22:03:52,456 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.16 | total_collisions=341
+2026-10-07 22:03:52,456 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=120.48 | total_collisions=342
+2026-10-07 22:03:52,456 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.15 | total_collisions=343
+2026-10-07 22:03:52,482 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=120.16 | total_collisions=344
+2026-10-07 22:03:52,482 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.18 | total_collisions=345
+2026-10-07 22:03:52,482 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.17 | total_collisions=346
+2026-10-07 22:03:52,733 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.12 | total_collisions=347
+2026-10-07 22:03:52,733 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=118.29 | total_collisions=348
+2026-10-07 22:03:52,733 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.07 | total_collisions=349
+2026-10-07 22:03:52,751 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=114.22 | total_collisions=350
+2026-10-07 22:03:52,751 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.16 | total_collisions=351
+2026-10-07 22:03:52,751 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.28 | total_collisions=352
+2026-10-07 22:03:52,997 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.19 | total_collisions=353
+2026-10-07 22:03:52,997 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=123.10 | total_collisions=354
+2026-10-07 22:03:52,998 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.12 | total_collisions=355
+2026-10-07 22:03:53,017 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=108.68 | total_collisions=356
+2026-10-07 22:03:53,017 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.09 | total_collisions=357
+2026-10-07 22:03:53,019 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.71 | total_collisions=358
+2026-10-07 22:03:53,253 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.37 | total_collisions=359
+2026-10-07 22:03:53,253 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.10 | total_collisions=360
+2026-10-07 22:03:53,253 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=127.62 | total_collisions=361
+2026-10-07 22:03:53,270 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.10 | total_collisions=362
+2026-10-07 22:03:53,271 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.25 | total_collisions=363
+2026-10-07 22:03:53,271 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=95.93 | total_collisions=364
+2026-10-07 22:03:53,516 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=76.65 | total_collisions=365
+2026-10-07 22:03:53,516 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.43 | total_collisions=366
+2026-10-07 22:03:53,516 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.08 | total_collisions=367
+2026-10-07 22:03:53,538 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.10 | total_collisions=368
+2026-10-07 22:03:53,538 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=131.05 | total_collisions=369
+2026-10-07 22:03:53,538 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.02 | total_collisions=370
+2026-10-07 22:03:53,780 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.21 | total_collisions=371
+2026-10-07 22:03:53,780 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.06 | total_collisions=372
+2026-10-07 22:03:53,780 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=127.96 | total_collisions=373
+2026-10-07 22:03:53,798 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=111.14 | total_collisions=374
+2026-10-07 22:03:53,798 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=134.94 | total_collisions=375
+2026-10-07 22:03:53,798 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.05 | total_collisions=376
+2026-10-07 22:03:54,041 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.08 | total_collisions=377
+2026-10-07 22:03:54,041 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=142.21 | total_collisions=378
+2026-10-07 22:03:54,041 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.08 | total_collisions=379
+2026-10-07 22:03:54,060 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=118.99 | total_collisions=380
+2026-10-07 22:03:54,060 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=134.77 | total_collisions=381
+2026-10-07 22:03:54,061 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.08 | total_collisions=382
+2026-10-07 22:03:54,311 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=147.39 | total_collisions=383
+2026-10-07 22:03:54,311 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.32 | total_collisions=384
+2026-10-07 22:03:54,311 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.08 | total_collisions=385
+2026-10-07 22:03:54,311 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=19.08 | total_collisions=386
+2026-10-07 22:03:54,311 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=125.41 | total_collisions=387
+2026-10-07 22:03:54,311 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.07 | total_collisions=388
+2026-10-07 22:03:54,329 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=136.49 | total_collisions=389
+2026-10-07 22:03:54,329 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.95 | total_collisions=390
+2026-10-07 22:03:54,330 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=9.19 | total_collisions=391
+2026-10-07 22:03:54,330 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.07 | total_collisions=392
+2026-10-07 22:03:54,330 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.06 | total_collisions=393
+2026-10-07 22:03:54,597 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=11.93 | total_collisions=394
+2026-10-07 22:03:54,598 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=18.16 | total_collisions=395
+2026-10-07 22:03:54,598 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=65.06 | total_collisions=396
+2026-10-07 22:03:54,599 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=134.36 | total_collisions=397
+2026-10-07 22:03:54,601 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.07 | total_collisions=398
+2026-10-07 22:03:54,620 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.09 | total_collisions=399
+2026-10-07 22:03:54,621 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=17.36 | total_collisions=400
+2026-10-07 22:03:54,628 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.09 | total_collisions=401
+2026-10-07 22:03:54,634 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=117.39 | total_collisions=402
+2026-10-07 22:03:54,865 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=126.47 | total_collisions=403
+2026-10-07 22:03:54,866 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.20 | total_collisions=404
+2026-10-07 22:03:54,870 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=24.87 | total_collisions=405
+2026-10-07 22:03:54,871 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.10 | total_collisions=406
+2026-10-07 22:03:54,893 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.12 | total_collisions=407
+2026-10-07 22:03:54,893 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=85.46 | total_collisions=408
+2026-10-07 22:03:54,904 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=37.15 | total_collisions=409
+2026-10-07 22:03:54,906 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.24 | total_collisions=410
+2026-10-07 22:03:55,123 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.15 | total_collisions=411
+2026-10-07 22:03:55,124 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=51.36 | total_collisions=412
+2026-10-07 22:03:55,124 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.56 | total_collisions=413
+2026-10-07 22:03:55,124 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=134.73 | total_collisions=414
+2026-10-07 22:03:55,143 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=128.88 | total_collisions=415
+2026-10-07 22:03:55,143 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=193.43 | total_collisions=416
+2026-10-07 22:03:55,143 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.12 | total_collisions=417
+2026-10-07 22:03:55,144 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.10 | total_collisions=418
+2026-10-07 22:03:55,144 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.62 | total_collisions=419
+2026-10-07 22:03:55,144 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=143.18 | total_collisions=420
+2026-10-07 22:03:55,434 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.12 | total_collisions=421
+2026-10-07 22:03:55,434 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=121.68 | total_collisions=422
+2026-10-07 22:03:55,435 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=157.26 | total_collisions=423
+2026-10-07 22:03:55,437 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.82 | total_collisions=424
+2026-10-07 22:03:55,463 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=159.61 | total_collisions=425
+2026-10-07 22:03:55,463 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.12 | total_collisions=426
+2026-10-07 22:03:55,463 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=110.67 | total_collisions=427
+2026-10-07 22:03:55,463 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=134.64 | total_collisions=428
+2026-10-07 22:03:55,755 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=157.07 | total_collisions=429
+2026-10-07 22:03:55,756 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.14 | total_collisions=430
+2026-10-07 22:03:55,756 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=128.20 | total_collisions=431
+2026-10-07 22:03:55,756 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.44 | total_collisions=432
+2026-10-07 22:03:55,780 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=100.92 | total_collisions=433
+2026-10-07 22:03:55,780 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.15 | total_collisions=434
+2026-10-07 22:03:55,784 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.06 | total_collisions=435
+2026-10-07 22:03:55,790 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=156.58 | total_collisions=436
+2026-10-07 22:03:56,085 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.16 | total_collisions=437
+2026-10-07 22:03:56,085 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=157.64 | total_collisions=438
+2026-10-07 22:03:56,085 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=130.66 | total_collisions=439
+2026-10-07 22:03:56,085 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.01 | total_collisions=440
+2026-10-07 22:03:56,109 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.39 | total_collisions=441
+2026-10-07 22:03:56,110 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=136.12 | total_collisions=442
+2026-10-07 22:03:56,110 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=159.15 | total_collisions=443
+2026-10-07 22:03:56,110 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=156.40 | total_collisions=444
+2026-10-07 22:03:56,110 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.14 | total_collisions=445
+2026-10-07 22:03:56,408 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=157.50 | total_collisions=446
+2026-10-07 22:03:56,410 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.16 | total_collisions=447
+2026-10-07 22:03:56,420 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=85.12 | total_collisions=448
+2026-10-07 22:03:56,420 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=134.91 | total_collisions=449
+2026-10-07 22:03:56,456 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=156.53 | total_collisions=450
+2026-10-07 22:03:56,458 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.14 | total_collisions=451
+2026-10-07 22:03:56,461 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=130.15 | total_collisions=452
+2026-10-07 22:03:56,462 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=136.54 | total_collisions=453
+2026-10-07 22:03:56,780 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.15 | total_collisions=454
+2026-10-07 22:03:56,780 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=135.07 | total_collisions=455
+2026-10-07 22:03:56,788 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=116.48 | total_collisions=456
+2026-10-07 22:03:56,789 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=157.48 | total_collisions=457
+2026-10-07 22:03:56,808 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=131.35 | total_collisions=458
+2026-10-07 22:03:56,810 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.15 | total_collisions=459
+2026-10-07 22:03:56,811 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=137.03 | total_collisions=460
+2026-10-07 22:03:56,811 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=157.41 | total_collisions=461
+2026-10-07 22:03:57,063 [ERROR] COLLISION DETECTED | Follower 3 vehicle #264 | other=static.prop #218 | impulse=1.14 | total_collisions=462
+2026-10-07 22:03:57,063 [ERROR] COLLISION DETECTED | Leader vehicle #261 | other=static.pole #0 | impulse=92.78 | total_collisions=463
+2026-10-07 22:03:57,063 [ERROR] COLLISION DETECTED | Follower 2 vehicle #263 | other=static.unknown #0 | impulse=157.75 | total_collisions=464
+2026-10-07 22:03:57,063 [ERROR] COLLISION DETECTED | Follower 1 vehicle #262 | other=static.vegetation #0 | impulse=138.30 | total_collisions=465
+2026-10-07 22:03:57,064 [INFO] 
+[TICK 464]
+2026-10-07 22:03:57,065 [INFO] CAV id=261 role=LEADER owner=MAPPO->SAFETY->LOW_LEVEL action=CHANGE_LEFT speed=0.1 target=26.5 wp=103 progress=0.57 lat=16.85 tl=NONE@80.0 pred=-1 gap=80.0 weather_mu=0.85 state=NORMAL_PLATOON lane=REQUEST_REJECTED_ROUTE_LOCK override=route_lane_lock
+2026-10-07 22:03:57,065 [INFO] CAV id=262 role=FOLLOWER 1 owner=MAPPO->SAFETY->LOW_LEVEL action=CRUISE speed=0.1 target=28.0 wp=103 progress=0.57 lat=102.33 tl=NONE@80.0 pred=261 gap=14.8 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:57,065 [INFO] CAV id=263 role=FOLLOWER 2 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=0.1 target=30.5 wp=103 progress=0.57 lat=45.71 tl=NONE@80.0 pred=262 gap=14.2 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:57,065 [INFO] CAV id=264 role=FOLLOWER 3 owner=MAPPO->SAFETY->LOW_LEVEL action=ACCELERATE speed=0.2 target=2.2 wp=103 progress=0.57 lat=44.32 tl=NONE@80.0 pred=263 gap=6.9 weather_mu=1.00 state=NORMAL_PLATOON lane=NORMAL override=none
+2026-10-07 22:03:57,075 [INFO] Cleaning up...
+2026-10-07 22:03:57,168 [INFO] Cleaned up all accident actors and cleared active events.
+2026-10-07 22:03:57,168 [INFO] EventManager reset
+2026-10-07 22:03:57,169 [INFO] UncertaintyManager cleanup complete
+2026-10-07 22:03:57,771 [INFO] Done.
