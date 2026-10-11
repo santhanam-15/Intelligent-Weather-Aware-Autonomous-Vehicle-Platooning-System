@@ -1,27 +1,27 @@
 ==========================================================
-  MAPPO DRL NEURAL UPDATE  [03:07:41]
+  MAPPO DRL NEURAL UPDATE  [15:49:07]
 ==========================================================
-  [UPDATE] Step : 229
-  [LOSS] Actor  : -0.2210  |  Critic: 9.6684
-  [REWARD] Mean : -0.1624  |  Std   : 0.0010
-  [ENTROPY]     : 0.5507
-  [KL] Div      : 0.00291  |  ClipFrac: 0.051  |  ExplVar: -0.001
-  [GRAD NORM]   : Actor: 0.3247  |  Critic: 0.5000
-  [CHECKPOINT]  : D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt [ed44aeb4]
+  [UPDATE] Step : 348
+  [LOSS] Actor  : -0.0691  |  Critic: 42.4252
+  [REWARD] Mean : +0.6815  |  Std   : 0.0002
+  [ENTROPY]     : 1.0890
+  [KL] Div      : 0.01464  |  ClipFrac: 0.271  |  ExplVar: 0.000
+  [GRAD NORM]   : Actor: 0.2296  |  Critic: 0.5000
+  [CHECKPOINT]  : D:\I FILES\Studies\sem7\MiniProj\WindowsNoEditor\PythonAPI\checkpoints\mappo_checkpoint.pt [8b564fb9]
 ==========================================================
   ACTOR layer weight L2 norms:
-    net.0.weight              5.091
-    net.0.bias                0.847
-    net.2.weight              5.619
-    net.2.bias                0.611
-    net.4.weight              1.597
-    net.4.bias                0.175
+    net.0.weight              5.280
+    net.0.bias                0.817
+    net.2.weight              5.706
+    net.2.bias                0.610
+    net.4.weight              1.569
+    net.4.bias                0.153
 ==========================================================
   CRITIC layer weight L2 norms:
-    net.0.weight              9.797
-    net.0.bias                1.286
-    net.2.weight              7.080
-    net.2.bias                0.602
-    net.4.weight              0.851
-    net.4.bias                0.267
+    net.0.weight             10.928
+    net.0.bias                0.981
+    net.2.weight              8.817
+    net.2.bias                0.521
+    net.4.weight              2.938
+    net.4.bias                0.248
 ==========================================================

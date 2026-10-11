@@ -68,6 +68,9 @@ if CARLA_ROOT not in sys.path:
 
 from Module2.module2_manager import Module2Manager
 from Module2.mission_controller import MissionPlatoonController
+from Module3.safety_shield import SafetyShield
+from Module3.snapshot import build_world_snapshot
+from Module3.config import MODULE3_ENABLED, MODULE3_MODE
 
 logger = logging.getLogger("UncertainPlatoonMain")
 
@@ -640,6 +643,11 @@ class CarlaSimulationThread(threading.Thread):
             module2_manager.set_control_context(mission_controller)
             logger.info("[MODULE 2] MAPPO System Initialized in %s mode.", args.mode.upper())
 
+            # Initialize Module 3 Twin-World Safety Shield
+            m3_mode = "DISABLED" if args.disable_module3 else args.module3_mode.upper()
+            safety_shield = SafetyShield(mode=m3_mode, enabled=(m3_mode != "DISABLED"))
+            logger.info("[MODULE 3] Twin-World Safety Shield Initialized (mode=%s, enabled=%s).", m3_mode, safety_shield.enabled)
+
             # Checkpoint Verification Banner
             ckpt_path = os.path.abspath(module2_manager.trainer.get_checkpoint_path())
             ckpt_hash = getattr(module2_manager.trainer, "active_checkpoint_hash", "--------")
@@ -777,15 +785,33 @@ class CarlaSimulationThread(threading.Thread):
                             self.stop_event.set()
                             break
                         if module2_manager.action_updated:
-                            mission_controller.set_tactical_actions(tactical_actions)
-                            for act in tactical_actions:
+                            # ── MODULE 3 TWIN-WORLD SAFETY SHIELD ARBITRATION ──
+                            world_snap = build_world_snapshot(
+                                world=world,
+                                platoon=platoon,
+                                current_time=elapsed_sim,
+                                friction_provider=friction_for,
+                                uncertainty_manager=uncertainty_manager,
+                            )
+                            val_actions, emerg_flags, safety_rep = safety_shield.arbitrate(
+                                proposed_actions=tactical_actions,
+                                snapshot=world_snap,
+                            )
+                            # Pass validated actions (identical in shadow mode, safeguarded in active mode)
+                            mission_controller.set_tactical_actions(val_actions)
+                            mission_controller.set_emergency_brakes(emerg_flags)
+
+                            for act in val_actions:
                                 action_counts[act] = action_counts.get(act, 0) + 1
                             raw_acts = getattr(module2_manager, "current_raw_actions", None)
                             logger.info(
-                                "[MAPPO DECISION] t=%.2fs | Raw Actions: %s | Post-Hysteresis Tactical: %s",
+                                "[MAPPO DECISION] t=%.2fs | Raw: %s | Proposed: %s | Module3 (%s): %s | Emerg: %s",
                                 elapsed_sim,
                                 list(raw_acts) if raw_acts is not None else tactical_actions,
                                 tactical_actions,
+                                safety_shield.mode,
+                                val_actions,
+                                emerg_flags,
                             )
                     module2_manager.train_if_ready()
                 t_m1 = time.perf_counter()
@@ -1160,6 +1186,10 @@ def parse_args() -> argparse.Namespace:
                         help="Deterministic scripted scenario for ghost driver (default: auto)")
     parser.add_argument("--ghost-seed", type=int, default=42,
                         help="Fixed random seed for deterministic ghost driver intrusion (default: 42)")
+    parser.add_argument("--module3-mode", choices=("shadow", "active", "disabled"), default="shadow",
+                        help="Operating mode for Module 3 Twin-World Safety Shield (default: shadow)")
+    parser.add_argument("--disable-module3", action="store_true", default=False,
+                        help="Completely disable Module 3 Twin-World Safety Shield")
     parser.set_defaults(clean=True)
     return parser.parse_args()
 
