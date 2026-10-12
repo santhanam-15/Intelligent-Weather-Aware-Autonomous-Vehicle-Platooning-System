@@ -2,7 +2,7 @@
 MODULE 2 (MAPPO LIVE DECISIONS)
 ================================================
 Vehicle: Leader
-MAPPO Action: ACCELERATE
+MAPPO Action: CHANGE_LEFT
 --------------------
 Vehicle: F1
 MAPPO Action: ACCELERATE

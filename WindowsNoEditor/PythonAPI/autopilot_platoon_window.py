@@ -576,6 +576,7 @@ class PlatoonSafetyMonitor:
         self.last_lane_event = "None"
         self.collision_count = 0
         self.lane_violation_count = 0
+        self.on_collision_callback = None
         self._attach_sensors()
 
     def _attach_sensors(self) -> None:
@@ -631,6 +632,11 @@ class PlatoonSafetyMonitor:
                 intensity,
                 self.collision_count,
             )
+            if hasattr(self, "on_collision_callback") and self.on_collision_callback:
+                try:
+                    self.on_collision_callback(actor_id, intensity, event)
+                except Exception:
+                    pass
         except Exception:
             pass
 
@@ -715,23 +721,40 @@ def vehicle_clearance(ahead: carla.Actor, behind: carla.Actor) -> Optional[float
     return center_distance - vehicle_half_length(ahead) - vehicle_half_length(behind)
 
 
-def platoon_rows(platoon: List[carla.Vehicle]) -> List[dict]:
+def platoon_rows(platoon: List[carla.Vehicle], active_leader_index: int = 0, disabled_ids: Optional[set] = None) -> List[dict]:
     rows = []
-    previous = None
+    active_predecessor = None
+    disabled_set = set(disabled_ids) if disabled_ids else set()
     for index, vehicle in enumerate(platoon):
         alive = bool(vehicle and vehicle.is_alive)
+        v_id = vehicle.id if vehicle else 0
+        is_disabled = (v_id in disabled_set)
+
         clearance = None
         center_gap = None
-        if previous is not None and alive:
-            prev_loc = actor_location(previous)
-            loc = actor_location(vehicle)
-            if prev_loc and loc:
-                center_gap = loc.distance(prev_loc)
-                clearance = vehicle_clearance(previous, vehicle)
+
+        if is_disabled:
+            role_label = "DISABLED LEADER" if index == 0 else f"DISABLED F{index}"
+            # A disabled vehicle does not track gap to active platoon
+        elif index == active_leader_index:
+            role_label = "LEADER" if index == 0 else "ACTIVE LEADER"
+            # An active leader has no platoon predecessor: gap is None
+            active_predecessor = vehicle if alive else None
+        else:
+            role_label = f"FOLLOWER {index}"
+            if active_predecessor is not None and alive:
+                prev_loc = actor_location(active_predecessor)
+                loc = actor_location(vehicle)
+                if prev_loc and loc:
+                    center_gap = loc.distance(prev_loc)
+                    clearance = vehicle_clearance(active_predecessor, vehicle)
+            if alive:
+                active_predecessor = vehicle
+
         rows.append(
             {
-                "role": "LEADER" if index == 0 else f"FOLLOWER {index}",
-                "id": vehicle.id if vehicle else 0,
+                "role": role_label,
+                "id": v_id,
                 "model": actor_type_name(vehicle) if alive else "Missing",
                 "speed": actor_speed_kmh(vehicle) if alive else 0.0,
                 "gap": clearance,
@@ -739,7 +762,6 @@ def platoon_rows(platoon: List[carla.Vehicle]) -> List[dict]:
                 "alive": alive,
             }
         )
-        previous = vehicle
     return rows
 
 

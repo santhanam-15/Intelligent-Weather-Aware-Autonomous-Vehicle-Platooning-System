@@ -17,7 +17,7 @@ import sys
 import threading
 import time
 from typing import Any, Dict, List, Optional, Tuple
-
+import math
 import carla
 import numpy as np
 import pygame
@@ -32,6 +32,31 @@ except Exception:
 # Path configuration
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 CARLA_ROOT = os.path.normpath(os.path.join(SCRIPT_DIR, '..'))
+PROJECT_ROOT = os.path.normpath(os.path.join(CARLA_ROOT, '..'))
+
+
+def launch_dedicated_consoles_if_needed(project_root: str) -> None:
+    """Spawn dedicated Windows terminal windows for MAPPO and Module 3 logs if not already running."""
+    if os.name != "nt" or os.environ.get("CARLA_MULTI_CONSOLE_ACTIVE") == "1":
+        return
+    try:
+        mappo_script = os.path.join(project_root, "WindowsNoEditor", "PythonAPI", "live_mappo_terminal.py")
+        m3_script = os.path.join(project_root, "WindowsNoEditor", "PythonAPI", "live_module3_terminal.py")
+
+        # Launch MAPPO console window
+        subprocess.Popen(
+            f'start "CARLA MAPPO Platoon Tactical Control Terminal" cmd /K "title CARLA MAPPO Platoon Tactical Control Terminal && cd /d "{project_root}" && py -3.7 "{mappo_script}""',
+            shell=True,
+        )
+        # Launch Module 3 console window
+        subprocess.Popen(
+            f'start "CARLA Module 3 Twin-World Safety Terminal" cmd /K "title CARLA Module 3 Twin-World Safety Terminal && cd /d "{project_root}" && py -3.7 "{m3_script}""',
+            shell=True,
+        )
+        os.environ["CARLA_MULTI_CONSOLE_ACTIVE"] = "1"
+        logging.getLogger("UncertainPlatoonMain").info("[LAUNCHER] Dedicated console windows spawned for MAPPO and Module 3.")
+    except Exception as exc:
+        logging.getLogger("UncertainPlatoonMain").warning("[LAUNCHER] Could not automatically spawn dedicated console windows: %s", exc)
 
 try:
     import glob
@@ -68,6 +93,7 @@ if CARLA_ROOT not in sys.path:
 
 from Module2.module2_manager import Module2Manager
 from Module2.mission_controller import MissionPlatoonController
+from Module2.logger import MAPPODecisionLogger
 from Module3.safety_shield import SafetyShield
 from Module3.snapshot import build_world_snapshot
 from Module3.config import MODULE3_ENABLED, MODULE3_MODE
@@ -301,7 +327,8 @@ class UnifiedHUD(MiniHUD):
 
             # Column 2
             col2_x = self.col2_x
-            leader_spd = rows[0]["speed"] if rows else 0.0
+            active_lead_row = next((r for r in rows if "LEADER" in r.get("role", "") and "DISABLED" not in r.get("role", "")), rows[0] if rows else None)
+            leader_spd = active_lead_row["speed"] if active_lead_row else 0.0
             tl_label = snapshot.tl_label
             tl_color = snapshot.tl_color
             ctrl_status = "MAPPO (ACTIVE)" if snapshot.control_active else "MAPPO (PAUSED)"
@@ -407,7 +434,8 @@ class UnifiedHUD(MiniHUD):
             txt_fb(line, self.col1_x, yy, color, self.font_s)
 
         col2_x = self.col2_x
-        leader_spd = rows[0]["speed"] if rows else 0.0
+        active_lead_row = next((r for r in rows if "LEADER" in r.get("role", "") and "DISABLED" not in r.get("role", "")), rows[0] if rows else None)
+        leader_spd = active_lead_row["speed"] if active_lead_row else 0.0
         tl_color = (160, 160, 160)
         tl_label = "NONE"
         if leader and getattr(leader, "is_alive", False):
@@ -606,6 +634,12 @@ class CarlaSimulationThread(threading.Thread):
             )
             safety_monitor = PlatoonSafetyMonitor(world, platoon)
 
+            def _on_vehicle_collision(actor_id: int, intensity: float, event: Any) -> None:
+                sim_t = world.get_snapshot().timestamp.elapsed_seconds - sim_start_time if world else 0.0
+                mission_controller.record_collision(actor_id, intensity, sim_t)
+
+            safety_monitor.on_collision_callback = _on_vehicle_collision
+
             uncertainty_manager.behavior.assign_random_profiles(
                 npcs, tm, weights={
                     DriverProfile.NORMAL: 0.45,
@@ -642,6 +676,7 @@ class CarlaSimulationThread(threading.Thread):
             )
             module2_manager.set_control_context(mission_controller)
             logger.info("[MODULE 2] MAPPO System Initialized in %s mode.", args.mode.upper())
+            mappo_logger = MAPPODecisionLogger.get_instance()
 
             # Initialize Module 3 Twin-World Safety Shield
             m3_mode = "DISABLED" if args.disable_module3 else args.module3_mode.upper()
@@ -655,6 +690,40 @@ class CarlaSimulationThread(threading.Thread):
             action_dim = 5
             update_step = module2_manager.trainer.update_step
             is_det = (args.mode == "evaluate")
+
+            # Stream startup summaries to dedicated console windows
+            mappo_logger.log_startup(
+                pid=os.getpid(),
+                channel="MAPPO Tactical Control Stream",
+                mode=args.mode,
+                leader_id=platoon[0].id if platoon else 0,
+                status="SUCCESS",
+            )
+            mappo_logger.log_initialization(
+                ckpt_path=ckpt_path,
+                ckpt_hash=ckpt_hash,
+                obs_dim=obs_dim,
+                action_dim=action_dim,
+                update_step=update_step,
+                is_deterministic=is_det,
+                actor_loaded=(module2_manager.trainer.actor is not None),
+                critic_loaded=(module2_manager.trainer.critic is not None),
+            )
+
+            safety_shield.logger.log_startup(
+                pid=os.getpid(),
+                channel="Module 3 Twin-World Safety Channel",
+                mode=m3_mode,
+                leader_id=platoon[0].id if platoon else 0,
+                status="SUCCESS",
+            )
+            safety_shield.logger.log_initialization(
+                mode=m3_mode,
+                enabled=safety_shield.enabled,
+                horizon_sec=getattr(safety_shield, "horizon_sec", 2.5),
+                dt_sec=getattr(safety_shield, "dt_sec", 0.1),
+                budget_ms=getattr(safety_shield, "budget_ms", 15.0),
+            )
             sep = "=" * 62
             logger.info("\n%s\n  MAPPO CONFIGURATION & CHECKPOINT VERIFICATION\n%s", sep, sep)
             logger.info("  CHECKPOINT PATH:           %s", ckpt_path)
@@ -792,6 +861,7 @@ class CarlaSimulationThread(threading.Thread):
                                 current_time=elapsed_sim,
                                 friction_provider=friction_for,
                                 uncertainty_manager=uncertainty_manager,
+                                controller=mission_controller,
                             )
                             val_actions, emerg_flags, safety_rep = safety_shield.arbitrate(
                                 proposed_actions=tactical_actions,
@@ -800,6 +870,8 @@ class CarlaSimulationThread(threading.Thread):
                             # Pass validated actions (identical in shadow mode, safeguarded in active mode)
                             mission_controller.set_tactical_actions(val_actions)
                             mission_controller.set_emergency_brakes(emerg_flags)
+                            if hasattr(mission_controller, "set_lateral_offsets"):
+                                mission_controller.set_lateral_offsets(safety_shield.latest_lateral_offsets)
 
                             for act in val_actions:
                                 action_counts[act] = action_counts.get(act, 0) + 1
@@ -812,6 +884,72 @@ class CarlaSimulationThread(threading.Thread):
                                 safety_shield.mode,
                                 val_actions,
                                 emerg_flags,
+                            )
+                            # Stream structured telemetry to dedicated MAPPO terminal
+                            veh_recs = []
+                            for idx_v, v_act_obj in enumerate(platoon):
+                                if not v_act_obj or not v_act_obj.is_alive:
+                                    continue
+                                is_dis = (v_act_obj.id in getattr(mission_controller, "disabled_vehicles", set()))
+                                if is_dis:
+                                    v_role_str = "Disabled Leader"
+                                elif idx_v == getattr(mission_controller, "active_leader_index", 0):
+                                    v_role_str = "Active Leader" if idx_v > 0 else "Leader"
+                                else:
+                                    v_role_str = f"Follower {idx_v}"
+
+                                prop_act = tactical_actions[idx_v] if idx_v < len(tactical_actions) else "CRUISE"
+                                val_act = val_actions[idx_v] if idx_v < len(val_actions) else prop_act
+                                is_emerg = emerg_flags[idx_v] if idx_v < len(emerg_flags) else False
+
+                                v_vel = v_act_obj.get_velocity()
+                                spd_m = math.hypot(v_vel.x, v_vel.y)
+                                cur_wp = mission_controller.route.cursors.get(v_act_obj.id, 0)
+                                tot_wp = len(mission_controller.route.route)
+
+                                spd_telemetry = getattr(mission_controller, "follower_speed_telemetry", {}).get(v_act_obj.id, {})
+                                cur_gap = spd_telemetry.get("gap", 0.0)
+                                des_gap = spd_telemetry.get("desired_gap", 0.0)
+                                tgt_spd = spd_telemetry.get("target_speed", spd_m)
+                                adj_reason = spd_telemetry.get("reason", "NOMINAL")
+
+                                if val_act != prop_act:
+                                    act_reason = f"SHIELD_OVERRIDE_{safety_shield.mode}"
+                                elif is_emerg:
+                                    act_reason = "EMERGENCY_BRAKE"
+                                else:
+                                    act_reason = adj_reason
+
+                                veh_recs.append({
+                                    "id": v_act_obj.id,
+                                    "role": v_role_str,
+                                    "action": val_act,
+                                    "proposed_action": prop_act,
+                                    "shield_action": val_act,
+                                    "shield_mode": safety_shield.mode,
+                                    "executed_action": val_act,
+                                    "reason": act_reason,
+                                    "action_reason": act_reason,
+                                    "speed_mps": spd_m,
+                                    "target_mps": tgt_spd,
+                                    "gap_m": cur_gap,
+                                    "desired_gap_m": des_gap,
+                                    "cursor": cur_wp,
+                                    "total_wps": tot_wp,
+                                })
+
+                            train_m = None
+                            if args.mode == "train" and hasattr(module2_manager, "trainer"):
+                                train_m = {
+                                    "update_step": getattr(module2_manager.trainer, "update_step", 0),
+                                }
+
+                            mappo_logger.log_tactical_cycle(
+                                sim_time_sec=elapsed_sim,
+                                step=getattr(module2_manager.trainer, "update_step", 0),
+                                mode=args.mode,
+                                vehicle_records=veh_recs,
+                                training_metrics=train_m,
                             )
                     module2_manager.train_if_ready()
                 t_m1 = time.perf_counter()
@@ -853,8 +991,12 @@ class CarlaSimulationThread(threading.Thread):
                     hw_monitor.sample()
 
                 # Build and publish telemetry snapshot for the UI thread
+                active_lead = mission_controller.get_active_leader() if mission_controller else leader
+                active_lead_idx = getattr(mission_controller, "active_leader_index", 0) if mission_controller else 0
+                disabled_ids = getattr(mission_controller, "disabled_vehicles", set()) if mission_controller else set()
+
                 snap = TelemetrySnapshot()
-                snap.platoon_rows = platoon_rows(platoon)
+                snap.platoon_rows = platoon_rows(platoon, active_leader_index=active_lead_idx, disabled_ids=disabled_ids)
                 snap.npc_stats = cached_npc_stats
                 snap.walker_stats = cached_walker_stats
                 snap.control_active = control_active
@@ -865,7 +1007,7 @@ class CarlaSimulationThread(threading.Thread):
                 snap.sim_fps = perf_sim_fps
                 snap.ghost_status = ghost_telemetry
                 snap.mappo_actions = actions_dict
-                leader_diag = mission_controller.diagnostics(leader, 0) if (mission_controller and leader) else {}
+                leader_diag = mission_controller.diagnostics(active_lead, active_lead_idx) if (mission_controller and active_lead) else {}
                 snap.leader_diag = leader_diag
                 snap.cpu_util = hw_monitor.cpu_pct
                 snap.gpu_util = hw_monitor.gpu_util
@@ -874,13 +1016,20 @@ class CarlaSimulationThread(threading.Thread):
                 snap.ckpt_step = module2_manager.trainer.update_step
                 snap.ckpt_hash = getattr(module2_manager.trainer, "active_checkpoint_hash", "--------")[:8]
                 snap.platoon_state = str(mission_controller.state).split(".")[-1] if mission_controller else "NORMAL"
-                snap.overrides = {
-                    ("Leader" if i == 0 else f"F{i}"): mission_controller.diagnostics(v, i).get("safety_override", "NONE")
-                    for i, v in enumerate(platoon) if v and v.is_alive
-                }
+                snap.overrides = {}
+                for i, v in enumerate(platoon):
+                    if not v or not v.is_alive:
+                        continue
+                    if i == active_lead_idx:
+                        k = "Leader"
+                    elif v.id in disabled_ids:
+                        k = f"Disabled_F{i}"
+                    else:
+                        k = f"F{i}"
+                    snap.overrides[k] = mission_controller.diagnostics(v, i).get("safety_override", "NONE")
 
                 # Traffic light status for leader (using controller's geometric projection)
-                if leader and leader.is_alive:
+                if active_lead and getattr(active_lead, "is_alive", False):
                     try:
                         ctl_tl = leader_diag.get("traffic_light", "NONE")
                         if ctl_tl in ("RED", "YELLOW", "GREEN"):
@@ -893,7 +1042,7 @@ class CarlaSimulationThread(threading.Thread):
                         elif ctl_tl in ("CLEARED_LIGHT", "INSIDE_JUNCTION", "ADJACENT_SIGNAL", "NONE"):
                             snap.tl_label, snap.tl_color = "CLEAR ○", (120, 200, 160)
                         else:
-                            tl = leader.get_traffic_light()
+                            tl = active_lead.get_traffic_light()
                             if tl is not None:
                                 state = tl.get_state()
                                 if state == carla.TrafficLightState.Red:
@@ -902,7 +1051,7 @@ class CarlaSimulationThread(threading.Thread):
                                     snap.tl_label, snap.tl_color = "AMBER ●", (255, 210, 50)
                                 elif state == carla.TrafficLightState.Green:
                                     snap.tl_label, snap.tl_color = "GREEN ●", (70, 255, 120)
-                        ctrl = leader.get_control()
+                        ctrl = active_lead.get_control()
                         snap.leader_thr = ctrl.throttle
                         snap.leader_brk = ctrl.brake
                     except Exception:
@@ -921,7 +1070,12 @@ class CarlaSimulationThread(threading.Thread):
                         veh = platoon[index]
                         diag = mission_controller.diagnostics(veh, index)
                         ctrl = veh.get_control() if veh and veh.is_alive else None
-                        tag = "Leader (F0)" if index == 0 else "Follower %d" % index
+                        if row["id"] in disabled_ids:
+                            tag = "Disabled Leader"
+                        elif index == active_lead_idx:
+                            tag = "Active Leader" if active_lead_idx > 0 else "Leader (F0)"
+                        else:
+                            tag = "Follower %d" % index
                         raw_a = raw_acts[index] if index < len(raw_acts) else "?"
                         tact_a = tactical_actions[index] if index < len(tactical_actions) else "?"
 
@@ -994,6 +1148,16 @@ class CarlaSimulationThread(threading.Thread):
                     module2_manager.train_if_ready()
                 except Exception:
                     logger.exception("Could not flush the final MAPPO transition")
+            if mappo_logger:
+                try:
+                    mappo_logger.close()
+                except Exception:
+                    pass
+            if safety_shield and hasattr(safety_shield, "logger"):
+                try:
+                    safety_shield.logger.close()
+                except Exception:
+                    pass
             if safety_monitor:
                 safety_monitor.destroy()
             if camera:
@@ -1024,6 +1188,9 @@ class CarlaSimulationThread(threading.Thread):
 # ── MAIN APPLICATION RUNNER (UI DISPLAY THREAD) ─────────────────────────────
 def run(args: argparse.Namespace) -> None:
     setup_logging(args.log_file)
+    if not getattr(args, "no_dedicated_consoles", False):
+        launch_dedicated_consoles_if_needed(PROJECT_ROOT)
+
     server_process = None
     if args.launch_server and not wait_for_server(args.host, args.port, 2):
         server_process = maybe_launch_carla(args.town, args.port, args.quality)
@@ -1190,6 +1357,8 @@ def parse_args() -> argparse.Namespace:
                         help="Operating mode for Module 3 Twin-World Safety Shield (default: shadow)")
     parser.add_argument("--disable-module3", action="store_true", default=False,
                         help="Completely disable Module 3 Twin-World Safety Shield")
+    parser.add_argument("--no-dedicated-consoles", action="store_true", default=False,
+                        help="Do not spawn dedicated Windows console windows for MAPPO and Module 3")
     parser.set_defaults(clean=True)
     return parser.parse_args()
 

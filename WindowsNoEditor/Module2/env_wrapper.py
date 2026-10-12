@@ -26,15 +26,16 @@ class MAPPOEnvWrapper:
         self.last_actions = np.zeros(len(platoon), dtype=int)
 
     def _get_friction_from_weather(self, weather_preset):
-        if weather_preset == WeatherPreset.CLEAR:
+        weather_name = getattr(weather_preset, "name", str(weather_preset)).upper().split(".")[-1]
+        if weather_name == "CLEAR":
             return 1.0
-        elif weather_preset == WeatherPreset.CLOUDY:
+        elif weather_name == "CLOUDY":
             return 0.9
-        elif weather_preset == WeatherPreset.LIGHT_RAIN:
+        elif weather_name in ("LIGHT_RAIN", "MODERATE_RAIN"):
             return 0.6
-        elif weather_preset == WeatherPreset.HEAVY_RAIN:
+        elif weather_name in ("HEAVY_RAIN", "RAIN_FOG"):
             return 0.4
-        elif weather_preset == WeatherPreset.HEAVY_FOG:
+        elif weather_name in ("FOG", "HEAVY_FOG"):
             return 0.7
         return 1.0
 
@@ -67,7 +68,11 @@ class MAPPOEnvWrapper:
                 clearance = max(0.0, dist - 4.7)
 
         # 3. Environment (Weather & Friction)
-        current_weather = getattr(self.uncertainty_manager.weather, 'current_weather', WeatherPreset.CLEAR)
+        current_weather = getattr(
+            self.uncertainty_manager.weather,
+            'current_preset',
+            getattr(self.uncertainty_manager.weather, 'current_weather', WeatherPreset.CLEAR),
+        )
         friction = self._get_friction_from_weather(current_weather)
 
         # 4. Traffic Light State
@@ -141,7 +146,11 @@ class MAPPOEnvWrapper:
                     clearance = max(0.0, dist - 4.7)
                     
                     # Weather aware safe distance
-                    current_weather = getattr(self.uncertainty_manager.weather, 'current_weather', WeatherPreset.CLEAR)
+                    current_weather = getattr(
+                        self.uncertainty_manager.weather,
+                        'current_preset',
+                        getattr(self.uncertainty_manager.weather, 'current_weather', WeatherPreset.CLEAR),
+                    )
                     friction = self._get_friction_from_weather(current_weather)
                     
                     # Desired clearance increases when friction is low

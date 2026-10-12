@@ -1,0 +1,568 @@
+CARLA WEATHER-AWARE AUTONOMOUS VEHICLE PLATOONING
+IMPLEMENTATION DOCUMENTATION AND AUDIT
+
+Document status: implementation inventory based on the repository state inspected on
+2026-10-07.  It describes code that exists in this checkout and distinguishes it
+from requested-but-not-yet-implemented research requirements.  In particular, a
+requirement in prompt.txt is not represented as completed unless source code or a
+recorded run supports it.
+
+================================================================================
+1. PROJECT PURPOSE
+================================================================================
+
+The project is a CARLA 0.9.9 research simulator for autonomous vehicle platooning
+under weather, traffic, and behavioural uncertainty.  Its current primary Module 2
+entry point combines:
+
+  CARLA world + Pygame view
+       -> deterministic low-level vehicle controllers
+       -> a shared MAPPO tactical policy
+       -> a centralized value critic and PPO training
+       -> NPC/pedestrian traffic, weather/friction uncertainty, and a ghost driver.
+
+The intended control split in the current Module 2 runner is:
+
+  platoon leader       RoadLeaderController + Module 2 tactical action
+  platoon followers    PlatoonPathController + each follower's tactical action
+  NPC/ghost vehicles   CARLA Traffic Manager and the ghost/uncertainty systems
+  pedestrians          CARLA walker AI controllers
+
+The current runner does not hand CARLA Traffic Manager control to a platoon actor:
+all platoon actors are spawned with set_autopilot(False).  Traffic Manager is still
+used for ordinary NPC traffic and for a ghost vehicle when it is released back into
+traffic.
+
+================================================================================
+2. REPOSITORY LAYOUT AND ENTRY POINTS
+================================================================================
+
+Primary current Module 2 path
+-----------------------------
+
+run_module_2.bat
+  Starts live log and MAPPO-monitor terminals, changes to PythonAPI, and runs:
+  py -3.7 run_module_2.py
+
+WindowsNoEditor/PythonAPI/run_module_2.py
+  The primary visible Module 2 simulation launcher and the one this document
+  describes as the current MAPPO integration.
+
+WindowsNoEditor/Module2/
+  Module 2 implementation: configuration, observations, tactical actions,
+  reward calculation, shared actor/centralized critic, rollout buffer, PPO trainer,
+  manager, and Module 1 control adapter.
+
+WindowsNoEditor/PythonAPI/autopilot_platoon_window.py
+  Reusable simulator utilities imported by run_module_2.py.  It provides CARLA
+  connection/timing helpers, platoon spawning, the road leader controller, follower
+  controller, camera, HUD components, and the standalone waypoint-controller mode.
+
+WindowsNoEditor/PythonAPI/real_world_simulation.py
+  Supplies the uncertainty timeline director and NPC/pedestrian spawners used by
+  run_module_2.py.  It also has an older standalone Traffic-Manager/ego demo path.
+  That legacy demo is not the MAPPO path and does use CARLA autopilot.
+
+WindowsNoEditor/PythonAPI/uncertainty/
+  Weather, friction, vehicle actuator, communication, traffic-jam, accident,
+  event, human-driver, scenario, and ghost-driver uncertainty modules.
+
+Module 1 / historical integrated path
+-------------------------------------
+
+module_1.md records the earlier unified uncertain-platoon environment work.
+run_uncertain_platoon.bat launches uncertain_platoon_main.py.  It is a related
+Module 1 integration path, not the primary MAPPO runner described above.
+
+Legacy/development files
+------------------------
+
+Module2/env_wrapper.py, Module2/mappo_agent.py, and Module2/mappo_network.py are
+older alternate abstractions.  The primary run_module_2.py path constructs
+Module2.module2_manager.Module2Manager and then uses Module2/mappo/trainer.py,
+actor.py, critic.py, and buffer.py.  The old files should not be confused with the
+active model path.
+
+WindowsNoEditor/PythonAPI/carla/ and scenario_runner-0.9.9/ are CARLA/Scenario
+Runner support code rather than project-specific MAPPO implementation.
+
+================================================================================
+3. WORLD, TIMING, AND SIMULATION LOOP
+================================================================================
+
+CARLA connection and world setup
+--------------------------------
+
+run_module_2.py connects a single carla.Client to the selected host/port.  It may
+load the requested town, obtains one CARLA world and one Traffic Manager instance,
+and optionally cleans actors left from a previous session.  It can launch CARLA
+when --launch-server is supplied.
+
+The default mode is synchronous.  configure_world_timing() sets:
+
+  synchronous_mode     True (unless --async-world is supplied)
+  fixed_delta_seconds  1 / TARGET_FPS; TARGET_FPS is 30
+  Traffic Manager      synchronized to the same mode when supported
+
+advance_world() is the single authoritative physics advance in the main loop:
+
+  synchronous mode:  world.tick()
+  asynchronous mode: world.wait_for_tick(seconds=2.0)
+
+The runner restores the original world and Traffic Manager settings on shutdown.
+The old helper modules contain their own standalone loops, but the active Module 2
+runner itself has one main loop and one world advance per iteration.
+
+Main-loop sequence
+------------------
+
+Every current Module 2 loop iteration:
+
+  1. Reads the CARLA snapshot and elapsed simulated time.
+  2. Applies a periodic random weather change when its CLI interval expires, then
+     synchronizes per-platoon tire friction.
+  3. Handles Pygame exit, pause, camera, and vehicle-camera-selection events.
+  4. Ticks UncertaintyManager and UncertaintyTimelineDirector, including the
+     ghost driver.
+  5. If driving is enabled, gets/caches MAPPO tactical actions, applies a new
+     action only at a decision boundary, trains when the rollout is full, applies
+     a red-light coordination override, and executes leader/follower control.
+  6. Advances CARLA once.
+  7. Logs vehicle ownership status, draws a ghost bounding box when applicable,
+     and renders the camera/HUD.
+
+At exit the runner flushes a pending Module 2 transition when possible, destroys
+sensors/cameras/actors, restores settings, closes Pygame, and optionally stops only
+the CARLA process it launched.
+
+================================================================================
+4. ACTOR CREATION AND CONTROL OWNERSHIP
+================================================================================
+
+Platoon spawning
+----------------
+
+spawn_platoon() selects a valid CARLA vehicle spawn point, creates a red Tesla
+Model 3 leader, then creates differently coloured followers at preceding valid
+same-road/same-lane waypoints spaced 13 m apart.  The leader gets role_name=hero;
+followers get role names platoon_follower_1, platoon_follower_2, and so on.  A
+partial group is destroyed and retried, so the function returns only a complete
+requested platoon.
+
+At spawn time every platoon vehicle calls set_autopilot(False).  The initial
+apply_control() calls merely establish a stationary/neutral initial condition;
+thereafter the local controllers write VehicleControl commands.
+
+Leader ownership
+----------------
+
+RoadLeaderController owns leader VehicleControl during active driving.  It:
+
+  * projects the leader to a CARLA driving waypoint;
+  * uses waypoint.next(9.0) and selects the branch with the smallest yaw change;
+  * uses a bounded/smoothed steering signal generated in vehicle coordinates;
+  * turns tactical ACCELERATE, DECELERATE, and CRUISE into a bounded target speed
+    offset of +4, -5, or 0 km/h relative to the configured cruise speed;
+  * handles tactical leader-only CHANGE_LEFT/CHANGE_RIGHT requests;
+  * searches a forward cone for vehicles or walkers, applies braking under 8 m,
+    caps target speed under 15 m, and checks lane occupancy before changing lane;
+  * forces throttle to zero whenever braking is non-zero.
+
+Lane changing is not a teleport.  The leader accepts a request only while idle and
+outside cooldown; the adjacent lane must be a driving lane and have no vehicle
+within MIN_LANE_GAP (15 m) of its target waypoint.  It follows that adjacent lane
+until its lane ID changes or a four-second timeout expires, then applies a two
+second cooldown.
+
+Follower ownership
+------------------
+
+PlatoonPathController owns each follower VehicleControl.  Every follower follows
+the immediate ordered platoon predecessor, not a copied leader transform.  It
+constructs an individual target point behind that predecessor using the two vehicle
+half lengths plus the follower's current desired clearance.  It uses:
+
+  * local-coordinate steering with a minimum forward look-ahead;
+  * steering smoothing: 85% prior command and 15% newly calculated command;
+  * a steer bound of [-0.65, +0.65];
+  * closing-time, clearance, speed-difference, and stopped-predecessor conditions
+    for brake/throttle decisions;
+  * a single-command rule: throttle and brake are never deliberately non-zero
+    together.
+
+The controller retains a leader-location history for its previous trajectory mode,
+but the active follower update directly targets its immediate predecessor because
+that avoids stale leader-history targets when a nearer follower falls behind.
+
+NPC, pedestrian, and ghost ownership
+-------------------------------------
+
+NPC traffic is spawned by real_world_simulation.spawn_npc_traffic() using CARLA
+batch spawning/Traffic Manager.  Pedestrians use CARLA walker AI controllers.
+The UncertaintyTimelineDirector registers the platoon actor IDs with GhostDriver,
+protecting them from ghost possession.  GhostDriver can possess NPC actors and
+alter their Traffic Manager behaviour; on release it restores Traffic Manager
+control.  Thus ghost/NPC controls are separate from platoon controls.
+
+The repository also contains standalone legacy real_world_simulation.py code that
+uses set_autopilot(True) for an ego vehicle and its platoon followers.  That code
+is outside the run_module_2.py execution path and must not be used as evidence that
+the active MAPPO platoon hands control to Traffic Manager.
+
+================================================================================
+5. MODULE 2 / MAPPO IMPLEMENTATION
+================================================================================
+
+Decision rate and action persistence
+------------------------------------
+
+CARLA control advances at 30 Hz.  Module2/config.py sets both state extraction
+and tactical decision interval to 1/15 second.  Module2Manager returns the cached
+tactical commands on intermediate control frames.  ActionManager requires two
+consecutive new proposals before changing an existing command after initialization.
+This prevents rapid ACCELERATE/DECELERATE and LEFT/RIGHT chatter.
+
+Shared policy and centralized critic
+------------------------------------
+
+Module2Manager constructs one MAPPOTrainer for the complete platoon.  MAPPOTrainer
+contains exactly:
+
+  * one SharedActor: 20 -> 64 Tanh -> 64 Tanh -> 5 logits;
+  * one CentralizedCritic: 80 -> 128 Tanh -> 64 Tanh -> 1 value;
+  * distinct Adam optimizers for actor and critic.
+
+The actor is evaluated once per row of the local-observation matrix, so every
+vehicle can produce its own sampled action from its own observation while sharing
+the same weights.  The critic consumes the ordered, padded global state.  This is
+the current centralized-training/decentralized-execution structure, subject to the
+observation limitations listed later.
+
+Action space
+------------
+
+The active model has five discrete tactical actions:
+
+  0 CRUISE
+  1 ACCELERATE
+  2 DECELERATE
+  3 CHANGE_LEFT
+  4 CHANGE_RIGHT
+
+The leader can sample all five.  The trainer action mask makes actions 3 and 4
+invalid for followers.  ActionManager also defensively remaps a follower's lane
+change to CRUISE.  Followers have no lane-change execution path.  There is no
+separate neural-network BRAKE action in the current active action interface.
+
+Transition collection and PPO update
+------------------------------------
+
+At a decision boundary, Module2Manager first closes the previous transition with
+the next global state and current reward.  It then gathers fresh local/global state,
+samples all actor actions, passes them through action persistence, recomputes a
+log-probability when persistence changed an action, gets the critic value, and
+stores the pending transition.  This preserves action/log-probability consistency.
+
+RolloutBuffer stores local observations, global states, individual actions and log
+probabilities, individual rewards, terminal flags, old values, and next global
+states.  A rollout is trained at 128 tactical decisions.  MAPPOTrainer computes a
+single cooperative team reward by averaging per-vehicle rewards, uses GAE with
+gamma=0.99 and lambda=0.95, normalizes advantages, then performs clipped PPO actor
+updates and MSE critic updates.  Important configured values are:
+
+  actor LR=3e-4; critic LR=1e-3; PPO clip=0.2; epochs=4;
+  minibatch=64; entropy coefficient=0.01; value coefficient=0.5;
+  gradient norm cap=0.5.
+
+The manager marks an episode terminal if a platoon actor is lost or adjacent
+platoon center-distance is at or below 4.7 m.  It does not attach collision
+sensors in the active Module 2 loop; this terminal check is distance based.
+
+Checkpointing and telemetry
+---------------------------
+
+The trainer saves actor/critic weights, both optimizer states, and update_step to
+checkpoints/mappo_checkpoint.pt relative to the process working directory.  The
+normal batch launcher changes into WindowsNoEditor/PythonAPI first, so the active
+path is WindowsNoEditor/PythonAPI/checkpoints/mappo_checkpoint.pt.  Compatible
+checkpoints are loaded at startup; incompatible ones are ignored to allow the new
+observation schema to start fresh.
+
+mappo_training.log records the most recent update losses, entropy, normalized
+advantage statistics, gradient norms, and model parameter L2 norms.  The manager
+writes current action telemetry to mappo_telemetry.log.  show_mappo_training.bat
+and show_mappo_telemetry.bat provide auto-refreshing terminal views.
+
+================================================================================
+6. OBSERVATION AND GLOBAL STATE
+================================================================================
+
+ObservationBuilder creates one finite float32 20-element local observation per
+ordered platoon actor.  NaN and infinity are converted to bounded numeric values.
+The elements are:
+
+  1  speed / 50
+  2  world velocity x / 30
+  3  world velocity y / 30
+  4  is-leader flag
+  5  normalized vehicle slot in MAX_PLATOON_SIZE
+  6  normalized current platoon size
+  7  predecessor relative longitudinal position / 100
+  8  predecessor relative lateral position / 100
+  9  predecessor relative longitudinal velocity / 30
+ 10  predecessor relative lateral velocity / 30
+ 11  predecessor clearance / 100
+ 12  predecessor speed minus own speed / 30
+ 13  leader distance / 100 for followers
+ 14  leader speed minus own speed / 30 for followers
+ 15  traffic-light state: green/other=0, yellow=0.5, red=1
+ 16  at-traffic-light flag
+ 17  associated traffic-light distance / 100; 50 m when none
+ 18  friction multiplier
+ 19  reserved zero
+ 20  reserved zero
+
+Relative predecessor pose/velocity components are expressed in the vehicle's own
+forward/right axes.  The centralized state is the ordered concatenation of at most
+four local vectors, padded with zeros to 80 values (MAX_PLATOON_SIZE=4).
+
+================================================================================
+7. REWARD DESIGN
+================================================================================
+
+RewardManager produces one state-based reward per ordered platoon vehicle, then
+adds 0.5 times the mean team reward to every individual reward.  Current terms are:
+
+  * -10 for an invalid/dead actor;
+  * -20 when an actor moves faster than 0.5 m/s at its red traffic light;
+  * followers: -50 if clearance to their ordered predecessor is non-positive;
+  * followers: -2 if clearance is below half of desired headway;
+  * followers: +0.5 inside a +/-2 m desired-headway deadband;
+  * followers: -0.5 if clearance is more than 1.5 times desired headway;
+  * +0.1 efficiency reward for speed above 5 m/s unless the reported light is red.
+
+Desired clearance is weather aware:
+
+  7.5 m + 0.5 * own speed (m/s) + 10 * (1 - friction)
+
+The function receives relative speed but does not currently use it in that formula.
+
+================================================================================
+8. WEATHER, FRICTION, TRAFFIC, AND GHOST UNCERTAINTY
+================================================================================
+
+The active runner initializes UncertaintyManager with seed 42, disables its
+traffic_jam, accident, and events modules for that run path, and leaves weather,
+friction, vehicle, communication, human-behaviour, and ghost functionality
+available.  It assigns the spawned NPCs random profiles with these weights:
+
+  NORMAL 0.45, AGGRESSIVE 0.15, CONSERVATIVE 0.15,
+  DISTRACTED 0.15, ERRATIC 0.10.
+
+The runner changes weather randomly at --weather minutes (default five).  It maps
+weather to a tire-friction multiplier and sets friction on every live platoon
+vehicle through the friction manager:
+
+  clear 1.0; cloudy 0.9; light/moderate rain 0.6;
+  heavy rain/rain-fog 0.4; fog/heavy fog 0.7.
+
+The same multiplier is exposed to the observation and reward systems.
+
+UncertaintyTimelineDirector supplies higher-level dynamic incidents including a
+cut-in, sudden braking, breakdown ahead, crossing pedestrian, and a cyclical event
+selection.  GhostDriver is configured by run_module_2.py for 15--20 s possession
+and 5--20 s cooldown.  The HUD and world debug renderer show ghost status and a
+red bounding box around the possessed external vehicle.
+
+================================================================================
+9. TRAFFIC LIGHTS, OBSTACLES, SAFETY, AND LANE CHANGES
+================================================================================
+
+Traffic lights
+--------------
+
+The active loop checks every platoon vehicle.  If any of them reports an associated
+red light, it calls leader_controller.set_traffic_stop(True), setting the leader
+speed target to zero.  When none reports red, it restores that target using the
+currently selected tactical speed mode.  The reward also penalizes movement at a
+red light.  Followers react through their normal preceding-vehicle control.
+
+This is a platoon-wide conservative coordination rule; it is not a route-aware
+stop-line planner.  It may stop the leader for a rear vehicle's red light and does
+not presently calculate a route-specific stopping distance or yellow-light rule.
+
+Obstacle safety
+---------------
+
+The leader scans vehicles and walkers inside a forward-facing cone.  It performs
+full braking below 4 m clearance, strong braking below 8 m, and caps target speed
+at 15 km/h below 15 m.  Followers calculate closing time and have escalating brake
+conditions down to full braking.  Module 2 additionally terminates when adjacent
+platoon center distance is <=4.7 m.
+
+Sensor infrastructure exists but is not connected to the active Module 2 runner:
+PlatoonSafetyMonitor in autopilot_platoon_window.py can attach collision and lane
+invasion sensors, and real_world_simulation.py has a CollisionSensor for its
+separate legacy demo.
+
+Lane changes
+------------
+
+RoadLeaderController has the active leader lane-change state implementation.  The
+separate Module2/action/lane_change_manager.py provides a simple timed state helper
+(normal/requested/in-progress/complete/return-to-normal), but it is not instantiated
+by Module2Manager.  The active manager is therefore the RoadLeaderController state
+described in section 4.  No follower may change lanes in the MAPPO path.
+
+================================================================================
+10. CAMERA, HUD, LOGGING, AND INTERACTION
+================================================================================
+
+CameraManager provides vehicle camera views and can attach to the leader or a
+selected follower.  The Module 2 UnifiedHUD includes:
+
+  * per-platoon role, CARLA ID, speed, clearance, and status;
+  * leader speed, current applied throttle/brake, traffic light, and driving state;
+  * individual MAPPO tactical action labels;
+  * ghost possession target/action/cooldown information;
+  * NPC and pedestrian summary statistics.
+
+Keyboard input in the primary runner:
+
+  P          toggle active waypoint/MAPPO driving; disabled state brakes platoon
+  C          toggle camera view
+  TAB        attach camera to the next platoon vehicle
+  Escape/Q   leave simulation cleanly
+
+The HUD string still labels the P state "Autopilot" for user familiarity, but in
+the primary Module 2 path it means the custom road/follower controllers plus MAPPO
+are active; it does not enable CARLA set_autopilot() on the platoon.
+
+================================================================================
+11. AVAILABLE COMMANDS
+================================================================================
+
+From the project root, the normal training-and-visible-simulation command is:
+
+  run_module_2.bat --town Town04 --launch-server --vehicles 10 --pedestrians 0
+                    --platoon-size 4 --duration 300 --windowed
+
+The batch file calls the Python 3.7 interpreter.  CARLA must be installed in
+WindowsNoEditor and a compatible Python/CARLA setup must be available.  Omit
+--launch-server if CARLA is already running on 127.0.0.1:2000.  Add
+--kill-launched-server only when the runner itself should close the CARLA process
+that it started.
+
+The default run trains online.  There is no current --evaluate/frozen-policy option:
+the current runner loads a compatible checkpoint but continues collecting rollouts
+and calling train_if_ready().  A frozen evaluation mode is NOT IMPLEMENTED.
+
+Related Module 1 launcher:
+
+  run_uncertain_platoon.bat --town Town05 --vehicles 32 --pedestrians 20
+                             --platoon-size 3 --windowed --width 1280
+                             --height 720 --launch-server --weather 10
+
+================================================================================
+12. VERIFIED EXECUTION EVIDENCE
+================================================================================
+
+Recorded evidence: WindowsNoEditor/PythonAPI/logs/module2_visible_5min.log.
+
+On 2026-10-07 the active Module 2 runner was launched on Town04 in synchronous
+mode.  It spawned a four-actor platoon (IDs 206--209), ten NPCs, and no pedestrians.
+The log records a compatible checkpoint loaded at update step 27, repeated
+"Rollout full. Training MAPPO..." messages, continued platoon actor status through
+frame 10211, ghost possession/release of a non-platoon NPC (ID 218), a weather
+transition, and normal cleanup.  The frame progression from 371 to 10211 at 30 Hz
+is about 328 seconds after startup/warm-up, consistent with the visible five-minute
+test.
+
+The final recorded training telemetry reports update step 65, actor loss -0.0079,
+critic loss 36.7460, and entropy 1.1879.  These figures demonstrate that the PPO
+update code ran.  They do NOT demonstrate convergence, policy quality, safety, or
+generalization.
+
+The log does not prove a collision-free run, traffic-light compliance, successful
+lane change, cut-in response, platoon split/rejoin, or destination arrival.  Those
+items are NOT VERIFIED by the available evidence.
+
+================================================================================
+13. IMPLEMENTATION GAPS / RESEARCH LIMITATIONS
+================================================================================
+
+The following are important gaps relative to the architecture requested in
+prompt.txt.  They are listed to keep reports and future experiments accurate.
+
+  1. Deterministic mission destination and global route planner: NOT IMPLEMENTED.
+     The leader selects a smooth next CARLA waypoint locally; no origin-to-
+     destination route, route progress, destination completion, or robust
+     intersection route continuity is stored.
+
+  2. Route features: NOT IMPLEMENTED in the active 20-value observation.  There
+     is no route progress, lateral route error, heading error, road/lane ID,
+     destination distance, lane availability, or route-compatible lane flag.
+
+  3. General nearby-vehicle representation: NOT IMPLEMENTED.  The observation
+     contains the ordered platoon predecessor and leader relationship, not a
+     compact set of NPC/ghost relative states or an explicit cut-in flag.
+
+  4. Platoon intrusion/split/rejoin topology state machine: NOT IMPLEMENTED.
+     There is no ordered external-intruder detection, front/rear subgroup logic,
+     rejoin eligibility calculation, or rejoin execution.
+
+  5. Full traffic-light routing logic: NOT IMPLEMENTED.  The current red-light
+     rule is platoon-wide and conservative, not per-route stop-line handling.
+
+  6. Follower lane changes: intentionally NOT IMPLEMENTED in the active MAPPO
+     path.  Leader lane change is available; there is no route-sensitive
+     follower manoeuvre/rejoin behaviour.
+
+  7. Explicit tactical brake action: NOT IMPLEMENTED.  The policy has five
+     actions, while emergency braking lives in deterministic safety logic.
+
+  8. Frozen evaluation/no-online-learning mode: NOT IMPLEMENTED.  The runner
+     trains online by default after loading a checkpoint.
+
+  9. Collision/lane-invasion sensor integration in the active Module 2 runner:
+     NOT IMPLEMENTED, although reusable sensor classes exist elsewhere.
+
+ 10. Formal staged tests for straight-road steering, red light, weather braking,
+     obstacle/cut-in, lane change, split, rejoin, and destination arrival: NOT
+     IMPLEMENTED/NOT VERIFIED in the available repository logs.
+
+ 11. The reward's headway formula accepts relative speed but currently ignores it.
+     It is weather/speed aware but not explicitly closing-speed aware.
+
+ 12. Some names are historical: RoadLeaderController's docstring and HUD wording
+     call the custom control path "autopilot."  This should not be interpreted as
+     CARLA Traffic Manager ownership in the active Module 2 runner.
+
+================================================================================
+14. FILES WITH THE CURRENT IMPLEMENTATION
+================================================================================
+
+Primary changed/active implementation files inspected for this documentation:
+
+  WindowsNoEditor/PythonAPI/run_module_2.py
+  WindowsNoEditor/PythonAPI/autopilot_platoon_window.py
+  WindowsNoEditor/PythonAPI/real_world_simulation.py
+  WindowsNoEditor/Module2/config.py
+  WindowsNoEditor/Module2/module2_manager.py
+  WindowsNoEditor/Module2/integration/module1_adapter.py
+  WindowsNoEditor/Module2/observation/observation_builder.py
+  WindowsNoEditor/Module2/action/action_manager.py
+  WindowsNoEditor/Module2/action/lane_change_manager.py
+  WindowsNoEditor/Module2/reward/reward_manager.py
+  WindowsNoEditor/Module2/mappo/actor.py
+  WindowsNoEditor/Module2/mappo/critic.py
+  WindowsNoEditor/Module2/mappo/buffer.py
+  WindowsNoEditor/Module2/mappo/trainer.py
+  WindowsNoEditor/PythonAPI/uncertainty/*.py
+  WindowsNoEditor/PythonAPI/config/uncertainty_config.json
+  run_module_2.bat, run_uncertain_platoon.bat,
+  show_mappo_training.bat, show_mappo_telemetry.bat
+
+The working tree contains uncommitted changes and generated checkpoints/logs.  This
+documentation does not alter those implementation files; it records their current
+state.
